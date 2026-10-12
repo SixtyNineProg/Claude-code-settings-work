@@ -1,0 +1,43 @@
+{
+  "expectations": [
+    {
+      "text": "Выражение ровно 0 9 30 9,11,12 *",
+      "passed": true,
+      "evidence": "Раздел «## Выражение для `cron_tab`»: `0 9 30 9,11,12 *`."
+    },
+    {
+      "text": "Назван часовой пояс Минск (UTC+3)",
+      "passed": true,
+      "evidence": "«Часовой пояс: Europe/Minsk (UTC+3) — cron считается в локальном времени Sherpa» + допущение 3 про `last_run` = `06:00:00Z`."
+    },
+    {
+      "text": "Приведены ближайшие даты запуска: 30.11.2026 и 30.12.2026",
+      "passed": true,
+      "evidence": "Вывод скрипта: «2026-11-30 09:00 Пн», «2026-12-30 09:00 Ср» + пояснение «30 сентября 2026 уже прошло, поэтому первым в списке идёт 30 ноября 2026»."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 1,
+      "Bash": 2,
+      "Write": 2
+    },
+    "total_tool_calls": 5,
+    "total_steps": 3,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-3-three-yearly-dates\\with_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-3-three-yearly-dates\\with_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 82.9
+  },
+  "eval_feedback": ""
+}

@@ -1,0 +1,22 @@
+[
+  {"query": "сделай README для процесса ics60001, папка rpa-suite/ics60001", "should_trigger": true},
+  {"query": "обнови readme в модуле ics00057-accounts — там новые шаги добавились после миграции email-шаблонов", "should_trigger": true},
+  {"query": "сгенерируй описание бота rps-sales в виде README.md, путь rpa-suite/rps-sales", "should_trigger": true},
+  {"query": "документируй процесс ics60187: шаги, конфигурация, ассеты — всё в README", "should_trigger": true},
+  {"query": "опиши процесс Sherpa ipe — нужен README со списком шагов и сервисными переменными", "should_trigger": true},
+  {"query": "Create a README.md for the rps-sales RPA process under rpa-suite/rps-sales, include steps and assets", "should_trigger": true},
+  {"query": "напиши readme для бота, который лежит в rpa-suite/ics60230-equipments", "should_trigger": true},
+  {"query": "перегенерируй README в ics60001 по текущему коду, старый совсем устарел", "should_trigger": true},
+  {"query": "для процесса ics00444 подготовь README — список шагов, init_params и email-шаблоны", "should_trigger": true},
+  {"query": "make a README for the ipe RPA module documenting its steps and orchestrator assets", "should_trigger": true},
+  {"query": "создай полный комплект документации для ics60001 — PDD, UG, TD, инструкция по развёртыванию, история изменений", "should_trigger": false},
+  {"query": "сделай PDD для процесса ics00057-accounts по шаблону DemoBP", "should_trigger": false},
+  {"query": "опиши, как работает класс ProcessSetupStep — нужна Javadoc на метод execute()", "should_trigger": false},
+  {"query": "добавь Javadoc-комментарии ко всем публичным методам шагов в ics60001", "should_trigger": false},
+  {"query": "обнови страницу в Confluence с описанием процесса ics60001, пространство SRPA", "should_trigger": false},
+  {"query": "расследуй, почему упал процесс ics60001 — пришёл Jira-тикет, бот закончился ошибкой", "should_trigger": false},
+  {"query": "перенеси Workfusion-процесс SupplierData в Sherpa RPA Suite, сгенерируй скелет", "should_trigger": false},
+  {"query": "напиши README для модуля rpa-core — это ядро библиотеки, не RPA-процесс", "should_trigger": false},
+  {"query": "сделай README для моего pet-проекта на Python, там FastAPI и postgres", "should_trigger": false},
+  {"query": "объясни, что делает метод execute в Transaction.java из rpa-core", "should_trigger": false}
+]

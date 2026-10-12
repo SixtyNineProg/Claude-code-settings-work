@@ -1,0 +1,55 @@
+{
+  "expectations": [
+    {
+      "text": "Overview, История изменений, Инструкция по развёртыванию, PDD, TD, UG files all exist plus one Step file per Java Step class",
+      "passed": true,
+      "evidence": "found 10 html files; 4 step files; missing: []"
+    },
+    {
+      "text": "No file contains <!DOCTYPE, <html, <head>, <body>, or <style> wrapper tags",
+      "passed": true,
+      "evidence": "files with wrapper tags: []"
+    },
+    {
+      "text": "Count of {bpName}-Step-*.html files equals the count of *Step.java classes (4)",
+      "passed": true,
+      "evidence": "expected 4 step files, found 4: ['ICS-00012-Step-01.html', 'ICS-00012-Step-02.html', 'ICS-00012-Step-03.html', 'ICS-00012-Step-04.html']"
+    },
+    {
+      "text": "Cross-reference IDs use the format {bpName}-Step-0N, {bpName}-EX-NN, {bpName}-PDD/TD/UG",
+      "passed": true,
+      "evidence": "non-ICS-00012 cross-ref prefixes found: []"
+    },
+    {
+      "text": "No literal 'DemoBP' remains in any output file",
+      "passed": true,
+      "evidence": "files still containing 'DemoBP': []"
+    },
+    {
+      "text": "No unfilled template placeholders remain (имя_ресурса_N, {{{...}}, ${...} that are not real values)",
+      "passed": true,
+      "evidence": "placeholder hits: []"
+    },
+    {
+      "text": "bpName 'ICS-00012' from process-config.json is used consistently in all filenames",
+      "passed": true,
+      "evidence": "files not starting with ICS-00012: []"
+    },
+    {
+      "text": "PDD 'Используемые системы' section lists Jira/JSD (from imports) and Orchestrator",
+      "passed": true,
+      "evidence": "systems found=['Jira', 'Orchestrator', 'Email'], missing=[]"
+    },
+    {
+      "text": "Missing bpNumber/bpDescription/controlName handled gracefully (filled from README/code or left as —/TBD, not crashed)",
+      "passed": true,
+      "evidence": "inline: minimal config handled gracefully per agent report (bpDescription from README, missing fields —/TBD)"
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 9,
+    "failed": 0,
+    "total": 9
+  }
+}

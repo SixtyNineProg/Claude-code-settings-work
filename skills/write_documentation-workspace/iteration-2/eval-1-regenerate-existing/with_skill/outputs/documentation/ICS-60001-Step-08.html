@@ -1,0 +1,71 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-08</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Рассылка заданий исполнителям</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>sampleDocuments, sampleOwners, ownersEnriched</li>
+                    <li>controllerName из транзакции</li>
+                    <li>InitParameters.controllerEmail, controlName, processName, documentReviewActionLink,
+                        emailRecipients</li>
+                    <li>asset sherpa_api_credentials</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот разделяет sampleOwners на activeOwnerEmails (активные персоны с email) и
+                        inactiveOwnerLogins;</li>
+                    <li>Бот строит mainTableRows из sampleDocuments (номер, дата, сумма, счёт, пользователь,
+                        текст);</li>
+                    <li>Бот формирует контекст письма (processName, controlName, controllerEmail, controllerName,
+                        expireDate, expireTime, inactiveEmailUsers, mainTable) и отправляет шаблон multitask_new
+                        активным владельцам (to) и emailRecipients.to (cc);</li>
+                    <li>Бот отправляет контролёру email task_assigned со ссылкой documentReviewActionLink
+                        (mtName="Проверка ручных проводок");</li>
+                    <li>Бот создаёт в очереди "ICS-60001 Document review" задачи documentReview (тег
+                        pendingReview) для каждого документа из sampleDocuments с параметрами sampleDoc и
+                        bearerToken (sherpa_api_credentials.password());</li>
+                    <li>Бот обновляет задачу documentTypePolicyEditor параметрами transactionName и
+                        processStage=3.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Если активных email-владельцев нет — письмо multitask_new не отправляется. Если emailRecipients.to
+                пуст — письмо контролёру не отправляется.</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>письма multitask_new владельцам и task_assigned контролёру</li>
+                    <li>задачи documentReview в очереди "ICS-60001 Document review"</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Web-action document-review должен быть опубликован, ссылка на него задана в init-параметрах.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-60001-EX-07</a></td>
+        </tr>
+    </tbody>
+</table>

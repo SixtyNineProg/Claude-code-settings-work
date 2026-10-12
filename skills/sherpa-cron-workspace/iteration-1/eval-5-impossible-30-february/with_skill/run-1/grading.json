@@ -1,0 +1,43 @@
+{
+  "expectations": [
+    {
+      "text": "Ответ: срабатываний не будет никогда (30 февраля не существует)",
+      "passed": true,
+      "evidence": "«**Короткий ответ: у этого расписания следующего запуска нет — и не будет никогда.**» + «Максимум 28 (29 в високосный)»."
+    },
+    {
+      "text": "Не выдумана конкретная дата следующего запуска",
+      "passed": true,
+      "evidence": "Дата не выдумана: вместо неё вывод скрипта «Срабатываний нет.» и `\"valid\": true, \"next\": []`."
+    },
+    {
+      "text": "Отмечено, что выражение синтаксически корректно, но недостижимо",
+      "passed": true,
+      "evidence": "«Выражение синтаксически корректно, Sherpa его примет без ошибки, но процесс по нему не стартует ни разу» + «Это не ошибка синтаксиса, а ошибка смысла»."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 2,
+      "Bash": 6,
+      "Write": 2
+    },
+    "total_tool_calls": 10,
+    "total_steps": 6,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-5-impossible-30-february\\with_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-5-impossible-30-february\\with_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 122.3
+  },
+  "eval_feedback": "A1 и A2 проходят в обеих конфигурациях. Различает A3: baseline называет выражение «невалидным», тогда как оно синтаксически корректно и просто недостижимо."
+}

@@ -1,0 +1,45 @@
+{
+  "expectations": [
+    {
+      "text": "Overview, История изменений, Инструкция по развёртыванию, PDD, TD, UG files all exist plus one Step file per Java Step class",
+      "passed": false,
+      "evidence": "found 16 html files; 10 step files; missing: ['ICS-60001 - Инструкция по развертыванию.html']"
+    },
+    {
+      "text": "No file contains <!DOCTYPE, <html, <head>, <body>, or <style> wrapper tags",
+      "passed": true,
+      "evidence": "files with wrapper tags: []"
+    },
+    {
+      "text": "Count of {bpName}-Step-*.html files equals the process scenario step count (10 = 8 Java *Step.java + 2 Manual Task web-actions listed as distinct user-facing steps in README)",
+      "passed": true,
+      "evidence": "expected 10 step files, found 10: ['ICS-60001-Step-01.html', 'ICS-60001-Step-02.html', 'ICS-60001-Step-03.html', 'ICS-60001-Step-04.html', 'ICS-60001-Step-05.html', 'ICS-60001-Step-06.html', 'ICS-60001-Step-07.html', 'ICS-60001-Step-08.html', 'ICS-60001-Step-09.html', 'ICS-60001-Step-10.html']"
+    },
+    {
+      "text": "Cross-reference IDs use the format {bpName}-Step-0N, {bpName}-EX-NN, {bpName}-PDD/TD/UG",
+      "passed": true,
+      "evidence": "non-ICS-60001 cross-ref prefixes found: []"
+    },
+    {
+      "text": "No literal 'DemoBP' remains in any output file",
+      "passed": true,
+      "evidence": "files still containing 'DemoBP': []"
+    },
+    {
+      "text": "No unfilled template placeholders remain (имя_ресурса_N, {{{...}}, ${...} that are not real values)",
+      "passed": true,
+      "evidence": "placeholder hits: []"
+    },
+    {
+      "text": "bpName 'ICS-60001' from process-config.json is used consistently in all filenames",
+      "passed": true,
+      "evidence": "files not starting with ICS-60001: []"
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.8571428571428571,
+    "passed": 6,
+    "failed": 1,
+    "total": 7
+  }
+}

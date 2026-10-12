@@ -1,0 +1,133 @@
+{
+  "processDir": "C:\\Users\\dzmitry_klim\\IdeaProjects\\sherpa\\rpa-suite\\ics00057-accounts",
+  "config": {
+    "processName": "ICS-00057",
+    "bpName": "ICS-00057",
+    "bpNumber": "01",
+    "bpDescription": "Обновление справочника",
+    "controlName": "Document Verification Accounting"
+  },
+  "steps": [
+    {
+      "order": 1,
+      "displayName": "InfrastructureStep",
+      "stepName": "InfrastructureStep",
+      "className": "InfrastructureStep",
+      "javaPath": "src/main/java/by/a1/ics00057_accounts/steps/InfrastructureStep.java",
+      "processFile": "Stage1.process",
+      "executeSource": "{\n    String className = this.getClass().getSimpleName();\n    log.info(\"Start {}\", className);\n\n    Optional<InitParameters> optionalInitParameters =\n        transaction.getInitParameters(InitParameters.class);\n    InitParameters initParams =\n        optionalInitParameters.orElseThrow(\n            () -> new IllegalStateException(\"InitParameters not found\"));\n    log.info(\"Init params: {}\", initParams);\n\n    sendMailBpLaunch(initParams.getEmailRecipients());\n\n    // Prepare Reporting Period\n    String periodStart = initParams.getPeriodStart();\n    String periodEnd = initParams.getPeriodEnd();\n    ReportingPeriod reportingPeriod = getReportingPeriod(periodStart, periodEnd);\n    log.info(\"Reporting period: {}\", reportingPeriod);\n    new ProcessTransaction(transaction).setReportingPeriod(reportingPeriod);\n\n    log.info(\"Finish {}\", className);\n  }"
+    },
+    {
+      "order": 2,
+      "displayName": "SapStep",
+      "stepName": "SapStep",
+      "className": "SapStep",
+      "javaPath": "src/main/java/by/a1/ics00057_accounts/steps/SapStep.java",
+      "processFile": "Stage1.process",
+      "executeSource": "{\n    String className = this.getClass().getSimpleName();\n    log.info(\"Start {}\", className);\n    try {\n      ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n      InitParameters initParams = getInitParameters(transaction);\n      ReportingPeriod reportingPeriod = processTransaction.getReportingPeriod();\n      UnifiedFoldersUtil remoteFolderStructure = FolderStructure.from(reportingPeriod);\n      createSharePointFolders(initParams, remoteFolderStructure);\n      exportAndStore(processTransaction, initParams);\n    } catch (Exception e) {\n      log.error(\"SAP step failed: {}\", e.getMessage(), e);\n      throw new BusinessException(\"SAP step failed\", e);\n    }\n    log.info(\"Finish {}\", className);\n  }"
+    },
+    {
+      "order": 3,
+      "displayName": "PrepareNewStep",
+      "stepName": "PrepareNewStep",
+      "className": "PrepareNewStep",
+      "javaPath": "src/main/java/by/a1/ics00057_accounts/steps/PrepareNewStep.java",
+      "processFile": "Stage1.process",
+      "executeSource": "{\n    String className = this.getClass().getSimpleName();\n    log.info(\"Start {}\", className);\n\n    ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n    InitParameters initParams = getInitParameters(transaction);\n    EmailRecipients emailRecipients = initParams.getEmailRecipients();\n\n    ProcessStateService stateService = new ProcessStateService(orchestratorService, new Gson());\n\n    List<Account> sapAccounts =\n        processTransaction\n            .getSapAccounts()\n            .orElseThrow(() -> new IllegalStateException(\"SAP accounts not found\"));\n    log.info(\"SAP accounts {}\", sapAccounts.size());\n    Set<String> comments = stateService.selectComments();\n    log.info(\"Selected comments {}\", comments.size());\n    List<Account> checklistAccounts = stateService.selectAccounts();\n    log.info(\"Selected accounts {}\", checklistAccounts.size());\n\n    AccountChecklistHelper checklist = new AccountChecklistHelper(checklistAccounts);\n    List<Account> newAccounts = checklist.getNewAccounts(sapAccounts);\n    log.info(\"New accounts size: {}\", newAccounts.size());\n\n    List<Account> newAccountsWithMarks = checklist.getAccountsWithMarks(newAccounts);\n    List<Acc"
+    },
+    {
+      "order": 4,
+      "displayName": "SaveNewStep",
+      "stepName": "SaveNewStep",
+      "className": "SaveNewStep",
+      "javaPath": "src/main/java/by/a1/ics00057_accounts/steps/SaveNewStep.java",
+      "processFile": "Stage2.process",
+      "executeSource": "{\n    String className = this.getClass().getSimpleName();\n    log.info(\"Start {}\", className);\n\n    try {\n      ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n      InitParameters initParams = getInitParameters(transaction);\n      EmailRecipients emailRecipients = initParams.getEmailRecipients();\n\n      Task submittedTask = findSubmittedTask();\n      String workflowStatus = processTransaction.getWorkflowStatus().orElse(null);\n\n      if (ProcessDataKeys.STATUS_NEW_ACCOUNTS_EXIST.equals(workflowStatus)) {\n        processSubmittedAccounts(processTransaction, submittedTask, emailRecipients);\n      } else if (ProcessDataKeys.STATUS_NO_NEW_ACCOUNTS.equals(workflowStatus)) {\n        log.info(\"No new accounts (workflow_status='{}'); skipping MT №1 account processing\",\n            workflowStatus);\n      } else {\n        // Неизвестный/пустой workflow_status (вероятно дефект PrepareNewStep): данных для разбора\n        // нет, но задачу ОБЯЗАТЕЛЬНО финализируем ниже — иначе auto-trigger пере-сработает.\n        log.warn(\"Unknown workflow_status='{}'; skipping MT №1 account processing (safe default)\",\n            workflowStatus);\n      }\n\n      // Финализация в люб"
+    },
+    {
+      "order": 5,
+      "displayName": "PrepareChangedStep",
+      "stepName": "PrepareChangedStep",
+      "className": "PrepareChangedStep",
+      "javaPath": "src/main/java/by/a1/ics00057_accounts/steps/PrepareChangedStep.java",
+      "processFile": "Stage2.process",
+      "executeSource": "{\n    String className = this.getClass().getSimpleName();\n    log.info(\"Start {}\", className);\n\n    ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n    InitParameters initParams = getInitParameters(transaction);\n    EmailRecipients emailRecipients = initParams.getEmailRecipients();\n\n    List<Account> sapAccounts =\n        processTransaction\n            .getSapAccounts()\n            .orElseThrow(() -> new IllegalStateException(\"SAP accounts not found\"));\n    List<Account> checklistAccounts =\n        processTransaction\n            .getChecklistAccounts()\n            .orElseThrow(() -> new IllegalStateException(\"Checklist accounts not found\"));\n    Set<String> comments = processTransaction.getMtComments().orElse(Set.of());\n\n    AccountChecklistHelper checklist = new AccountChecklistHelper(checklistAccounts);\n    List<Account> existingAccounts = checklist.getExistingAccounts(sapAccounts);\n    List<Account> withChangedMarks = checklist.getAccountsWithChangedMarks(existingAccounts);\n    List<Account> accountsWithMarks = checklist.getAccountsWithMarks(withChangedMarks);\n    List<Account> accountsWithoutMarks = checklist.getAccountsWithoutMarks(withChangedMarks"
+    },
+    {
+      "order": 6,
+      "displayName": "SaveChangedStep",
+      "stepName": "SaveChangedStep",
+      "className": "SaveChangedStep",
+      "javaPath": "src/main/java/by/a1/ics00057_accounts/steps/SaveChangedStep.java",
+      "processFile": "Stage3.process",
+      "executeSource": "{\n    String className = this.getClass().getSimpleName();\n    log.info(\"Start {}\", className);\n\n    try {\n      ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n      InitParameters initParams = getInitParameters(transaction);\n      EmailRecipients emailRecipients = initParams.getEmailRecipients();\n\n      Task submittedTask = findSubmittedTask();\n      String workflowStatus = processTransaction.getWorkflowStatus().orElse(null);\n\n      if (ProcessDataKeys.STATUS_CHANGED_ACCOUNTS_EXIST.equals(workflowStatus)) {\n        processSubmittedAccounts(processTransaction, submittedTask, emailRecipients);\n      } else if (ProcessDataKeys.STATUS_NO_CHANGED_ACCOUNTS.equals(workflowStatus)) {\n        log.info(\"No changed accounts (workflow_status='{}'); skipping MT №2 account processing\",\n            workflowStatus);\n      } else {\n        // Неизвестный/пустой workflow_status (вероятно дефект PrepareChangedStep): данных для разбора\n        // нет, но задачу ОБЯЗАТЕЛЬНО финализируем ниже — иначе auto-trigger пере-сработает.\n        log.warn(\"Unknown workflow_status='{}'; skipping MT №2 account processing (safe default)\",\n            workflowStatus);\n      }\n\n      // Ф"
+    },
+    {
+      "order": 7,
+      "displayName": "PrepareAllStep",
+      "stepName": "PrepareAllStep",
+      "className": "PrepareAllStep",
+      "javaPath": "src/main/java/by/a1/ics00057_accounts/steps/PrepareAllStep.java",
+      "processFile": "Stage3.process",
+      "executeSource": "{\n    String className = this.getClass().getSimpleName();\n    log.info(\"Start {}\", className);\n\n    ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n    InitParameters initParams = getInitParameters(transaction);\n    EmailRecipients emailRecipients = initParams.getEmailRecipients();\n\n    List<Account> checklistAccounts =\n        processTransaction\n            .getChecklistAccounts()\n            .orElseThrow(() -> new IllegalStateException(\"Checklist accounts not found\"));\n    Set<String> comments = processTransaction.getMtComments().orElse(Set.of());\n    log.info(\"Checklist accounts size: {}\", checklistAccounts.size());\n\n    createManualTask(checklistAccounts, comments);\n    sendMailNewTask(emailRecipients, initParams.getProcessAllActionLink());\n\n    log.info(\"Finish {}\", className);\n  }"
+    },
+    {
+      "order": 8,
+      "displayName": "SaveAllStep",
+      "stepName": "SaveAllStep",
+      "className": "SaveAllStep",
+      "javaPath": "src/main/java/by/a1/ics00057_accounts/steps/SaveAllStep.java",
+      "processFile": "Stage4.process",
+      "executeSource": "{\n    String className = this.getClass().getSimpleName();\n    log.info(\"Start {}\", className);\n\n    try {\n      ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n      InitParameters initParams = getInitParameters(transaction);\n      EmailRecipients emailRecipients = initParams.getEmailRecipients();\n\n      Task submittedTask = findSubmittedTask();\n      processSubmittedAccounts(processTransaction, submittedTask, emailRecipients);\n\n      // Финализация: SUCCESS + замена тегов на «processedAll» снимает задачу с триггера\n      // оркестратора и предотвращает повторный запуск Stage4.\n      markTaskSuccess(submittedTask.getGuid());\n      markTaskProcessed(submittedTask.getGuid());\n\n      log.info(\"Finish {}\", className);\n    } catch (Exception e) {\n      log.error(\"Failed to process MT №3 results: {}\", e.getMessage(), e);\n      throw new BusinessException(\"Process MT №3 results failed\", e);\n    }\n  }"
+    },
+    {
+      "order": 9,
+      "displayName": "UploadEvidenceStep",
+      "stepName": "UploadEvidenceStep",
+      "className": "UploadEvidenceStep",
+      "javaPath": "src/main/java/by/a1/ics00057_accounts/steps/UploadEvidenceStep.java",
+      "processFile": "Stage4.process",
+      "executeSource": "{\n    String className = this.getClass().getSimpleName();\n    log.info(\"Start {}\", className);\n\n    ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n    InitParameters initParams = getInitParameters(transaction);\n    EmailRecipients emailRecipients = initParams.getEmailRecipients();\n    ReportingPeriod reportingPeriod = processTransaction.getReportingPeriod();\n    UnifiedFoldersUtil remoteFolderStructure = FolderStructure.from(reportingPeriod);\n    // Orchestrator Storage плоский — без структуры папок; чек-лист и архив грузим в папку Storage\n    // с плоским уникальным именем (суффикс даты-времени), единым с SapStep образом (см. StorageNames).\n    String storageFolderName = initParams.getStorageFolderName();\n    String fileTimestamp = StorageNames.nowFileTimestamp();\n\n    Asset.Credentials credentials =\n        orchestratorService.assets().getCredentials(SharePointModule.CREDENTIALS_ASSET).execute();\n    SharePointService sharePointService =\n        SharePointModule.create(\n            initParams.getSpVactproBase(), initParams.getSpVactproProject(), credentials);\n\n    String tempDirectory = FileUtils.createTempDirectory(\"ICS-00057-\");\n    Path tempDirPat"
+    }
+  ],
+  "initParamsFiles": [
+    "src/main/resources/init_params/prod/ics00057_accounts_init_params.json",
+    "src/main/resources/init_params/test/ics00057_accounts_init_params.json"
+  ],
+  "emailTemplatesFile": "src/main/resources/ics00057_accounts_email_templates.json",
+  "serviceVariables": [
+    {
+      "name": "sap_credentials",
+      "kind": "credentials",
+      "callStyles": [
+        "assets.getCredentials"
+      ],
+      "definedIn": "SapStep.java"
+    },
+    {
+      "name": "sap_settings",
+      "kind": "settings",
+      "callStyles": [
+        "assets.get"
+      ],
+      "definedIn": "SapStep.java"
+    },
+    {
+      "name": "sharepoint_credentials",
+      "kind": "credentials",
+      "callStyles": [
+        "assets.getCredentials"
+      ],
+      "definedIn": "SapStep.java"
+    },
+    {
+      "name": "sherpa_api_credentials",
+      "kind": "credentials",
+      "callStyles": [
+        "assets.getCredentials"
+      ],
+      "definedIn": "PrepareAllStep.java"
+    }
+  ],
+  "warnings": []
+}

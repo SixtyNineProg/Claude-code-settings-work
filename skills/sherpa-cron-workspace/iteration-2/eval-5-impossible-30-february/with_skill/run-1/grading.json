@@ -1,0 +1,43 @@
+{
+  "expectations": [
+    {
+      "text": "Ответ: срабатываний не будет никогда (30 февраля не существует)",
+      "passed": true,
+      "evidence": "«**Следующего запуска не будет. Ни одного — никогда.**» + «в феврале 28 дней, в високосный год — 29»."
+    },
+    {
+      "text": "Не выдумана конкретная дата следующего запуска",
+      "passed": true,
+      "evidence": "Дата не выдумана: вместо неё вывод скрипта «Срабатываний нет.» и `warnings` с предупреждением о пятилетнем горизонте."
+    },
+    {
+      "text": "Отмечено, что выражение синтаксически корректно, но недостижимо",
+      "passed": true,
+      "evidence": "«Код возврата `0` — выражение **синтаксически валидное**, платформа его примет без ошибки. Именно в этом и ловушка: расписание сохранится, задача будет выглядеть настроенной, но не запустится ни разу. Ошибка молчаливая.»"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 1,
+      "Bash": 3,
+      "Write": 2
+    },
+    "total_tool_calls": 6,
+    "total_steps": 6,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-5-impossible-30-february\\with_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-5-impossible-30-february\\with_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 104.8
+  },
+  "eval_feedback": "A1 и A2 проходят в обеих конфигурациях. Различает A3: baseline перечисляет, как ведут себя разные планировщики, но про Sherpa не говорит, что тот сохранит выражение молча и оно не сработает ни разу — а именно это операционно важно. В этой итерации baseline уже не называет выражение «невалидным», как в iteration-1, — формулировка стала ближе, утверждение на границе."
+}

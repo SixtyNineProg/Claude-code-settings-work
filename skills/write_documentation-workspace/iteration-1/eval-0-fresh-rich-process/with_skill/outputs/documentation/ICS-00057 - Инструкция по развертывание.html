@@ -1,0 +1,88 @@
+<table>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>
+                <p>Проверить, что все элементы процесса соответствуют <a
+                        href="https://wiki.a1.by/pages/viewpage.action?pageId=453837503">принятому стилю</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>
+                <p>Подготовить необходимые файлы и выполнить перенос процесса на прод согласно <a
+                        href="https://wiki.a1.by/pages/viewpage.action?pageId=474056373">общей инструкции</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>
+                <p>Проверяем/Создаем Ресурсы типа Credential на целевой среде (без них процесс не сможет авторизоваться
+                    в системах):</p>
+                <ul>
+                    <li>sap_credentials</li>
+                    <li>sharepoint_credentials</li>
+                    <li>sherpa_api_credentials</li>
+                    <li>smtp_credentials</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>
+                <p>Проверяем/Создаем Ресурсы типа Text на целевой среде:</p>
+                <ul>
+                    <li>sap_settings</li>
+                    <li>ics00057_accounts_init_params</li>
+                    <li>ics00057_accounts_email_templates</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>
+                <p>Проверяем/Создаем папку в Хранилище Orchestrator Storage с именем из параметра
+                    <code>storageFolderName</code> (по умолчанию <code>ICS-00057</code>) — туда бот загружает выгрузку SAP,
+                    скриншоты, чек-лист и технический архив под плоскими именами с суффиксом даты-времени. Также процесс
+                    использует два файла-состояния в Storage: <code>ics00057_accounts.json</code> (справочник счетов) и
+                    <code>ics00057_comments.json</code> (комментарии MT).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>
+                <p>Проверяем/Создаем Очередь задач <code>ICS-00057 Обновление справочника</code> — общая очередь для трёх
+                    Manual Task (MT №1 «Проверка новых счетов», MT №2 «Проверка изменения меток счетов», MT №3
+                    «Внесение изменений по счетам»). Теги MT не конфликтуют: <code>pending</code> /
+                    <code>reviewed</code> / <code>processed</code> (MT №1), <code>pendingChanged</code> /
+                    <code>reviewedChanged</code> / <code>processedChanged</code> (MT №2), <code>pendingAll</code> /
+                    <code>reviewedAll</code> / <code>processedAll</code> (MT №3).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>
+                <p>Проверяем/Создаем Триггеры типа Task Queue в Orchestrator для очереди
+                    <code>ICS-00057 Обновление справочника</code>: по тегу <code>reviewed</code> запуск
+                    <code>SaveNewStep</code> (Stage2), по тегу <code>reviewedChanged</code> запуск
+                    <code>SaveChangedStep</code> (Stage3), по тегу <code>reviewedAll</code> запуск
+                    <code>SaveAllStep</code> (Stage4). При срабатывании триггера статус задачи переводится в
+                    <code>In Progress</code>.</p>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Дополнительные действия (дополнения к указанному в таблице/прочая информация, которую удобнее расположить так):</p>
+<ol>
+    <li>Загрузить в файловое хранилище скрипты форм Manual Task: <code>actions/process_new.js</code>,
+        <code>actions/process_changed.js</code>, <code>actions/process_all.js</code> (общие <code>core.js</code> и
+        <code>style.css</code> берутся из <code>rpa-core/src/test/resources/manualtask/</code>);</li>
+    <li>Создать три Action в Orchestrator (по одному на MT) и прописать их ссылки в параметрах
+        <code>processNewActionLink</code>, <code>processChangedActionLink</code>, <code>processAllActionLink</code>
+        InitParams соответствующей среды;</li>
+    <li>Убедиться, что учётные записи SAP, SharePoint и Sherpa API заведены в
+        <a href="https://wiki.a1.by/pages/viewpage.action?pageId=407798383">Интеграции со сторонними системами</a>;</li>
+    <li>Ассет <code>sap_settings</code> должен содержать <code>language = "RU"</code> — имена счетов зависят от
+        языка SAP.</li>
+</ol>

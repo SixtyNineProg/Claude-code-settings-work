@@ -1,0 +1,41 @@
+{
+  "expectations": [
+    {
+      "text": "Выражение ровно 0 9 30 9,11,12 *",
+      "passed": true,
+      "evidence": "«## Cron-выражение (стандартный 5-полевой cron) ```0 9 30 9,11,12 *```» с верным разбором по полям и замечанием, что `9-12` захватил бы октябрь."
+    },
+    {
+      "text": "Назван часовой пояс Минск (UTC+3)",
+      "passed": false,
+      "evidence": "«Время **09:00** трактуется в часовом поясе сервера/планировщика, где зарегистрирован процесс (в Sherpa.Orchestrator — время сервера, на котором работает Orchestrator)». Ни Минска, ни UTC+3 нет."
+    },
+    {
+      "text": "Приведены ближайшие даты запуска: 30.11.2026 и 30.12.2026",
+      "passed": true,
+      "evidence": "«## Проверка: ближайшие срабатывания ... - 30.11.2026 09:00 - 30.12.2026 09:00 - 30.09.2027 09:00 ...» с оговоркой «(30.09.2026 в текущем году уже прошло)». Даты посчитаны верно, хотя и без прогона скрипта."
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 1,
+    "total": 3,
+    "pass_rate": 0.6667
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Write": 2
+    },
+    "total_tool_calls": 2,
+    "total_steps": 2,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-3-three-yearly-dates\\without_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-3-three-yearly-dates\\without_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 53.6
+  },
+  "eval_feedback": "A1 и A3 прошли в обеих конфигурациях: выражение из прода модель собирает верно и даты считает сама. Различает A2 (часовой пояс) — baseline назвал «время сервера Orchestrator», правило про Минск/UTC+3 не знает."
+}

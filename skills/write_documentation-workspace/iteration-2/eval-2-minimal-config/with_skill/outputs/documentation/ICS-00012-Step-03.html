@@ -1,0 +1,66 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-00012-Step-03</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>JiraTicketCreation</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>init параметры (jiraUrl, issueProject, issueType, issueComponent, issueAssignee,
+                        issueSummary, issueDescription, fileDirectory, countLimit)</li>
+                    <li>scriptResult (Integer) из Step-02</li>
+                    <li>dateTime (String) из Step-02</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот получает учётные данные <code>jira_jsd_credentials</code> из Orchestrator;</li>
+                    <li>Бот создаёт клиент Jira (<code>JiraJsdUtils</code>) с login/password и
+                        <code>jiraUrl</code>;</li>
+                    <li>Бот формирует описание тикета, подставляя <code>count</code>, <code>directory</code>,
+                        <code>count_limit</code> в шаблон <code>issueDescription</code>;</li>
+                    <li>Бот формирует структуру Issue (project, issueType, summary, description, component,
+                        customField_18311);</li>
+                    <li>Бот создаёт задачу в Jira и получает <code>issueId</code>;</li>
+                    <li>Бот назначает исполнителя задачи <code>issueAssignee</code> через
+                        <code>assignIssue</code>;</li>
+                    <li>Бот сохраняет <code>ticketId</code> в транзакцию.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Если возвращённый <code>issueId</code> пуст или null, Бот выбрасывает
+                IllegalStateException.</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>ticketId (String) — ключ созданной задачи Jira (например, SOX-12345)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Шаг выполняется только при <code>isTicketNeeded=true</code></td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-00012-EX-03</a></td>
+        </tr>
+    </tbody>
+</table>

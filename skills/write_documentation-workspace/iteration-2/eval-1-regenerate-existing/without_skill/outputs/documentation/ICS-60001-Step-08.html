@@ -1,0 +1,70 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-08</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Рассылка заданий исполнителям и контролёру, создание задач <code>documentReview</code></strong></td>
+        </tr>
+        <tr>
+            <td><strong>Класс Java</strong></td>
+            <td><code>by.a1.ics60001.steps.SendMultitaskNotificationStep</code></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Transaction: <code>sample.documents</code>, <code>owners.enriched</code>, <code>sample.owners</code>, опционально <code>controller.name</code></li>
+                    <li>Credentials: <code>sherpa_api_credentials</code></li>
+                    <li>InitParameters: <code>emailRecipients</code>, <code>controllerEmail</code>, <code>processName</code>, <code>controlName</code>, <code>documentReviewActionLink</code></li>
+                    <li>Ресурс <code>ics60001_email_templates</code> (шаблон <code>multitask_new</code>)</li>
+                    <li>Системное свойство <code>transaction.path</code></li>
+                    <li>Очередь «ICS-60001 Document type policy editor» (берётся первая задача для обновления)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот фильтрует активных владельцев (active=TRUE, email заполнен, sapLogin в sampleOwners) → <code>activeOwnerEmails</code>; собирает неактивных логины → <code>inactiveOwnerLogins</code>;</li>
+                    <li>Бот строит <code>mainTable</code> из sampleDocs: number, docNumber, date (postingDate с заменой «/» на «.»), currency=«BYN», userName, text (из первой позиции), amount (позиции <code>bookAmount</code> через «&lt;br&gt;»), account (номера счетов через «&lt;br&gt;»);</li>
+                    <li>Бот формирует контекст письма: processName, controllerEmail, controllerName (или controllerEmail), controlName, expireDate/expireTime (текущее UTC→Europe/Minsk, минуты обнуляются), inactiveEmailUsers (если есть), mainTable;</li>
+                    <li>Бот отправляет <code>sendByTemplateName("multitask_new", context, recipients)</code> активным владельцам (to=activeOwnerEmails, cc=emailRecipients.to);</li>
+                    <li>Бот отправляет <code>sendTaskAssigned</code> с <code>actionUrl=documentReviewActionLink</code>, <code>mtName=«Проверка ручных проводок»</code> контролёру (to=emailRecipients.to, cc=emailRecipients.cc);</li>
+                    <li>Для каждого документа из <code>sample.documents</code> бот создаёт задачу <code>documentReview</code> в очереди «ICS-60001 Document review» с тегом <code>pendingReview</code> и параметрами <code>initialData={sampleDoc, bearerToken=sherpaApiCredentials.password}</code>;</li>
+                    <li>Бот обновляет первую задачу в очереди «ICS-60001 Document type policy editor», передавая <code>transactionName</code> и <code>processStage=3</code>.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Если <code>activeOwnerEmails</code> пуст — письмо владельцам не отправляется (логируется warning). Если <code>emailRecipients.to</code> пуст — письмо контролёру не отправляется. При любом исключении бот выбрасывает <code>BusinessException</code> («Send multitask notifications failed»).</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Email «multitask_new» активным владельцам</li>
+                    <li>Email task_assigned «Проверка ручных проводок» контролёру</li>
+                    <li>Задачи <code>documentReview</code> (тег <code>pendingReview</code>) в очереди «ICS-60001 Document review» — по числу документов выборки</li>
+                    <li>Обновлённая задача в очереди «ICS-60001 Document type policy editor» (processStage=3)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Возможность повторной рассылки при ошибке; системное свойство <code>transaction.path</code> обязательно.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="ICS-60001-EX-01.html">ICS-60001-EX-01</a></td>
+        </tr>
+    </tbody>
+</table>

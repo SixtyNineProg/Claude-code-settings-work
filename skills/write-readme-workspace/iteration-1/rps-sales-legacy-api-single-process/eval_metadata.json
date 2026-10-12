@@ -1,0 +1,14 @@
+{
+  "eval_id": 3,
+  "eval_name": "rps-sales-legacy-api-single-process",
+  "prompt": "сделай документацию README для процесса rps-sales. Путь: C:\\Users\\dzmitry_klim\\IdeaProjects\\sherpa\\rpa-suite\\rps-sales",
+  "assertions": [
+    "README.md существует в корне rps-sales",
+    "Первая строка начинается с '# RPS-Sales'",
+    "Список шагов содержит ровно 4 пункта: getOnecReportData, prepareInitialParameters, dataProcessing, getSapReportData в порядке из главной диаграммы",
+    "Отключённый шаг _GetSapReportData (orphan из warnings) НЕ включён в нумерованный список шагов",
+    "Каждая ссылка на шаг ведёт на существующий файл src/main/java/by/a1/rps_sales/steps/*Step.java",
+    "Секция параметров инициализации ссылается на src/main/resources/rps_sales_init_params.json (корень ресурсов, не подпапка)",
+    "В таблице сервисных переменных присутствуют 1c_ct_credentials, jira_jsd_credentials, sap_credentials"
+  ]
+}

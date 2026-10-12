@@ -1,0 +1,66 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-00012-Step-02</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Script Executing</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>init_params: serverName, fileDirectory, countLimit, scriptBlock</li>
+                    <li>credential: svc_wf_rm_credentials (login/password для WinRM)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот получает credentials svc_wf_rm_credentials из Orchestrator;</li>
+                    <li>Бот формирует тело скрипта, подставляя fileDirectory в scriptBlock вместо %{directory};</li>
+                    <li>Бот запускает PowerShell (Invoke-Command на serverName) и получает количество файлов;</li>
+                    <li>Бот сравнивает count с countLimit;</li>
+                    <li>Если count ≥ countLimit — Бот сохраняет isTicketNeeded=true, scriptResult (count)
+                        и текущие дату/время в транзакцию;</li>
+                    <li>Если count &lt; countLimit — Бот сохраняет isTicketNeeded=false.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Если PowerShell-скрипт завершился с ошибкой или вернул некорректный ответ, Бот выбрасывает
+                BusinessException и процесс останавливается.</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>isTicketNeeded (boolean) — признак необходимости создания тикета</li>
+                    <li>scriptResult (Integer) — количество файлов</li>
+                    <li>dateTime (String) — дата/время проверки (Europe/Minsk)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Учётная запись svc_wf_rm_credentials должна иметь права на удалённый запуск PowerShell
+                (Invoke-Command) на serverName.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td>
+                <a href="">ICS-00012-EX-01</a>,
+                <a href="">ICS-00012-EX-02</a>
+            </td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,61 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-EX-01</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Системная/бизнес-ошибка шага процесса: ошибка интеграции (SAP, SharePoint, MIM, CurrencyRates), отсутствие обязательных данных в транзакции, некорректные параметры инициализации, ошибка парсинга Excel, ошибка web-формы (<code>[object Object]</code>), отсутствие ресурса <code>sap_settings</code>, отсутствие системного свойства <code>transaction.path</code></td>
+        </tr>
+        <tr>
+            <td><strong>Тип исключения</strong></td>
+            <td>Системное / Бизнес</td>
+        </tr>
+        <tr>
+            <td><strong>Источники в коде</strong></td>
+            <td>
+                <ul>
+                    <li><code>BusinessException</code> в шагах 1, 2, 5, 6, 7, 8, 10</li>
+                    <li><code>IllegalStateException</code> при отсутствии <code>InitParameters</code>, обязательных ключей транзакции, <code>transaction.path</code></li>
+                    <li><code>IllegalArgumentException</code> при некорректном <code>reportEndDate</code></li>
+                    <li><code>SessionException</code> при сбое SAP GUI (шаг 2)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Действие Bot при наступлении</strong></td>
+            <td>
+                <ol>
+                    <li>Шаг логирует ошибку с контекстом и выбрасывает соответствующее исключение;</li>
+                    <li>Стандартный шаблон <code>process_error</code> в коде явно не вызывается — обработка делегирована инфраструктуре Orchestrator;</li>
+                    <li>Процесс завершается с ошибочным статусом; задача попадает в обработку support-группы.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Действие Исполнителя при наступлении</strong></td>
+            <td>
+                <ul>
+                    <li>Получить уведомление об ошибке от инфраструктуры;</li>
+                    <li>Ожидать информации от support-группы по решению проблемы или скоординировать действия самостоятельно.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Связанные шаги</strong></td>
+            <td>
+                <ul>
+                    <li><a href="ICS-60001-Step-01.html">ICS-60001-Step-01</a></li>
+                    <li><a href="ICS-60001-Step-02.html">ICS-60001-Step-02</a></li>
+                    <li><a href="ICS-60001-Step-03.html">ICS-60001-Step-03</a></li>
+                    <li><a href="ICS-60001-Step-05.html">ICS-60001-Step-05</a></li>
+                    <li><a href="ICS-60001-Step-06.html">ICS-60001-Step-06</a></li>
+                    <li><a href="ICS-60001-Step-07.html">ICS-60001-Step-07</a></li>
+                    <li><a href="ICS-60001-Step-08.html">ICS-60001-Step-08</a></li>
+                    <li><a href="ICS-60001-Step-10.html">ICS-60001-Step-10</a></li>
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>

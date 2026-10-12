@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions id="Def_ICS-60001"
+  xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+  xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
+  xmlns:bizagi="http://www.bizagi.com/BPMN20"
+  targetNamespace="http://bpmn.io/schema/bpmn">
+
+  <!-- Collaboration -->
+  <collaboration id="Collab_ICS-60001" name="ICS-60001 Collaboration">
+    <participant id="Participant_Bot" name="Bot" processRef="Process_Bot"/>
+    <participant id="Participant_User" name="Исполнитель" processRef="Process_User"/>
+    <!-- Message Flows -->
+    <messageFlow id="MF_NotifyStart" name="Уведомление о старте" sourceRef="Task_Bot_NotifyStart" targetRef="Event_User_ReceiveStart"/>
+    <messageFlow id="MF_NotifyEdit" name="Задание на редактирование" sourceRef="Task_Bot_ProvideEditor" targetRef="Event_User_ReceiveEdit"/>
+    <messageFlow id="MF_NotifyReview" name="Задание на проверку документа" sourceRef="Task_Bot_ProvideReview" targetRef="Event_User_ReceiveReview"/>
+    <messageFlow id="MF_NotifyError" name="Уведомление об ошибке" sourceRef="Task_Bot_Error" targetRef="Event_User_ReceiveError"/>
+  </collaboration>
+
+  <!-- Bot Process -->
+  <process id="Process_Bot" name="ICS-60001 Bot" isExecutable="true">
+    <startEvent id="Start_Bot" name="Ботопроцесс запущен"/>
+    <sequenceFlow id="SF_Bot_1" sourceRef="Start_Bot" targetRef="Task_Bot_Init"/>
+    <task id="Task_Bot_Init" name="Выполнить: инициализацию параметров и создание структуры папок"/>
+    <sequenceFlow id="SF_Bot_2" sourceRef="Task_Bot_Init" targetRef="Task_Bot_NotifyStart"/>
+    <task id="Task_Bot_NotifyStart" name="Отправить сообщение: уведомление о старте процесса"/>
+    <sequenceFlow id="SF_Bot_3" sourceRef="Task_Bot_NotifyStart" targetRef="Task_Bot_GetSAP"/>
+    <task id="Task_Bot_GetSAP" name="Выполнить: получение данных отчёта из SAP"/>
+    <sequenceFlow id="SF_Bot_4" sourceRef="Task_Bot_GetSAP" targetRef="Task_Bot_PrepareDocTypes"/>
+    <task id="Task_Bot_PrepareDocTypes" name="Выполнить: подготовку списков типов документов"/>
+    <sequenceFlow id="SF_Bot_5" sourceRef="Task_Bot_PrepareDocTypes" targetRef="Task_Bot_ProvideEditor"/>
+    <task id="Task_Bot_ProvideEditor" name="Отправить сообщение: предоставить ссылку на редактор списков типов документов"/>
+    <sequenceFlow id="SF_Bot_6" sourceRef="Task_Bot_ProvideEditor" targetRef="Task_Bot_SaveDocTypes"/>
+    <task id="Task_Bot_SaveDocTypes" name="Выполнить: сохранение списков типов документов"/>
+    <sequenceFlow id="SF_Bot_7" sourceRef="Task_Bot_SaveDocTypes" targetRef="Task_Bot_SamplePrep"/>
+    <task id="Task_Bot_SamplePrep" name="Выполнить: подготовку выборки для проверки"/>
+    <sequenceFlow id="SF_Bot_8" sourceRef="Task_Bot_SamplePrep" targetRef="Task_Bot_EnrichOwners"/>
+    <task id="Task_Bot_EnrichOwners" name="Выполнить: обогащение выборки владельцами"/>
+    <sequenceFlow id="SF_Bot_9" sourceRef="Task_Bot_EnrichOwners" targetRef="Task_Bot_SendTasks"/>
+    <task id="Task_Bot_SendTasks" name="Выполнить: рассылку заданий исполнителям"/>
+    <sequenceFlow id="SF_Bot_10" sourceRef="Task_Bot_SendTasks" targetRef="Task_Bot_ProvideReview"/>
+    <task id="Task_Bot_ProvideReview" name="Отправить сообщение: предоставить интерфейс проверки документа"/>
+    <sequenceFlow id="SF_Bot_11" sourceRef="Task_Bot_ProvideReview" targetRef="Task_Bot_Finalize"/>
+    <task id="Task_Bot_Finalize" name="Выполнить: финализацию и публикацию результатов"/>
+    <sequenceFlow id="SF_Bot_12" sourceRef="Task_Bot_Finalize" targetRef="End_Bot"/>
+    <endEvent id="End_Bot" name="Работа ботопроцесса завершена"/>
+    <!-- Ошибка -->
+    <task id="Task_Bot_Error" name="Отправить сообщение: уведомление об ошибке"/>
+  </process>
+
+  <!-- User Process -->
+  <process id="Process_User" name="ICS-60001 User" isExecutable="false">
+    <startEvent id="Start_User" name="Ожидание старта"/>
+    <sequenceFlow id="SF_User_1" sourceRef="Start_User" targetRef="Event_User_ReceiveStart"/>
+    <intermediateCatchEvent id="Event_User_ReceiveStart" name="Получить уведомление о старте"/>
+    <sequenceFlow id="SF_User_2" sourceRef="Event_User_ReceiveStart" targetRef="Event_User_ReceiveEdit"/>
+    <intermediateCatchEvent id="Event_User_ReceiveEdit" name="Получить задание на редактирование списков"/>
+    <sequenceFlow id="SF_User_3" sourceRef="Event_User_ReceiveEdit" targetRef="Task_User_EditDocTypes"/>
+    <userTask id="Task_User_EditDocTypes" name="Выполнить: редактирование списков типов документов"/>
+    <sequenceFlow id="SF_User_4" sourceRef="Task_User_EditDocTypes" targetRef="Event_User_ReceiveReview"/>
+    <intermediateCatchEvent id="Event_User_ReceiveReview" name="Получить задание на обработку документа"/>
+    <sequenceFlow id="SF_User_5" sourceRef="Event_User_ReceiveReview" targetRef="Task_User_ReviewDoc"/>
+    <userTask id="Task_User_ReviewDoc" name="Выполнить: обработку документа"/>
+    <sequenceFlow id="SF_User_6" sourceRef="Task_User_ReviewDoc" targetRef="End_User"/>
+    <endEvent id="End_User" name="Завершено"/>
+    <!-- Ошибка -->
+    <intermediateCatchEvent id="Event_User_ReceiveError" name="Получить уведомление об ошибке"/>
+  </process>
+
+  <!-- DataStoreReferences -->
+  <dataStoreReference id="DS_SAP" name="SAP"/>
+  <dataStoreReference id="DS_SharePoint" name="SharePoint"/>
+  <!-- Associations -->
+  <association id="Assoc_Bot_GetSAP_SAP" sourceRef="Task_Bot_GetSAP" targetRef="DS_SAP"/>
+  <association id="Assoc_Bot_Init_SharePoint" sourceRef="Task_Bot_Init" targetRef="DS_SharePoint"/>
+
+  <!-- BPMNDiagram (DI) -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_ICS-60001">
+    <bpmndi:BPMNPlane id="BPMNPlane_ICS-60001" bpmnElement="Collab_ICS-60001">
+      <!-- Pools -->
+      <bpmndi:BPMNShape id="Pool_Bot_DI" bpmnElement="Participant_Bot">
+        <omgdc:Bounds x="50" y="50" width="2200" height="200"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Pool_User_DI" bpmnElement="Participant_User">
+        <omgdc:Bounds x="50" y="300" width="2200" height="200"/>
+      </bpmndi:BPMNShape>
+      <!-- Bot Process Elements -->
+      <bpmndi:BPMNShape id="Start_Bot_DI" bpmnElement="Start_Bot">
+        <omgdc:Bounds x="100" y="120" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Bot_Init_DI" bpmnElement="Task_Bot_Init">
+        <omgdc:Bounds x="200" y="110" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Bot_NotifyStart_DI" bpmnElement="Task_Bot_NotifyStart">
+        <omgdc:Bounds x="400" y="110" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Bot_GetSAP_DI" bpmnElement="Task_Bot_GetSAP">
+        <omgdc:Bounds x="600" y="110" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Bot_PrepareDocTypes_DI" bpmnElement="Task_Bot_PrepareDocTypes">
+        <omgdc:Bounds x="800" y="110" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Bot_ProvideEditor_DI" bpmnElement="Task_Bot_ProvideEditor">
+        <omgdc:Bounds x="1000" y="110" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Bot_SaveDocTypes_DI" bpmnElement="Task_Bot_SaveDocTypes">
+        <omgdc:Bounds x="1200" y="110" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Bot_SamplePrep_DI" bpmnElement="Task_Bot_SamplePrep">
+        <omgdc:Bounds x="1400" y="110" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Bot_EnrichOwners_DI" bpmnElement="Task_Bot_EnrichOwners">
+        <omgdc:Bounds x="1600" y="110" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Bot_SendTasks_DI" bpmnElement="Task_Bot_SendTasks">
+        <omgdc:Bounds x="1800" y="110" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Bot_ProvideReview_DI" bpmnElement="Task_Bot_ProvideReview">
+        <omgdc:Bounds x="2000" y="110" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Bot_Finalize_DI" bpmnElement="Task_Bot_Finalize">
+        <omgdc:Bounds x="2200" y="110" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Bot_DI" bpmnElement="End_Bot">
+        <omgdc:Bounds x="2400" y="120" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <!-- User Process Elements -->
+      <bpmndi:BPMNShape id="Start_User_DI" bpmnElement="Start_User">
+        <omgdc:Bounds x="100" y="370" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_User_ReceiveStart_DI" bpmnElement="Event_User_ReceiveStart">
+        <omgdc:Bounds x="200" y="380" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_User_ReceiveEdit_DI" bpmnElement="Event_User_ReceiveEdit">
+        <omgdc:Bounds x="400" y="380" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_User_EditDocTypes_DI" bpmnElement="Task_User_EditDocTypes">
+        <omgdc:Bounds x="600" y="370" width="170" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_User_ReceiveReview_DI" bpmnElement="Event_User_ReceiveReview">
+        <omgdc:Bounds x="900" y="380" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_User_ReviewDoc_DI" bpmnElement="Task_User_ReviewDoc">
+        <omgdc:Bounds x="1100" y="370" width="170" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_User_DI" bpmnElement="End_User">
+        <omgdc:Bounds x="1300" y="380" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <!-- Ошибка -->
+      <bpmndi:BPMNShape id="Task_Bot_Error_DI" bpmnElement="Task_Bot_Error">
+        <omgdc:Bounds x="2600" y="110" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_User_ReceiveError_DI" bpmnElement="Event_User_ReceiveError">
+        <omgdc:Bounds x="2600" y="380" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <!-- DataStoreReferences DI -->
+      <bpmndi:BPMNShape id="DS_SAP_DI" bpmnElement="DS_SAP">
+        <omgdc:Bounds x="600" y="30" width="50" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="DS_SharePoint_DI" bpmnElement="DS_SharePoint">
+        <omgdc:Bounds x="200" y="30" width="70" height="36"/>
+      </bpmndi:BPMNShape>
+      <!-- Sequence Flows DI (пример для первых двух) -->
+      <bpmndi:BPMNEdge id="SF_Bot_1_DI" bpmnElement="SF_Bot_1">
+        <omgdi:waypoint x="136" y="138"/>
+        <omgdi:waypoint x="200" y="140"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_Bot_2_DI" bpmnElement="SF_Bot_2">
+        <omgdi:waypoint x="350" y="140"/>
+        <omgdi:waypoint x="400" y="140"/>
+      </bpmndi:BPMNEdge>
+      <!-- ... остальные sequenceFlow и messageFlow аналогично ... -->
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

@@ -1,0 +1,63 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-08</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Рассылка заданий исполнителям</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>sampleDocuments, sampleOwners, ownersEnriched</li>
+                    <li>controllerName (из транзакции, при наличии)</li>
+                    <li>InitParameters (processName, controlName, controllerEmail, emailRecipients, documentReviewActionLink)</li>
+                    <li>sherpa_api_credentials</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот формирует список email активных владельцев из ownersEnriched (active=true, sapLogin ∈ sampleOwners) и список неактивных логинов;</li>
+                    <li>Бот строит строки таблицы mainTable (number, docNumber, date, amount, currency, account, userName, text) по sampleDocuments;</li>
+                    <li>Бот отправляет письмо <code>multitask_new</code> (emailService.sendByTemplateName) активным владельцам с копией на emailRecipients.to и контекстом (processName, controllerEmail, controllerName, controlName, expireDate, expireTime, inactiveEmailUsers, mainTable);</li>
+                    <li>Бот отправляет контролёру уведомление task_assigned (Проверка ручных проводок) со ссылкой documentReviewActionLink;</li>
+                    <li>Бот для каждого sampleDocument создаёт задачу <code>documentReview</code> в очереди "ICS-60001 Document review" с тегом pendingReview (initialData: sampleDoc, bearerToken из sherpa_api_credentials);</li>
+                    <li>Бот обновляет первую задачу в очереди "ICS-60001 Document type policy editor", проставляя transactionName и processStage=3.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Если активных владельцев нет — письмо multitask_new не отправляется; если emailRecipients.to пуст — контролёру письмо не отправляется.</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Письмо multitask_new активным владельцам проводок</li>
+                    <li>Письмо task_assigned контролёру</li>
+                    <li>Задачи documentReview в очереди "ICS-60001 Document review"</li>
+                    <li>Обновлённая задача в очереди "ICS-60001 Document type policy editor" (processStage=3)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Системное свойство <code>transaction.path</code> должно быть задано средой Sherpa; ресурс <code>sherpa_api_credentials</code> должен содержать токен API.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-60001-EX-08</a></td>
+        </tr>
+    </tbody>
+</table>

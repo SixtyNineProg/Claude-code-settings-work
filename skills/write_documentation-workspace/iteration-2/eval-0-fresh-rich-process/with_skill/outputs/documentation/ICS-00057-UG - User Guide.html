@@ -1,0 +1,292 @@
+<h2>Общая информация</h2>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>Название бизнес-процесса</strong></td>
+      <td>ICS-00057 / Обновление справочника</td>
+    </tr>
+    <tr>
+      <td><strong>Управление</strong></td>
+      <td>Document Verification Accounting</td>
+    </tr>
+    <tr>
+      <td><strong>Владелец бизнес-процесса</strong></td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>Пользователи бизнес-процесса</strong></td>
+      <td>Контролёр счетов (Исполнитель MT №1/№2/№3)</td>
+    </tr>
+    <tr>
+      <td><strong>Связанные документы</strong></td>
+      <td>
+        <ul>
+          <li>ICS-00057-PDD: Process Design Document / Документ проектирования процесса</li>
+          <li>ICS-00057-TD: Test Documentation / Тестовая документация</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>Статус документа</td>
+      <td>равно статусу и верификации <a href="">ICS-00057-PDD</a>, если прямо не указано иное</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Краткое описание процесса</h2>
+<h3>Упрощенная BPMN схема бизнес-процесса</h3>
+<p><img alt="BPMN схема ICS-00057" src="" /></p>
+
+<h2>Описание шагов процесса с точки зрения действий Исполнителя</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Шаг (со ссылкой на PDD)</th>
+      <th>Наименование</th>
+      <th>Действия Исполнителя</th>
+      <th>Действия Bot</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="">ICS-00057-Step-01</a></td>
+      <td>InfrastructureStep</td>
+      <td>
+        <ul>
+          <li>Получает уведомление process_started о начале работы процесса.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Загружает InitParameters;</li>
+          <li>Отправляет письмо process_started;</li>
+          <li>Формирует и сохраняет ReportingPeriod (по periodStart/periodEnd или прошлый квартал).</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-02</a></td>
+      <td>SapStep</td>
+      <td>Исполнитель не участвует (процесс выполняется автоматически)</td>
+      <td>
+        <ul>
+          <li>Создаёт структуру папок периода в SharePoint;</li>
+          <li>Подключается к SAP GUI и запускает ZACCOUNTS (IFRS, БЕ 1320, язык RU);</li>
+          <li>Экспортирует ALV в Excel, снимает скриншоты экранов;</li>
+          <li>Загружает выгрузку и скриншоты в Orchestrator Storage (плоское имя).</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-03</a></td>
+      <td>PrepareNewStep</td>
+      <td>
+        <ul>
+          <li>Получает письмо new_tasks со ссылкой на Action-форму MT №1 «Проверка новых счетов»;</li>
+          <li>Открывает форму, проверяет счета «без меток»/«с метками», заполняет комментарии и помечает
+            задачу тегом reviewed.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Сравнивает SAP-выгрузку со справочником и определяет новые счета;</li>
+          <li>Создаёт в очереди задачу MT №1 (тег pending, processStage=2);</li>
+          <li>Отправляет письмо new_tasks или no_new_tasks (auto-trigger при отсутствии новых).</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-04</a></td>
+      <td>SaveNewStep</td>
+      <td>
+        <ul>
+          <li>Получает письмо task_processed после разбора результата MT №1.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Запускается триггером по тегу reviewed;</li>
+          <li>Разбирает processedAccounts, обновляет справочник и комментарии;</li>
+          <li>Финализирует задачу (SUCCESS + processed), отправляет task_processed.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-05</a></td>
+      <td>PrepareChangedStep</td>
+      <td>
+        <ul>
+          <li>Получает письмо new_tasks со ссылкой на Action-форму MT №2 «Проверка изменения меток счетов»;</li>
+          <li>Открывает форму, проверяет изменённые счета «без меток»/«с метками», заполняет комментарии и
+            помечает задачу тегом reviewedChanged.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Определяет счета с изменёнными метками;</li>
+          <li>Создаёт задачу MT №2 (тег pendingChanged, processStage=3);</li>
+          <li>Отправляет письмо new_tasks или no_new_tasks (auto-trigger при отсутствии изменений).</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-06</a></td>
+      <td>SaveChangedStep</td>
+      <td>
+        <ul>
+          <li>Получает письмо task_processed после разбора результата MT №2.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Запускается триггером по тегу reviewedChanged;</li>
+          <li>Разбирает processedAccounts, обновляет справочник и комментарии;</li>
+          <li>Финализирует задачу (SUCCESS + processedChanged), отправляет task_processed.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-07</a></td>
+      <td>PrepareAllStep</td>
+      <td>
+        <ul>
+          <li>Получает письмо new_tasks со ссылкой на Action-форму MT №3 «Внесение изменений по счетам»;</li>
+          <li>Открывает форму, выбирает счета из справочника (autocomplete) для корректировки, заполняет
+            комментарии и помечает задачу тегом reviewedAll.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Читает полный справочник из транзакции;</li>
+          <li>Безусловно создаёт задачу MT №3 (тег pendingAll, processStage=4);</li>
+          <li>Отправляет письмо new_tasks.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-08</a></td>
+      <td>SaveAllStep</td>
+      <td>
+        <ul>
+          <li>Получает письмо task_processed после разбора результата MT №3.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Запускается триггером по тегу reviewedAll;</li>
+          <li>Разбирает processedAccounts (возможно пустой), обновляет справочник и комментарии;</li>
+          <li>Финализирует задачу (SUCCESS + processedAll), отправляет task_processed;</li>
+          <li>Запускает UploadEvidenceStep.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-09</a></td>
+      <td>UploadEvidenceStep</td>
+      <td>
+        <ul>
+          <li>Получает письмо work_end со ссылкой на папку SharePoint с результатами.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Скачивает выгрузку и скриншоты из Хранилища;</li>
+          <li>Формирует чек-лист ICS-00057_01.xlsx и ZIP-архив;</li>
+          <li>Загружает чек-лист и архив в Orchestrator Storage и SharePoint;</li>
+          <li>Обновляет файлы состояния справочника и комментариев;</li>
+          <li>Отправляет письмо work_end со ссылкой на результаты.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Работа Исполнителя с исключениями</h2>
+<table>
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Описание</th>
+      <th>Тип исключения</th>
+      <th>Действие Исполнителя при наступлении</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="">ICS-00057-EX-01</a></td>
+      <td>Некорректный отчётный период (periodStart &ge; periodEnd или periodEnd &ge; дата запуска)</td>
+      <td>Бизнес</td>
+      <td>
+        <ul>
+          <li>Получить уведомление process_error: «Во время выполнения ботопроцесса 01 Обновление справочника
+            возникла ошибка.»;</li>
+          <li>Проверить значения periodStart/periodEnd в init_params (формат dd.MM.yyyy, start &lt; end &lt;
+            дата запуска) и при необходимости скорректировать;</li>
+          <li>Ожидать информации от support-группы по решению проблемы либо скоординировать действия
+            самостоятельно.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-EX-02</a></td>
+      <td>Ошибка SAP-сессии или экспорта ZACCOUNTS</td>
+      <td>Системное</td>
+      <td>
+        <ul>
+          <li>Получить уведомление process_error;</li>
+          <li>Проверить доступность SAP Logon и корректность Shortcut в sap_settings (язык RU);</li>
+          <li>Проверить учётные данные sap_credentials;</li>
+          <li>Ожидать информации от support-группы либо скоординировать действия самостоятельно.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-EX-03</a></td>
+      <td>Отсутствует ресурсный файл mock-режима SAP</td>
+      <td>Системное</td>
+      <td>
+        <ul>
+          <li>Получить уведомление process_error;</li>
+          <li>Ожидать информации от support-группы по восстановлению ресурсных файлов sap_mock/*.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-EX-04</a></td>
+      <td>Ошибка разбора результата формы MT №1 или отсутствует задача с тегом reviewed</td>
+      <td>Системное</td>
+      <td>
+        <ul>
+          <li>Получить уведомление process_error;</li>
+          <li>Проверить состояние задачи MT №1 в очереди «ICS-00057 Обновление справочника» и наличие тега
+            reviewed;</li>
+          <li>Ожидать информации от support-группы либо скоординировать действия самостоятельно.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-EX-05</a></td>
+      <td>Ошибка разбора результата формы MT №2 или отсутствует задача с тегом reviewedChanged</td>
+      <td>Системное</td>
+      <td>
+        <ul>
+          <li>Получить уведомление process_error;</li>
+          <li>Проверить состояние задачи MT №2 в очереди и наличие тега reviewedChanged;</li>
+          <li>Ожидать информации от support-группы либо скоординировать действия самостоятельно.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-EX-06</a></td>
+      <td>Ошибка разбора результата формы MT №3 или отсутствует задача с тегом reviewedAll</td>
+      <td>Системное</td>
+      <td>
+        <ul>
+          <li>Получить уведомление process_error;</li>
+          <li>Проверить состояние задачи MT №3 в очереди и наличие тега reviewedAll;</li>
+          <li>Ожидать информации от support-группы либо скоординировать действия самостоятельно.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>

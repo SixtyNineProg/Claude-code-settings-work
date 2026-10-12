@@ -1,0 +1,67 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-01</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Инициализация параметров и создание структуры папок</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>InitParameters процесса (emailRecipients, reportEndDate, materialityLevel, currencyCode,
+                        sharepointBaseUrl, sharepointProject, sharepointBasePath, processName)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот извлекает InitParameters из транзакции и вычисляет resolvedReportEndDate (пусто = последний
+                        день прошлого месяца, дата или смещение месяца);</li>
+                    <li>Бот загружает asset currency_rates_config и учётные данные proxy_credentials, sap_credentials,
+                        строит CurrencyRates и получает курс валюты currencyCode на дату resolvedReportEndDate;</li>
+                    <li>Бот рассчитывает порог существенности materialityThreshold = rate * materialityLevel и
+                        сохраняет ExchangeRate в транзакцию;</li>
+                    <li>Бот подключается к SharePoint через sharepoint_credentials и создаёт структуру папок
+                        UnifiedFoldersUtil.monthly(processName, resolvedReportEndDate) в sharepointBasePath;</li>
+                    <li>Бот сохраняет в транзакцию пути к папкам Work/Screenshots, Work/Input data, Working,
+                        Work/Other evidence и имя технического архива;</li>
+                    <li>Бот отправляет уведомление process_started на emailRecipients.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>resolvedReportEndDate (строка yyyy-MM-dd)</li>
+                    <li>ExchangeRate (курс и materialityThreshold)</li>
+                    <li>пути к папкам Work/Screenshots, Work/Input data, Working, Work/Other evidence</li>
+                    <li>technicalArchiveFilename</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>На хосте Бота должен быть доступен HTTPS-прокси для сервиса курсов валют; SharePoint-credentials
+                должны иметь права на создание папок в sharepointBasePath.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-60001-EX-01</a></td>
+        </tr>
+    </tbody>
+</table>

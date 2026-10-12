@@ -1,0 +1,79 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-00057-Step-09</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td>UploadEvidenceStep — Загрузка результатов на SharePoint и в Storage</td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>InitParameters (emailRecipients, storageFolderName, spVactproBase, spVactproProject, spVactproPath, unloadingFileName, screenshotsFileName)</li>
+                    <li>ReportingPeriod, sapScreenshotsStorageName, sapUnloadingStorageName — из транзакции</li>
+                    <li>checklistAccounts, mtComments — из транзакции</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот вычисляет унифицированную структуру папок (FolderStructure.from(reportingPeriod)) и временный каталог;</li>
+                    <li>Бот получает sharepoint_credentials и создаёт SharePointService;</li>
+                    <li>Бот скачивает скриншоты и выгрузку обратно из Orchestrator Storage (по sapScreenshotsStorageName / sapUnloadingStorageName) в подкаталоги screenshots/ и input data/ временной папки;</li>
+                    <li>Бот формирует чек-лист ICS-00057_01.xlsx из checklistAccounts (сортировка по номеру счёта) через ExcelChecklistHelper;</li>
+                    <li>Бот формирует ZIP-архив &lt;runDate&gt; archive ICS-00057_01.zip (скриншоты и выгрузка внутри подкаталогов, чек-лист в корне) и вычисляет его MD5;</li>
+                    <li>Бот загружает чек-лист и архив в Orchestrator Storage (плоское имя с суффиксом даты-времени) и в SharePoint по унифицированной структуре папок;</li>
+                    <li>Бот обновляет ассеты состояния в Storage: ics00057_accounts.json и ics00057_comments.json через ProcessStateService;</li>
+                    <li>Бот удаляет временный каталог;</li>
+                    <li>Бот отправляет письмо work_end со ссылкой на папку SharePoint с результатами.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>чек-лист ICS-00057_01.xlsx и ZIP-архив в Orchestrator Storage и SharePoint</li>
+                    <li>обновлённые ics00057_accounts.json, ics00057_comments.json в Storage</li>
+                    <li>md5Checksum — в ProcessTransaction</li>
+                    <li>письмо work_end со ссылкой на результаты</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Локальные файлы SapStep не переживают MT-шаги (бот-сессия разрывается), поэтому скриншоты и выгрузка скачиваются из Storage заново</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-00057-EX-04</a>, <a href="">ICS-00057-EX-07</a></td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Приложения</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Пример письма с результатом работы</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>картинка с письмом work_end, где видны тема "${bpNumber} ${bpDescription}: Работа завершена" и тело со ссылкой на папку SharePoint с результатами</td>
+        </tr>
+    </tbody>
+</table>

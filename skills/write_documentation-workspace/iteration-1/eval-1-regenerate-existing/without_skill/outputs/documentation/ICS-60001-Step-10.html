@@ -1,0 +1,72 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-10</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Финализация и публикация результатов: итоговый отчёт, технический архив, уведомления</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Класс Java</strong></td>
+            <td><code>by.a1.ics60001.steps.FinalizeAndPublishResultsStep</code> (формирование workbook — <code>TemplateResultsWorkbookBuilder</code>)</td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Transaction: <code>sample.documents</code>, <code>documents.filtered</code>, <code>accounting.document.positions</code>, <code>dictionary.list</code>, <code>exchange.rate</code>, <code>resolved.report.end.date</code>, <code>work.working.folder.path</code>, <code>work.input.data.folder.path</code>, <code>work.screenshots.folder.path</code>, <code>work.other.evidence.folder.path</code>, <code>work.technical.archive.filename</code></li>
+                    <li>Очередь «ICS-60001 Document review» (задачи с <code>userInput</code>)</li>
+                    <li>Файл-шаблон <code>ICS-60001.xlsx</code> (из Storage/ресурсов)</li>
+                    <li>Credentials: <code>sharepoint_credentials</code></li>
+                    <li>InitParameters: параметры SharePoint, <code>sapTransactionCode</code>, <code>emailRecipients</code>, <code>controlName</code></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот подключается к SharePoint и получает задачи из очереди «ICS-60001 Document review»; каждая задача парсится в <code>DocumentReviewResult</code> (sampleDoc + userInput);</li>
+                    <li>Бот строит map <code>byDoc</code>: documentNumber → UserInput (status, comment, uploadedFileGuid, uploadedFileName); считает <code>checkedDocsCount</code> (результаты с непустым userInput);</li>
+                    <li>Бот заполняет файл-шаблон <code>ICS-60001.xlsx</code> через <code>TemplateResultsWorkbookBuilder.build(...)</code> (листы <code>ZFI_FCRP1</code>, <code>Выборка</code>, <code>Популяция</code>, <code>Справочник</code>; именованные ячейки <code>Rate</code>, <code>Materiality_level</code>, <code>Rate_limit</code>, <code>Date_end</code>, <code>Date_current</code>, <code>All_docs</code>, <code>All_docs_to_check</code>, <code>Docs_to_check</code>, <code>Checked_docs</code>);</li>
+                    <li>Бот загружает итоговый <code>ICS-60001.xlsx</code> в папку <code>work/working</code> SharePoint (OVERWRITE);</li>
+                    <li>Для каждого результата с <code>uploadedFileGuid</code> бот скачивает файл из Storage Orchestrator и загружает его в папку <code>work/other evidence</code> SharePoint;</li>
+                    <li>Бот скачивает из SharePoint исходный <code>&lt;sapTransactionCode&gt;.xlsx</code> (из input data) и <code>screenshots.xlsx</code> (из screenshots);</li>
+                    <li>Бот собирает ZIP-технический архив с именем <code>work.technical.archive.filename</code>: разделы <code>ICS-60001.xlsx</code>, <code>input data/&lt;tcode&gt;.xlsx</code>, <code>screenshots/screenshots.xlsx</code>, <code>other evidence/&lt;file&gt;</code> (с уникализацией имён через <code>ensureUniqueEntryName</code>); загружает ZIP в <code>work/working</code> SharePoint;</li>
+                    <li>Бот очищает temp-файлы;</li>
+                    <li>Бот отправляет <code>sendTaskCompleted</code> с <code>mtName=«Проверка ручных проводок»</code>;</li>
+                    <li>Бот отправляет <code>sendProcessCompleted</code> с контекстом <code>controlStatus</code> (расхождения обнаружены, если хотя бы один статус «NOT OK», иначе не обнаружены) и <code>controlResultsLink</code> (полный путь к папке <code>work/working</code> в SharePoint).</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Ошибка скачивания/загрузки отдельных файлов логируется как warning и не прерывает шаг. При общем исключении бот выбрасывает <code>BusinessException</code> («Finalize and publish results failed»).</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>SharePoint: <code>ICS-60001.xlsx</code> и ZIP-архив в папке <code>work/working</code></li>
+                    <li>SharePoint: доказательства в папке <code>work/other evidence</code></li>
+                    <li>Email task_completed «Проверка ручных проводок»</li>
+                    <li>Email process_completed с controlStatus и controlResultsLink</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Файл-шаблон <code>ICS-60001.xlsx</code> должен быть доступен процессу; ресурсы Storage Orchestrator доступны для скачивания по guid.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="ICS-60001-EX-01.html">ICS-60001-EX-01</a></td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,54 @@
+{
+  "skill_name": "write-readme",
+  "evals": [
+    {
+      "id": 1,
+      "name": "ics60001-multistage-derived-names",
+      "prompt": "Сгенерируй README для процесса ics60001. Каталог: C:\\Users\\dzmitry_klim\\IdeaProjects\\sherpa\\rpa-suite\\ics60001",
+      "expected_output": "README.md в корне ics60001 с заголовком ICS-60001, 8 шагами в порядке Stage1/Stage2/Stage3 с разрешёнными именами processSetup..finalizeAndPublishResults, секцией init_params (initparams/test/), email-шаблонами и таблицей сервисных переменных (sap/proxy/sharepoint/sherpa_api/mim credentials, sap_settings, currency_rates_config, document_type_classification, document_type_comments).",
+      "files": [],
+      "assertions": [
+        "README.md существует в корне ics60001",
+        "Первая строка начинается с '# ICS-60001'",
+        "Список шагов содержит ровно 8 пунктов в порядке processSetup, getSapReportData, prepareDocumentTypeLists, persistDocumentTypeLists, samplePreparation, ownersEnrichment, sendMultitaskNotification, finalizeAndPublishResults",
+        "Каждая ссылка на шаг ведёт на существующий файл src/main/java/by/a1/ics60001/steps/*Step.java",
+        "Имя шага в пункте совпадает со значением StepName из .process (lowercase first char), а не с InternalName блока",
+        "Секция параметров инициализации ссылается на реальный путь src/main/resources/initparams/test/ics60001_init_params.json",
+        "В таблице сервисных переменных присутствуют sap_credentials, proxy_credentials, sharepoint_credentials, sherpa_api_credentials, mim_credentials, sap_settings, currency_rates_config",
+        "Секция email-шаблонов присутствует и ссылается на src/main/resources/ics60001_email_templates.json"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "ics00057-accounts-annotation-names-constants",
+      "prompt": "обнови README в rpa-suite/ics00057-accounts. Процесс лежит в C:\\Users\\dzmitry_klim\\IdeaProjects\\sherpa\\rpa-suite\\ics00057-accounts",
+      "expected_output": "README.md для ICS-00057 с 9 шагами по @StepName (InfrastructureStep, SapStep, PrepareNewStep, SaveNewStep, PrepareChangedStep, SaveChangedStep, PrepareAllStep, SaveAllStep, UploadEvidenceStep), prod+test init_params, email-шаблонами и сервисными переменными sap_credentials, sap_settings, sharepoint_credentials, sherpa_api_credentials (имена разрешены из констант SAP_CREDENTIALS_ASSET и т.п.).",
+      "files": [],
+      "assertions": [
+        "README.md существует в корне ics00057-accounts",
+        "Первая строка начинается с '# ICS-00057'",
+        "Список шагов содержит ровно 9 пунктов с именами из @StepName-аннотаций (InfrastructureStep, SapStep, PrepareNewStep, SaveNewStep, PrepareChangedStep, SaveChangedStep, PrepareAllStep, SaveAllStep, UploadEvidenceStep) в порядке Stage1..Stage4",
+        "Каждая ссылка на шаг ведёт на существующий файл src/main/java/by/a1/ics00057_accounts/steps/*Step.java",
+        "Секция параметров инициализации перечисляет оба файла: prod/ics00057_accounts_init_params.json и test/ics00057_accounts_init_params.json",
+        "В таблице сервисных переменных присутствуют sap_credentials, sap_settings, sharepoint_credentials, sherpa_api_credentials (имена разрешены из констант, не идентификаторы)",
+        "В таблице нет неразрешённых идентификаторов вида SAP_CREDENTIALS_ASSET"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "rps-sales-legacy-api-single-process",
+      "prompt": "сделай документацию README для процесса rps-sales. Путь: C:\\Users\\dzmitry_klim\\IdeaProjects\\sherpa\\rpa-suite\\rps-sales",
+      "expected_output": "README.md для RPS-Sales с 4 шагами из главной диаграммы (getOnecReportData, prepareInitialParameters, dataProcessing, getSapReportData), init_params в корне ресурсов, email-шаблонами и сервисными переменными через legacy-стиль getCredentials: 1c_ct_credentials, jira_jsd_credentials, sap_credentials. Отключённый шаг _GetSapReportData НЕ входит в основной список шагов.",
+      "files": [],
+      "assertions": [
+        "README.md существует в корне rps-sales",
+        "Первая строка начинается с '# RPS-Sales'",
+        "Список шагов содержит ровно 4 пункта: getOnecReportData, prepareInitialParameters, dataProcessing, getSapReportData в порядке из главной диаграммы",
+        "Отключённый шаг _GetSapReportData (orphan из warnings) НЕ включён в нумерованный список шагов",
+        "Каждая ссылка на шаг ведёт на существующий файл src/main/java/by/a1/rps_sales/steps/*Step.java",
+        "Секция параметров инициализации ссылается на src/main/resources/rps_sales_init_params.json (корень ресурсов, не подпапка)",
+        "В таблице сервисных переменных присутствуют 1c_ct_credentials, jira_jsd_credentials, sap_credentials"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "skill_name": "wf-migrate",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Сделай миграцию процесса из Workfusion в Sherpa. WF процесс находится в C:\\Users\\dzmitry_klim\\IdeaProjects\\wf_odf\\ODF\\ics00442_ad_app_externals. Создай Sherpa проект с именем ics00442-ad-app-externals в rpa-suite. Сгенерируй скелет через gradle generateProcess, проанализируй XML конфиги и Java классы WF, создай Step классы для каждого Processor, обнови InitParameters, ProcessDataKeys и ProcessTransaction. Добавь все нужные зависимости в build.gradle. Также запусти PowerShell анализатор с флагом -GenerateCode, чтобы сгенерировать Java файлы.",
+      "expected_output": "Сгенерирован Sherpa проект ics00442-ad-app-externals в rpa-suite с полной структурой: build.gradle с зависимостями (jPowerShell, okhttp, jsoup, rpa-ad, rpa-jira), InitParameters с полями из WF AppInitParams, ProcessDataKeys с константами из WF AppDoc.Column, ProcessTransaction с get/set методами, Step классы для каждого WF Processor (GetEmailsStep, GetAdUserStep, GetManagerStep, SplitStep, JSDStep, JoinStep), скопированы PowerShell скрипты в resources/scripts/. PowerShell скрипт wf-migrate.ps1 сгенерировал Java файлы в указанную директорию.",
+      "files": [],
+      "expectations": [
+        "The skill runs gradle generateProcess to create the project skeleton",
+        "The skill analyzes WF XML configs and identifies step types (desktop, server-side, parallel)",
+        "The skill maps WF Processor classes to Sherpa Step classes",
+        "The skill updates build.gradle with detected dependencies",
+        "The skill creates Step classes matching the number of WF Processors",
+        "The skill copies PowerShell scripts to resources/scripts/",
+        "The skill does not remove EmailRecipients from InitParameters",
+        "The skill runs the PowerShell analyzer script with -GenerateCode flag",
+        "The skill generates Java source files (InitParameters, ProcessDataKeys, ProcessTransaction, Step classes) via PowerShell"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Проанализируй Workfusion процесс crb_sap из C:\\Users\\dzmitry_klim\\IdeaProjects\\wf_odf\\ODF\\crb_sap и создай для него Sherpa проект. Определи типы шагов (SAP, server-side), найди Manual Task файлы, определи нужные зависимости (rpa-sapgui, jacob.jar, rpa-sharepoint, poiji). Сгенерируй проект и создай Step классы. Запусти PowerShell анализатор для автоматической генерации Java файлов.",
+      "expected_output": "Проанализирован WF процесс crb_sap. Определены типы шагов: SAP (ResultSAPProcessor, SapProcessor) и server-side (GetRebookingDataProcessor, WorkEndProcessor). Найден Manual Task (mt.html, mt.js). Определены зависимости: rpa-sapgui + jacob.jar, rpa-sharepoint, poiji. Сгенерирован Sherpa проект crb-sap с соответствующими Step классами. PowerShell скрипт сгенерировал build.gradle с правильными зависимостями.",
+      "files": [],
+      "expectations": [
+        "The skill detects SAP process type from fleet='SAP' in XML",
+        "The skill detects Manual Task files (mt.html, mt.js)",
+        "The skill adds rpa-sapgui and jacob.jar dependencies for SAP automation",
+        "The skill adds rpa-sharepoint dependency for SharePoint integration",
+        "The skill adds poiji dependency for Excel processing",
+        "The skill creates Step classes for all detected Processors",
+        "The skill runs the PowerShell analyzer and generates Java files automatically"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Мне нужно перенести процесс из Workfusion в Sherpa, но я не знаю с чего начать. У меня есть директория с WF процессом C:\\Users\\dzmitry_klim\\IdeaProjects\\wf_odf\\ODF\\ics00442_ad_app_externals и есть rpa-suite в C:\\Users\\dzmitry_klim\\IdeaProjects\\sherpa\\rpa-suite. Объясни этапы миграции и с чего начать. Не нужно сразу создавать код — покажи план и определи тип процесса. Дай пошаговый чек-лист и объясни, как использовать PowerShell анализатор.",
+      "expected_output": "Skill предоставляет пошаговый план миграции: 1) Анализ WF процесса (XML, Java), 2) Определение типа, 3) Генерация через gradle generateProcess, 4) Модификация проекта. Skill определяет тип процесса динамически и даёт чёткие инструкции, не приступая к генерации кода без подтверждения пользователя. Skill объясняет, как запустить wf-migrate.ps1 с флагом -GenerateCode для автоматической генерации Java файлов.",
+      "files": [],
+      "expectations": [
+        "The skill explains the migration workflow phases clearly",
+        "The skill detects the process type from available information",
+        "The skill provides the exact gradle generateProcess command",
+        "The skill does not start generating code without user confirmation",
+        "The skill mentions the bundled PowerShell analyzer script",
+        "The skill provides a checklist of what will need manual work",
+        "The skill explains how to use the PowerShell analyzer with -GenerateCode flag"
+      ]
+    }
+  ]
+}

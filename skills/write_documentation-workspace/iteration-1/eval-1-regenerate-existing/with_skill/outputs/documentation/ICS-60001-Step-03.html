@@ -1,0 +1,60 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-03</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Подготовка списков типов документов</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>accountingDocumentPositions</li>
+                    <li>InitParameters (documentTypePolicyEditorActionLink, emailRecipients)</li>
+                    <li>Ресурсы: document_type_classification (allowed/denied), document_type_comments</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот загружает классификатор <code>document_type_classification</code> (allowedDocTypes, deniedDocTypes) и справочник <code>document_type_comments</code>;</li>
+                    <li>Бот определяет неклассифицированные коды из accountingDocumentPositions, отсутствующие в allowed и denied;</li>
+                    <li>Бот формирует и сортирует списки allowedDocList, deniedDocList, unclassifiedDocList (код → комментарий);</li>
+                    <li>Бот сохраняет списки в транзакцию;</li>
+                    <li>Бот ставит в очередь Оркестратора "ICS-60001 Document type policy editor" задачу <code>documentTypePolicyEditor</code> с тегом pendingPolicyUpdate и параметрами (initialData, transactionName, processStage=2);</li>
+                    <li>Бот отправляет уведомление task_assigned (Обновление справочника) на emailRecipients.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Если asset document_type_comments пуст или невалиден, Бот использует пустой Map комментариев; если document_type_classification пуст, списки allowed/denied считаются пустыми.</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>allowedDocList, deniedDocList, unclassifiedDocList — списки кодов с комментариями</li>
+                    <li>Задача documentTypePolicyEditor в очереди "ICS-60001 Document type policy editor"</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Системное свойство <code>transaction.path</code> должно быть задано средой Sherpa.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-60001-EX-04</a></td>
+        </tr>
+    </tbody>
+</table>

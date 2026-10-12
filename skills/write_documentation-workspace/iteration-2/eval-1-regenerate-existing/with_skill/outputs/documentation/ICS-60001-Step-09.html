@@ -1,0 +1,58 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-09</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Обработка документа</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Исполнитель</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>задача documentReview из очереди "ICS-60001 Document review" (initialData: sampleDoc,
+                        bearerToken)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Исполнитель открывает web-action document-review по ссылке из письма task_assigned;</li>
+                    <li>Исполнитель просматривает информацию о документе и его позициях;</li>
+                    <li>Исполнитель загружает файл подтверждающего документа;</li>
+                    <li>Исполнитель выбирает статус проверки ("OK" или "NOT OK") и вводит комментарий;</li>
+                    <li>Исполнитель сохраняет результат — web-action обновляет задачу в очереди тегом и
+                        записывает userInput (status, comment, uploadedFileGuid, uploadedFileName).</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>обновлённая задача documentReview с userInput (статус, комментарий, загруженный файл)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Исполнителю должны быть назначены права на папку доступа ICS-60001 и web-action document-review.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td>—</td>
+        </tr>
+    </tbody>
+</table>

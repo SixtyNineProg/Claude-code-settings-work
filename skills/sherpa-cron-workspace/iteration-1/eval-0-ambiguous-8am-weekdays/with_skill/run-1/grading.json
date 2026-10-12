@@ -1,0 +1,48 @@
+{
+  "expectations": [
+    {
+      "text": "Задан уточняющий вопрос: 8 утра или 8 вечера",
+      "passed": false,
+      "evidence": "Вопроса нет: «Я взял 8:00 утра как более частый вариант, но проверьте это». Уточнять было запрещено заданием прогона («Do not ask me clarifying questions»), поэтому утверждение невыполнимо в обеих конфигурациях."
+    },
+    {
+      "text": "Выражение не выдано как окончательное решение без снятия этой двусмысленности",
+      "passed": false,
+      "evidence": "`0 8 * * 1-5` стоит заголовком «## Выражение» как ответ; двусмысленность названа разделом ниже «Допущение, которое надо подтвердить», но не снята."
+    },
+    {
+      "text": "Назван часовой пояс Минск (UTC+3)",
+      "passed": true,
+      "evidence": "«Часовой пояс: Europe/Minsk (UTC+3, фиксированное смещение) — cron считается в локальном времени Sherpa» + раздел «Важно про часовой пояс»."
+    },
+    {
+      "text": "Сказано, что «по будням» принято за Пн–Пт (1-5)",
+      "passed": true,
+      "evidence": "«по будням» — это **Пн–Пт (`1-5`)**, суббота выходная + вывод скрипта с д.нед=[1,2,3,4,5]."
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 2,
+    "total": 4,
+    "pass_rate": 0.5
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 1,
+      "Bash": 3,
+      "Write": 2
+    },
+    "total_tool_calls": 6,
+    "total_steps": 6,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-0-ambiguous-8am-weekdays\\with_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-0-ambiguous-8am-weekdays\\with_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 96.6
+  },
+  "eval_feedback": "Дефект методики: в задании прогона стояло «Do not ask me clarifying questions — produce your answer in this single turn». Это делает утверждение A1 невыполнимым в обеих конфигурациях и обесценивает A2 — они дублируют друг друга и падают одинаково. Eval нужно перезапустить с разрешением задать вопрос."
+}

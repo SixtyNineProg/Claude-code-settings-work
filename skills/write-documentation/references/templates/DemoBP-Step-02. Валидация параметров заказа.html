@@ -1,0 +1,55 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>DemoBP-Step-02</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Валидация параметров заказа</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>конф. параметры ботопроцесса</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот извлекает из конфигурации значения: orderId, orderAmount, orderStatus;</li>
+                    <li>Бот проверяет корректность значений (orderId — числовой, orderAmount — > 0, orderStatus —
+                        допустимый);</li>
+                    <li>При успешной проверке Бот формирует объект Order для дальнейшей обработки.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>3. Если значения некорректны, Бот отправляет нотификацию с описанием проблемы и выбрасывает ошибку;</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Order - заказ, готовый для обработки</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">DemoBP-EX-01</a></td>
+        </tr>
+    </tbody>
+</table>

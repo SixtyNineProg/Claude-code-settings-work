@@ -1,0 +1,63 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-00057-Step-08</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>SaveAllStep</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>задача MT №3 в очереди с final-тегом reviewedAll и статусом IN_PROGRESS</li>
+                    <li>checklistAccounts, mtComments из Step-07</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот-приёмник запускается Orchestrator-триггером по тегу reviewedAll в очереди MT №3;</li>
+                    <li>Бот находит задачу MT №3 (имя processAll, тег reviewedAll, статус IN_PROGRESS);</li>
+                    <li>Бот разбирает initialData → ProcessAllResult → processedAccounts (возможно пустой список);</li>
+                    <li>Бот обновляет справочник (AccountChecklistHelper.updateWith) и объединяет комментарии;</li>
+                    <li>Бот отправляет письмо task_processed;</li>
+                    <li>Бот переводит задачу в SUCCESS и заменяет все теги на processedAll, после чего запускается
+                        UploadEvidenceStep.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Если контролёр не внёс ни одной правки, processedAccounts пуст — Бот сохраняет справочник без
+                изменений и финализирует задачу.</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>allProcessedAccounts в транзакции;</li>
+                    <li>обновлённые checklistAccounts и mtComments;</li>
+                    <li>финализированная задача MT №3 (SUCCESS + processedAll);</li>
+                    <li>письмо task_processed.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-00057-EX-06</a></td>
+        </tr>
+    </tbody>
+</table>

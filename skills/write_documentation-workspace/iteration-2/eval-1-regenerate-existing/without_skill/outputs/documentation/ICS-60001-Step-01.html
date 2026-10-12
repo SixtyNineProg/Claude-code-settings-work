@@ -1,0 +1,72 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-01</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Инициализация параметров, расчёт порога существенности и создание структуры папок в SharePoint</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Класс Java</strong></td>
+            <td><code>by.a1.ics60001.steps.ProcessSetupStep</code></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Ресурс <code>ics60001_init_params</code> (InitParameters)</li>
+                    <li>Ресурс <code>currency_rates_config</code> (CurrencyRatesConfig)</li>
+                    <li>Credentials: <code>proxy_credentials</code>, <code>sap_credentials</code>, <code>sharepoint_credentials</code></li>
+                    <li>Системное свойство <code>transaction.path</code> (используется на последующих шагах)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот читает <code>InitParameters</code> из транзакции;</li>
+                    <li>Бот вычисляет и сохраняет <code>resolved.report.end.date</code> из <code>reportEndDate</code>:
+                        <ul>
+                            <li>пусто → последний день прошлого месяца;</li>
+                            <li>дата <code>yyyy-MM-dd</code> → дата (если в будущем — сегодня);</li>
+                            <li>целое число → смещение в месяцах, последний день месяца.</li>
+                        </ul>
+                    </li>
+                    <li>Бот через сервис <code>CurrencyRates</code> получает курс <code>currencyCode</code> на дату <code>resolvedReportEndDate</code> и считает <code>materialityThreshold = rate × materialityLevel</code>; сохраняет <code>ExchangeRate</code> в транзакцию;</li>
+                    <li>Бот создаёт унифицированную структуру папок в SharePoint через <code>UnifiedFoldersUtil.monthly(processName, resolvedReportEndDate)</code> (все пути из <code>getAllPaths()</code>) в <code>sharepointBasePath</code>;</li>
+                    <li>Бот сохраняет в транзакцию пути <code>work.screenshots.folder.path</code>, <code>work.input.data.folder.path</code>, <code>work.working.folder.path</code>, <code>work.other.evidence.folder.path</code> и имя <code>work.technical.archive.filename</code>;</li>
+                    <li>Бот отправляет уведомление <code>sendProcessStarted</code> на <code>emailRecipients</code>.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Ошибка загрузки параметров, получения курса валюты или создания папок SharePoint — бот выбрасывает <code>BusinessException</code> («SharePoint folder creation failed») либо <code>IllegalStateException</code>, процесс завершается с ошибкой.</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Transaction: <code>exchange.rate</code>, <code>resolved.report.end.date</code>, <code>work.screenshots.folder.path</code>, <code>work.input.data.folder.path</code>, <code>work.working.folder.path</code>, <code>work.other.evidence.folder.path</code>, <code>work.technical.archive.filename</code></li>
+                    <li>Структура папок в SharePoint создана</li>
+                    <li>Email process_started отправлен</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Доступ к SAP-сервису курсов валют и SharePoint должен быть настроен до запуска.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="ICS-60001-EX-01.html">ICS-60001-EX-01</a></td>
+        </tr>
+    </tbody>
+</table>

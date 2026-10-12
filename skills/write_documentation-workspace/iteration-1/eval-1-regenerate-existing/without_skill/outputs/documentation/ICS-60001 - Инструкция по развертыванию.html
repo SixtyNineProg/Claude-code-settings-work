@@ -1,0 +1,71 @@
+<table>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>
+                <p>Проверить, что все элементы процесса соответствуют <a href="https://wiki.a1.by/pages/viewpage.action?pageId=453837503">принятому стилю</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>
+                <p>Подготовить необходимые файлы и выполнить перенос процесса на прод согласно <a href="https://wiki.a1.by/pages/viewpage.action?pageId=474056373">общей инструкции</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>
+                <p>Проверяем/Создаем Ресурсы типа Credential на целевой среде (без них процесс не сможет авторизоваться в системах):</p>
+                <ul>
+                    <li>sherpa_api_credentials — токен для работы с API Sherpa (используется в шаге SendMultitaskNotificationStep для создания заданий documentReview)</li>
+                    <li>sap_credentials — доступ к SAP (SAP GUI и сервис курсов валют)</li>
+                    <li>sharepoint_credentials — доступ к SharePoint</li>
+                    <li>proxy_credentials — прокси для внешних соединений (используется сервисом CurrencyRates)</li>
+                    <li>mim_credentials — доступ к MIM (PowerShell-запросы аккаунтов и сотрудников)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>
+                <p>Проверяем/Создаем Ресурсы типа Text на целевой среде:</p>
+                <ul>
+                    <li>ics60001_init_params — параметры инициализации (см. <a href="ICS-60001-PDD - Process Design Document.html">PDD, раздел «Конфигурируемые параметры»</a>)</li>
+                    <li>ics60001_email_templates — шаблоны email-уведомлений (содержит шаблон <code>multitask_new</code>)</li>
+                    <li>currency_rates_config — конфигурация получения курсов валют (CurrencyRatesConfig)</li>
+                    <li>document_type_comments — справочник комментариев к типам документов (Map&lt;String,String&gt;)</li>
+                    <li>document_type_classification — классификатор типов документов (allowedDocTypes/deniedDocTypes)</li>
+                    <li>sap_settings — настройки SAP GUI (systemName, client, language) для шага GetSapReportDataStep</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>
+                <p><strong>Опционально</strong> Проверяем/Создаем папку в Хранилище файлов и загружаем файл-шаблон отчёта <code>ICS-60001.xlsx</code> (используется <code>TemplateResultsWorkbookBuilder</code> на шаге финализации). Шаблон содержит листы <code>ZFI_FCRP1</code>, <code>Выборка</code>, <code>Популяция</code>, <code>Справочник</code> и именованные ячейки <code>Rate</code>, <code>Materiality_level</code>, <code>Rate_limit</code>, <code>Date_end</code>, <code>Date_current</code>, <code>All_docs</code>, <code>All_docs_to_check</code>, <code>Docs_to_check</code>, <code>Checked_docs</code>.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>
+                <p><strong>Опционально</strong> Проверяем/Создаем очереди задач в Orchestrator:</p>
+                <ul>
+                    <li><code>ICS-60001 Document type policy editor</code> — задания на редактирование справочника типов документов</li>
+                    <li><code>ICS-60001 Document review</code> — задания на проверку документов выборки</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td><strong>Опционально</strong> Проверяем/Создаем Триггеры</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Дополнительные действия:</p>
+<ol>
+    <li>Проверить доступ к SAP (включая SAP GUI и сервис курсов валют) и SharePoint с целевой среды;</li>
+    <li>Проверить корректность email-шаблонов (<code>ics60001_email_templates</code>, шаблон <code>multitask_new</code>) и параметров интеграции (<code>mimUrl</code>, <code>mimCommand</code>, фильтры MIM);</li>
+    <li>Проверить доступность PowerShell и возможность выполнения команд MIM с целевой среды (шаг OwnersEnrichmentStep использует <code>com.profesorfalken.jpowershell</code>);</li>
+    <li>Убедиться, что web-действия <code>document-type-policy-editor</code> и <code>document-review</code> опубликованы в Orchestrator, и ссылки на них указаны в <code>documentTypePolicyEditorActionLink</code> и <code>documentReviewActionLink</code> параметров инициализации.</li>
+</ol>

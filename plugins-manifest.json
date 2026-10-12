@@ -1,0 +1,68 @@
+{
+  "marketplaces": {
+    "claude-plugins-official": {
+      "source": "github:anthropics/claude-plugins-official"
+    },
+    "obsidian-skills": {
+      "source": "github:kepano/obsidian-skills"
+    }
+  },
+  "plugins": {
+    "claude-code-setup@claude-plugins-official": {
+      "version": "1.0.0"
+    },
+    "claude-md-management@claude-plugins-official": {
+      "version": "1.0.0"
+    },
+    "code-review@claude-plugins-official": {
+      "version": "unknown"
+    },
+    "code-simplifier@claude-plugins-official": {
+      "version": "1.0.0"
+    },
+    "commit-commands@claude-plugins-official": {
+      "version": "unknown"
+    },
+    "context7@claude-plugins-official": {
+      "version": "unknown"
+    },
+    "feature-dev@claude-plugins-official": {
+      "version": "9e150cfd48b8",
+      "gitCommitSha": "9e150cfd48b87280cc76e035de04a11aa604e9c5"
+    },
+    "gitlab@claude-plugins-official": {
+      "version": "unknown"
+    },
+    "jdtls-lsp@claude-plugins-official": {
+      "version": "1.0.0"
+    },
+    "obsidian@obsidian-skills": {
+      "version": "1.0.1",
+      "gitCommitSha": "a1dc48e68138490d522c04cbf5822214c6eb1202"
+    },
+    "playwright@claude-plugins-official": {
+      "version": "unknown"
+    },
+    "remember@claude-plugins-official": {
+      "version": "0.7.2",
+      "gitCommitSha": "c9b34417a8132f0416411a0ca51d009a256a3acc"
+    },
+    "security-guidance@claude-plugins-official": {
+      "version": "2.0.0"
+    },
+    "skill-creator@claude-plugins-official": {
+      "version": "unknown"
+    },
+    "supabase@claude-plugins-official": {
+      "version": "0.1.9",
+      "gitCommitSha": "1b910c021aee8c9c054196f0e840b3a65e1a7c63"
+    },
+    "superpowers@claude-plugins-official": {
+      "version": "5.1.0",
+      "gitCommitSha": "f2cbfbefebbfef77321e4c9abc9e949826bea9d7"
+    },
+    "telegram@claude-plugins-official": {
+      "version": "0.0.6"
+    }
+  }
+}

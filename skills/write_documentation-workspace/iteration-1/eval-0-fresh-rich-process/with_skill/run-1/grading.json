@@ -1,0 +1,50 @@
+{
+  "expectations": [
+    {
+      "text": "Overview, История изменений, Инструкция по развёртыванию, PDD, TD, UG files all exist plus one Step file per Java Step class",
+      "passed": false,
+      "evidence": "found 15 html files; 9 step files; missing: ['ICS-00057 - Инструкция по развертыванию.html']"
+    },
+    {
+      "text": "No file contains <!DOCTYPE, <html, <head>, <body>, or <style> wrapper tags",
+      "passed": true,
+      "evidence": "files with wrapper tags: []"
+    },
+    {
+      "text": "Count of {bpName}-Step-*.html files equals the count of *Step.java classes (9)",
+      "passed": true,
+      "evidence": "expected 9 step files, found 9: ['ICS-00057-Step-01.html', 'ICS-00057-Step-02.html', 'ICS-00057-Step-03.html', 'ICS-00057-Step-04.html', 'ICS-00057-Step-05.html', 'ICS-00057-Step-06.html', 'ICS-00057-Step-07.html', 'ICS-00057-Step-08.html', 'ICS-00057-Step-09.html']"
+    },
+    {
+      "text": "Cross-reference IDs use the format {bpName}-Step-0N, {bpName}-EX-NN, {bpName}-PDD/TD/UG",
+      "passed": true,
+      "evidence": "non-ICS-00057 cross-ref prefixes found: []"
+    },
+    {
+      "text": "No literal 'DemoBP' remains in any output file",
+      "passed": true,
+      "evidence": "files still containing 'DemoBP': []"
+    },
+    {
+      "text": "No unfilled template placeholders remain (имя_ресурса_N, {{{...}}, ${...} that are not real values)",
+      "passed": true,
+      "evidence": "placeholder hits: []"
+    },
+    {
+      "text": "bpName 'ICS-00057' from process-config.json is used consistently in all filenames",
+      "passed": true,
+      "evidence": "files not starting with ICS-00057: []"
+    },
+    {
+      "text": "PDD 'Используемые системы' section lists SAP GUI, SharePoint, Orchestrator, Email",
+      "passed": true,
+      "evidence": "systems found=['SAP GUI', 'SharePoint', 'Orchestrator', 'Email'], missing=[]"
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.875,
+    "passed": 7,
+    "failed": 1,
+    "total": 8
+  }
+}

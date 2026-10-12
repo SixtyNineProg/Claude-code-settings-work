@@ -1,0 +1,46 @@
+{
+  "eval_name": "ics60001-multistage-derived-names",
+  "run": "without_skill",
+  "expectations": [
+    {
+      "text": "Первая строка начинается с '# ICS-60001'",
+      "passed": true,
+      "evidence": "first line: '# ICS-60001 — Контроль корректности ручных бухгалтерских проводок'"
+    },
+    {
+      "text": "Список шагов содержит 8 пунктов в ожидаемом порядке",
+      "passed": false,
+      "evidence": "got []"
+    },
+    {
+      "text": "Каждая ссылка на шаг ведёт на существующий .java файл",
+      "passed": false,
+      "evidence": "0 links; broken: []"
+    },
+    {
+      "text": "Имена шагов совпадают с resolved stepName из отчёта",
+      "passed": false,
+      "evidence": "report: ['processSetup', 'getSapReportData', 'prepareDocumentTypeLists', 'persistDocumentTypeLists', 'samplePreparation', 'ownersEnrichment', 'sendMultitaskNotification', 'finalizeAndPublishResults']; readme: []"
+    },
+    {
+      "text": "Секция параметров инициализации ссылается на ics60001_init_params.json",
+      "passed": true,
+      "evidence": "init section present and references expected file"
+    },
+    {
+      "text": "Секция email-шаблонов присутствует и ссылается на реальный файл",
+      "passed": true,
+      "evidence": "emailTemplatesFile in report: src/main/resources/ics60001_email_templates.json"
+    },
+    {
+      "text": "Таблица сервисных переменных содержит: sap_credentials, proxy_credentials, sharepoint_credentials, sherpa_api_credentials, mim_credentials, sap_settings, currency_rates_config",
+      "passed": false,
+      "evidence": "missing: ['sap_settings']; present: ['currency_rates_config', 'document_type_classification', 'document_type_comments', 'mim_credentials', 'proxy_credentials', 'sap_credentials', 'sharepoint_credentials', 'sherpa_api_credentials']"
+    },
+    {
+      "text": "В таблице нет неразрешённых идентификаторов-констант",
+      "passed": true,
+      "evidence": "unresolved identifiers: []"
+    }
+  ]
+}

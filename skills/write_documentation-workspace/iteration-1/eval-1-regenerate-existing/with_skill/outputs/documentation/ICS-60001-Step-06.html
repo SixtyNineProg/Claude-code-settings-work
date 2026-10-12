@@ -1,0 +1,60 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-06</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Подготовка выборки для проверки</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>accountingDocumentPositions</li>
+                    <li>allowedDocList (из транзакции) либо ресурс document_type_classification</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот загружает позиции и множество allowedDocTypes (из allowedDocList или, при пустом списке, из ресурса <code>document_type_classification</code>);</li>
+                    <li>Бот группирует позиции по номеру документа в AccountingDocumentGroup;</li>
+                    <li>Бот фильтрует группы по разрешённым типам документов (documentType ∈ allowedDocTypes);</li>
+                    <li>Бот рассчитывает размер выборки getDocsCountForProceed: ≤12 — 2, ≤52 — 5, ≤365 — 15, иначе 25;</li>
+                    <li>Бот случайным образом отбирает sampleSize групп, сортирует по первому вхождению документа;</li>
+                    <li>Бот собирает уникальные имена пользователей (sampleOwners) и сохраняет sampleDocuments, sampleOwners, filteredDocuments в транзакцию.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>sampleDocuments — отобранные для проверки группы документов</li>
+                    <li>sampleOwners — уникальные SAP-логины владельцев проводок</li>
+                    <li>filteredDocuments — все группы разрешённых типов</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-60001-EX-06</a></td>
+        </tr>
+    </tbody>
+</table>

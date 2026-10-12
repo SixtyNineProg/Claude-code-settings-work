@@ -1,0 +1,18 @@
+# Sync an allowlist only: sessions, caches, plugin clones and .credentials.json are ignored by design.
+/*
+!/.gitignore
+!/CLAUDE.md
+!/settings.json
+!/settings.local.json
+!/keybindings.json
+!/plugins-manifest.json
+!/rules/
+# Contains real Jira/Confluence personal access tokens - never sync this file.
+rules/AtlassianMCP.md
+!/skills/
+!/scripts/
+!/agents/
+!/commands/
+!/themes/
+!/output-styles/
+!/workflows/

@@ -1,0 +1,67 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-00057-Step-02</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>SapStep — Выгрузка справочника счетов из SAP</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>InitParameters (mockSap, unloadingFileName, screenshotsFileName, storageFolderName, spVactproBase, spVactproProject, spVactproPath)</li>
+                    <li>ReportingPeriod из транзакции</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот получает credentials SharePoint (sharepoint_credentials) и создаёт унифицированную структуру папок периода в SharePoint (FolderStructure.from(reportingPeriod)), удаляя папку прочих доказательств;</li>
+                    <li>Бот создаёт локальную временную папку;</li>
+                    <li>Если mockSap=true — Бот копирует выгрузку и скриншоты из ресурсов sap_mock/*;</li>
+                    <li>Если mockSap=false — Бот завершает процессы saplogon.exe/saplgpad.exe, читает sap_credentials и sap_settings, подключается к SAP через SapGuiAutomation;</li>
+                    <li>Бот запускает транзакцию ZACCOUNTS, заполняет план счетов IFRS и БЕ 1320, делает скриншот параметров;</li>
+                    <li>Бот нажимает F8 (выполнение отчёта), ждёт появления кнопки экспорта, делает скриншот первой страницы;</li>
+                    <li>Бот эмулирует Ctrl+PageDown (Robot) для прокрутки к последней странице и делает скриншот;</li>
+                    <li>Бот инициирует экспорт ALV в Excel (Ctrl+Shift+F10 → Ctrl+Shift+F7), указывает путь и имя файла, сохраняет выгрузку;</li>
+                    <li>Бот завершает EXCEL.EXE и закрывает SAP-сессию;</li>
+                    <li>Бот сохраняет скриншоты в xlsx через ExcelScreenshotHelper и парсит выгрузку в List&lt;Account&gt; через ExcelSapUnloadingParser;</li>
+                    <li>Бот загружает выгрузку и скриншоты в Orchestrator Storage (папка storageFolderName) под плоским именем с суффиксом даты-времени;</li>
+                    <li>Бот сохраняет в транзакцию sapAccounts, sapScreenshotsStorageName, sapUnloadingStorageName;</li>
+                    <li>Бот удаляет временную папку.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>3. В mock-режиме шаг не обращается к SAP — выгрузка берётся из ресурсов (для тестирования частей процесса, не связанных с SAP).</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>sapAccounts — список счетов из SAP</li>
+                    <li>sapScreenshotsStorageName — плоское имя файла скриншотов в Storage</li>
+                    <li>sapUnloadingStorageName — плоское имя файла выгрузки в Storage</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Ассет sap_settings должен содержать language = "RU" (имена счетов зависят от языка); план счетов IFRS, БЕ 1320</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-00057-EX-02</a>, <a href="">ICS-00057-EX-03</a>, <a href="">ICS-00057-EX-07</a></td>
+        </tr>
+    </tbody>
+</table>

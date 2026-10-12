@@ -1,0 +1,174 @@
+﻿{
+    "warnings":  [
+
+                 ],
+    "services":  [
+                     "email",
+                     "active-directory",
+                     "powershell",
+                     "jira",
+                     "mssql",
+                     "http"
+                 ],
+    "manualTaskFiles":  [
+
+                        ],
+    "initParams":  [
+                       {
+                           "name":  "emailTo",
+                           "type":  "String"
+                       },
+                       {
+                           "name":  "emailCopy",
+                           "type":  "String"
+                       },
+                       {
+                           "name":  "mailDirectory",
+                           "type":  "String"
+                       },
+                       {
+                           "name":  "jsdUrl",
+                           "type":  "String"
+                       },
+                       {
+                           "name":  "jsdPort",
+                           "type":  "int"
+                       },
+                       {
+                           "name":  "passwordResetUpperLimit",
+                           "type":  "String"
+                       },
+                       {
+                           "name":  "mimPortalUrl",
+                           "type":  "String"
+                       },
+                       {
+                           "name":  "deleteReadMessages",
+                           "type":  "boolean"
+                       },
+                       {
+                           "name":  "smtpHost",
+                           "type":  "String"
+                       },
+                       {
+                           "name":  "smtpPort",
+                           "type":  "int"
+                       },
+                       {
+                           "name":  "maxWaitTimeExecutePsScript",
+                           "type":  "String"
+                       },
+                       {
+                           "name":  "jsdJql",
+                           "type":  "String"
+                       },
+                       {
+                           "name":  "jsdProjectKey",
+                           "type":  "String"
+                       },
+                       {
+                           "name":  "jsdSummary",
+                           "type":  "String"
+                       },
+                       {
+                           "name":  "jsdIssueTypeName",
+                           "type":  "String"
+                       },
+                       {
+                           "name":  "jsdDescriptionTemplate",
+                           "type":  "String"
+                       },
+                       {
+                           "name":  "externalHost",
+                           "type":  "String"
+                       }
+                   ],
+    "powerShellScripts":  [
+                              "get_ad_user.ps1",
+                              "get_manager.ps1"
+                          ],
+    "steps":  [
+                  {
+                      "fleet":  null,
+                      "hasPool":  true,
+                      "file":  "ics00442_ad_app_externals Get AdUser.xml",
+                      "type":  "desktop",
+                      "processor":  "GetAdUser"
+                  },
+                  {
+                      "fleet":  null,
+                      "hasPool":  false,
+                      "file":  "ics00442_ad_app_externals Get Emails.xml",
+                      "type":  "server-side",
+                      "processor":  "GetEmails"
+                  },
+                  {
+                      "fleet":  null,
+                      "hasPool":  true,
+                      "file":  "ics00442_ad_app_externals Get Manager.xml",
+                      "type":  "desktop",
+                      "processor":  "GetManager"
+                  },
+                  {
+                      "fleet":  null,
+                      "hasPool":  false,
+                      "file":  "ics00442_ad_app_externals Infrastructure.xml",
+                      "type":  "server-side",
+                      "processor":  null
+                  },
+                  {
+                      "fleet":  null,
+                      "hasPool":  true,
+                      "file":  "ics00442_ad_app_externals Join Processor.xml",
+                      "type":  "parallel",
+                      "processor":  "Join"
+                  },
+                  {
+                      "fleet":  null,
+                      "hasPool":  true,
+                      "file":  "ics00442_ad_app_externals JSD Processor.xml",
+                      "type":  "parallel",
+                      "processor":  "JSD"
+                  },
+                  {
+                      "fleet":  null,
+                      "hasPool":  false,
+                      "file":  "ics00442_ad_app_externals Split Processor.xml",
+                      "type":  "server-side",
+                      "processor":  "Split"
+                  }
+              ],
+    "processPath":  "C:\\Users\\dzmitry_klim\\IdeaProjects\\wf_odf\\ODF\\ics00442_ad_app_externals",
+    "errors":  [
+
+               ],
+    "projectName":  "ics00442-ad-app-externals-test",
+    "dataKeys":  [
+                     "EXTERNAL_USER",
+                     "DOC_WORKFLOW_STATUS",
+                     "STATUS_NEXT",
+                     "STATUS_EXIT",
+                     "INIT_PARAMS",
+                     "WORKFLOW_STATUS",
+                     "USERS",
+                     "STATUS_NEXT",
+                     "STATUS_EXIT"
+                 ],
+    "dependencies":  [
+                         "rpa-core (already included)",
+                         "rpa-ad",
+                         "com.profesorfalken:jPowerShell:3.1.1",
+                         "rpa-jira",
+                         "com.microsoft.sqlserver:mssql-jdbc:12.6.1.jre11",
+                         "com.squareup.okhttp3:okhttp",
+                         "com.squareup.okhttp3:logging-interceptor"
+                     ],
+    "processors":  [
+                       "GetAdUser",
+                       "GetEmails",
+                       "GetManager",
+                       "Join",
+                       "JSD",
+                       "Split"
+                   ]
+}

@@ -1,0 +1,56 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-09</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Обработка документа (пользовательское действие)</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Исполнитель / Владелец проводки</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Задача documentReview из очереди "ICS-60001 Document review" (initialData: sampleDoc, bearerToken)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Владелец/Исполнитель открывает форму Action "document-review" по ссылке из письма/личного кабинета;</li>
+                    <li>Просматривает информацию о документе и его позициях;</li>
+                    <li>Загружает файл подтверждающего документа (при наличии);</li>
+                    <li>Выбирает статус проверки ("OK" или "NOT OK") и вводит комментарий;</li>
+                    <li>Сохраняет результат — задача обновляется с userInput (status, comment, uploadedFileGuid, uploadedFileName).</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Задача в очереди "ICS-60001 Document review" с userInput (status, comment, загруженный файл)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Пользовательское действие "document-review" должно быть опубликовано в Оркестраторе; ссылка указана в параметре <code>documentReviewActionLink</code>.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td>—</td>
+        </tr>
+    </tbody>
+</table>

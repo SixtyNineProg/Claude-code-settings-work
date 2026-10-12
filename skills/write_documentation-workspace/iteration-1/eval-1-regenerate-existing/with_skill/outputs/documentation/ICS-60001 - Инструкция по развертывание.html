@@ -1,0 +1,70 @@
+<table>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>
+                <p>Проверить, что все элементы процесса соответствуют <a
+                        href="https://wiki.a1.by/pages/viewpage.action?pageId=453837503">принятому стилю</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>
+                <p>Подготовить необходимые файлы и выполнить перенос процесса на прод согласно <a
+                        href="https://wiki.a1.by/pages/viewpage.action?pageId=474056373">общей инструкции</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>
+                <p>Проверяем/Создаем Ресурсы типа Credential на целевой среде (без них процесс не сможет авторизоваться
+                    в системах):</p>
+                <ul>
+                    <li>sharepoint_credentials</li>
+                    <li>sap_credentials</li>
+                    <li>proxy_credentials</li>
+                    <li>mim_credentials</li>
+                    <li>sherpa_api_credentials</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>
+                <p>Проверяем/Создаем Ресурсы типа Text на целевой среде:</p>
+                <ul>
+                    <li>ics60001_init_params</li>
+                    <li>ics60001_email_templates</li>
+                    <li>currency_rates_config</li>
+                    <li>sap_settings</li>
+                    <li>document_type_classification</li>
+                    <li>document_type_comments</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td><strong>Опционально</strong> Проверяем/Создаем папку в Хранилище и загружаем туда нужные файлы</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td><strong>Опционально</strong> Проверяем/Создаем Очереди задач:
+                <ul>
+                    <li>ICS-60001 Document type policy editor</li>
+                    <li>ICS-60001 Document review</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td><strong>Опционально</strong> Проверяем/Создаем Триггеры</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Дополнительные действия (дополнения к указанному в таблице/прочая информация, которую удобнее расположить так):</p>
+<ol>
+    <li>Опубликовать пользовательские действия (Actions) в Оркестраторе: "document-type-policy-editor" (редактор списков типов документов) и "document-review" (форма проверки документа);</li>
+    <li>Указать ссылки на опубликованные Actions в параметрах <code>documentTypePolicyEditorActionLink</code> и <code>documentReviewActionLink</code> ресурса <code>ics60001_init_params</code>;</li>
+    <li>Проверить доступность SharePoint-проекта <code>Project_1776</code> и базового пути <code>Lists/documents/БОТ/ICS-60001</code> для учётной записи ресурса <code>sharepoint_credentials</code>.</li>
+</ol>

@@ -1,0 +1,46 @@
+{
+  "eval_name": "ics00057-accounts-annotation-names-constants",
+  "run": "without_skill",
+  "expectations": [
+    {
+      "text": "Первая строка начинается с '# ICS-00057'",
+      "passed": true,
+      "evidence": "first line: '# ICS-00057 Обновление справочника'"
+    },
+    {
+      "text": "Список шагов содержит 9 пунктов в ожидаемом порядке",
+      "passed": false,
+      "evidence": "got []"
+    },
+    {
+      "text": "Каждая ссылка на шаг ведёт на существующий .java файл",
+      "passed": false,
+      "evidence": "0 links; broken: []"
+    },
+    {
+      "text": "Имена шагов совпадают с resolved stepName из отчёта",
+      "passed": false,
+      "evidence": "report: ['InfrastructureStep', 'SapStep', 'PrepareNewStep', 'SaveNewStep', 'PrepareChangedStep', 'SaveChangedStep', 'PrepareAllStep', 'SaveAllStep', 'UploadEvidenceStep']; readme: []"
+    },
+    {
+      "text": "Секция параметров инициализации ссылается на ics00057_accounts_init_params.json",
+      "passed": false,
+      "evidence": "missing or wrong reference"
+    },
+    {
+      "text": "Секция email-шаблонов присутствует и ссылается на реальный файл",
+      "passed": false,
+      "evidence": "emailTemplatesFile in report: src/main/resources/ics00057_accounts_email_templates.json"
+    },
+    {
+      "text": "Таблица сервисных переменных содержит: sap_credentials, sap_settings, sharepoint_credentials, sherpa_api_credentials",
+      "passed": false,
+      "evidence": "missing: ['sap_credentials', 'sap_settings', 'sharepoint_credentials', 'sherpa_api_credentials']; present: []"
+    },
+    {
+      "text": "В таблице нет неразрешённых идентификаторов-констант",
+      "passed": true,
+      "evidence": "unresolved identifiers: []"
+    }
+  ]
+}

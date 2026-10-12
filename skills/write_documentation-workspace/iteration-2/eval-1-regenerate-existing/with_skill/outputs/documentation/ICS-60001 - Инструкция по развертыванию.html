@@ -1,0 +1,75 @@
+<table>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>
+                <p>Проверить, что все элементы процесса соответствуют <a
+                        href="https://wiki.a1.by/pages/viewpage.action?pageId=453837503">принятому стилю</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>
+                <p>Подготовить необходимые файлы и выполнить перенос процесса на прод согласно <a
+                        href="https://wiki.a1.by/pages/viewpage.action?pageId=474056373">общей инструкции</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>
+                <p>Проверяем/Создаем Ресурсы типа Credential на целевой среде (без них процесс не сможет авторизоваться
+                    в системах):</p>
+                <ul>
+                    <li>sharepoint_credentials</li>
+                    <li>sap_credentials</li>
+                    <li>proxy_credentials</li>
+                    <li>mim_credentials</li>
+                    <li>sherpa_api_credentials</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>
+                <p>Проверяем/Создаем Ресурсы типа Text на целевой среде:</p>
+                <ul>
+                    <li>currency_rates_config</li>
+                    <li>sap_settings</li>
+                    <li>document_type_classification</li>
+                    <li>document_type_comments</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td><strong>Опционально</strong> Проверяем/Создаем папку в Хранилище и загружаем туда нужные файлы</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>
+                <p><strong>Опционально</strong> Проверяем/Создаем очереди задач в Orchestrator:</p>
+                <ul>
+                    <li>ICS-60001 Document type policy editor</li>
+                    <li>ICS-60001 Document review</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td><strong>Опционально</strong> Проверяем/Создаем Триггеры</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Дополнительные действия (дополнения к указанному в таблице/прочая информация, которую удобнее расположить так):</p>
+<ol>
+    <li>Создать/обновить ресурс <strong>ics60001_init_params</strong> (Init Parameters) с параметрами из
+        <code>src/main/resources/initparams/{prod,test}/ics60001_init_params.json</code>;</li>
+    <li>Создать/обновить ресурс <strong>ics60001_email_templates</strong> с шаблонами писем из
+        <code>src/main/resources/ics60001_email_templates.json</code>;</li>
+    <li>Опубликовать web-actions <em>document-type-policy-editor</em> и <em>document-review</em> из
+        <code>src/main/resources/actions/</code> и прописать их ссылки в
+        <code>documentTypePolicyEditorActionLink</code> и <code>documentReviewActionLink</code> init-параметров;</li>
+    <li>Удостовериться, что на целевой среде доступен SAP Logon и PowerShell модуль MIM
+        (jpowershell использует локальный PowerShell хост Бота).</li>
+</ol>

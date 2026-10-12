@@ -1,0 +1,160 @@
+{
+  "processDir": "C:\\Users\\dzmitry_klim\\IdeaProjects\\sherpa\\rpa-suite\\ics60001",
+  "config": {
+    "bpName": "ICS-60001",
+    "controlName": "Correctness of manual journal entries"
+  },
+  "steps": [
+    {
+      "order": 1,
+      "displayName": "ProcessSetup",
+      "stepName": "processSetup",
+      "className": "ProcessSetupStep",
+      "javaPath": "src/main/java/by/a1/ics60001/steps/ProcessSetupStep.java",
+      "processFile": "Stage1.process",
+      "executeSource": "{\n    ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n    initParams = extractInitParameters(transaction);\n\n    String resolvedReportEndDate =\n        processTransaction.resolveAndStoreReportEndDate(initParams.getReportEndDate());\n    log.info(\"Resolved report end date: {}\", resolvedReportEndDate);\n\n    ExchangeRate exchangeRate = fetchExchangeRate(resolvedReportEndDate);\n    processTransaction.storeExchangeRate(exchangeRate);\n\n    createUnifiedFolders(resolvedReportEndDate, processTransaction);\n\n    emailService.sendProcessStarted(initParams.getEmailRecipients());\n  }"
+    },
+    {
+      "order": 2,
+      "displayName": "GetSapReportData",
+      "stepName": "getSapReportData",
+      "className": "GetSapReportDataStep",
+      "javaPath": "src/main/java/by/a1/ics60001/steps/GetSapReportDataStep.java",
+      "processFile": "Stage1.process",
+      "executeSource": "{\n    ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n    InitParameters initParams =\n        transaction\n            .getInitParameters(InitParameters.class)\n            .orElseThrow(() -> new IllegalStateException(\"InitParameters not found\"));\n\n    String resolvedReportEndDate = processTransaction.getResolvedReportEndDateOrThrow();\n    ExchangeRate exchangeRate = processTransaction.getExchangeRateOrThrow();\n\n    LocalDate reportEndDate = LocalDate.parse(resolvedReportEndDate);\n    String year = String.valueOf(reportEndDate.getYear());\n    String month = String.format(\"%02d\", reportEndDate.getMonthValue());\n\n    log.info(\n        \"Starting SapExportStep: tcode={}, reportEndDate={}, year={}, month={}, mocked={}\",\n        initParams.getSapTransactionCode(),\n        resolvedReportEndDate,\n        year,\n        month,\n        initParams.isSapMocked());\n\n    Asset.Credentials sharePointCredentials =\n        orchestratorService.assets().getCredentials(\"sharepoint_credentials\").execute();\n\n    try (SharePoint sharePoint =\n        SharePoint.builder()\n            .baseUrl(initParams.getSharepointBaseUrl())\n            .credentials(sharePointCredentials)\n      "
+    },
+    {
+      "order": 3,
+      "displayName": "PrepareDocumentTypeLists",
+      "stepName": "prepareDocumentTypeLists",
+      "className": "PrepareDocumentTypeListsStep",
+      "javaPath": "src/main/java/by/a1/ics60001/steps/PrepareDocumentTypeListsStep.java",
+      "processFile": "Stage1.process",
+      "executeSource": "{\n    final ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n    final InitParameters initParams =\n        transaction\n            .getInitParameters(InitParameters.class)\n            .orElseThrow(() -> new IllegalStateException(\"InitParameters not found\"));\n\n    final List<AccountingDocumentPosition> positions =\n        processTransaction.getAccountingDocumentPositions();\n\n    log.info(\n        \"PrepareDocumentTypeListsStep started. positionsCount={}\",\n        positions != null ? positions.size() : 0);\n\n    if (positions == null) {\n      log.warn(\"AccountingDocumentPositions list is null – proceeding with empty classification\");\n    } else if (positions.isEmpty()) {\n      log.warn(\n          \"AccountingDocumentPositions list is empty – no unclassified codes will be detected\");\n    }\n\n    final DocumentTypeClassification classification =\n        orchestratorService\n            .assets()\n            .get(\"document_type_classification\")\n            .execute()\n            .parseJson(DocumentTypeClassification.class)\n            .orElseGet(DocumentTypeClassification::new);\n\n    final Set<String> allowed =\n        Optional.ofNullable(classification.getAllowed"
+    },
+    {
+      "order": 4,
+      "displayName": "PersistDocumentTypeLists",
+      "stepName": "persistDocumentTypeLists",
+      "className": "PersistDocumentTypeListsStep",
+      "javaPath": "src/main/java/by/a1/ics60001/steps/PersistDocumentTypeListsStep.java",
+      "processFile": "Stage2.process",
+      "executeSource": "{\n    ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n    final InitParameters initParams =\n        transaction\n            .getInitParameters(InitParameters.class)\n            .orElseThrow(() -> new IllegalStateException(\"InitParameters not found\"));\n\n    try {\n      List<Task> tasks =\n          orchestratorService\n              .tasks()\n              .listFromQueue(\"ICS-60001 Document type policy editor\")\n              .execute();\n\n      Task task =\n          tasks.stream()\n              .filter(t -> t.getTagList().contains(\"policyUpdated\"))\n              .findFirst()\n              .orElseThrow();\n      log.info(task.toString());\n\n      Object rawInitialData = task.getParameters().getParametersMap().get(\"initialData\");\n      Map<String, List<Map<String, String>>> initialData;\n      if (rawInitialData instanceof Map) {\n        @SuppressWarnings(\"unchecked\")\n        Map<String, List<Map<String, String>>> casted =\n            (Map<String, List<Map<String, String>>>) rawInitialData;\n        initialData = casted;\n      } else if (rawInitialData instanceof String rawInitialDataString) {\n        if (\"[object Object]\".equals(rawInitialDataString)) {\n         "
+    },
+    {
+      "order": 5,
+      "displayName": "SamplePreparation",
+      "stepName": "samplePreparation",
+      "className": "SamplePreparationStep",
+      "javaPath": "src/main/java/by/a1/ics60001/steps/SamplePreparationStep.java",
+      "processFile": "Stage2.process",
+      "executeSource": "{\n    ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n    log.info(\"SamplePreparationStep started\");\n\n    try {\n      List<AccountingDocumentPosition> positions = processTransaction.getAccountingDocumentPositions();\n      log.info(\"Loaded positions: {}\", positions.size());\n\n      Set<String> allowedDocTypes = loadAllowedDocTypes(processTransaction);\n      log.info(\"Allowed document types loaded: {}\", allowedDocTypes.size());\n\n      Map<Long, List<AccountingDocumentPosition>> byDoc =\n          positions.stream().filter(Objects::nonNull)\n              .collect(Collectors.groupingBy(AccountingDocumentPosition::getDocumentNumber, LinkedHashMap::new, Collectors.toList()));\n\n      List<AccountingDocumentGroup> groups = new ArrayList<>();\n      for (Map.Entry<Long, List<AccountingDocumentPosition>> e : byDoc.entrySet()) {\n        List<AccountingDocumentPosition> docPositions = e.getValue();\n        if (docPositions.isEmpty()) continue;\n        AccountingDocumentPosition h = docPositions.getFirst();\n\n        AccountingDocumentGroup g = new AccountingDocumentGroup();\n        g.setDocumentNumber(h.getDocumentNumber());\n        g.setBalanceEntity(h.getBalanceEntit"
+    },
+    {
+      "order": 6,
+      "displayName": "OwnersEnrichment",
+      "stepName": "ownersEnrichment",
+      "className": "OwnersEnrichmentStep",
+      "javaPath": "src/main/java/by/a1/ics60001/steps/OwnersEnrichmentStep.java",
+      "processFile": "Stage2.process",
+      "executeSource": "{\n    ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n    log.info(\"OwnersEnrichmentStep started\");\n    try {\n      List<String> owners = processTransaction.getSampleOwners();\n      log.info(\"Owners to enrich: {}\", owners.size());\n      if (owners.isEmpty()) {\n        log.info(\n            \"Owners list is empty. MIM queries will still run if controller enrichment is required.\");\n      }\n\n      var initParams =\n          transaction\n              .getInitParameters(InitParameters.class)\n              .orElseThrow(() -> new IllegalStateException(\"InitParameters not found\"));\n\n      String mimCommand = initParams.getMimCommand();\n      String mimUrl = initParams.getMimUrl();\n      List<String> attrs = initParams.getMimPersonsAttributesToGet();\n      String timeoutMs = initParams.getMimCommandTimeoutMs();\n      if (mimCommand == null || mimUrl == null || attrs == null || timeoutMs == null) {\n        throw new IllegalStateException(\n            \"MIM configuration (command/url/attributes/timeout) is missing in InitParameters\");\n      }\n\n      log.debug(\n          \"MIM configuration loaded: url is set, attributes count={}, timeoutMs={}\",\n          attrs.size()"
+    },
+    {
+      "order": 7,
+      "displayName": "SendMultitaskNotification",
+      "stepName": "sendMultitaskNotification",
+      "className": "SendMultitaskNotificationStep",
+      "javaPath": "src/main/java/by/a1/ics60001/steps/SendMultitaskNotificationStep.java",
+      "processFile": "Stage2.process",
+      "executeSource": "{\n    ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n    log.info(\"SendMultitaskNotificationStep started\");\n    try {\n      InitParameters initParams =\n          transaction\n              .getInitParameters(InitParameters.class)\n              .orElseThrow(() -> new IllegalStateException(\"InitParameters not found\"));\n\n      List<AccountingDocumentGroup> sampleDocs = processTransaction.getSampleDocuments();\n      List<OwnerContact> enrichedOwners = processTransaction.getOwnersEnriched();\n      List<String> sampleOwners = processTransaction.getSampleOwners();\n\n      log.info(\n          \"Inputs loaded: sampleDocs={}, enrichedOwners={}, sampleOwners={}\",\n          sampleDocs.size(),\n          enrichedOwners.size(),\n          sampleOwners.size());\n\n      Set<String> sampleOwnerSet = new HashSet<>(sampleOwners);\n      List<String> activeOwnerEmails =\n          enrichedOwners.stream()\n              .filter(Objects::nonNull)\n              .filter(o -> Boolean.TRUE.equals(o.getActive()))\n              .filter(o -> sampleOwnerSet.contains(o.getSapLogin()))\n              .map(OwnerContact::getEmail)\n              .filter(e -> e != null && !e.isBlank())\n           "
+    },
+    {
+      "order": 8,
+      "displayName": "FinalizeAndPublishResults",
+      "stepName": "finalizeAndPublishResults",
+      "className": "FinalizeAndPublishResultsStep",
+      "javaPath": "src/main/java/by/a1/ics60001/steps/FinalizeAndPublishResultsStep.java",
+      "processFile": "Stage3.process",
+      "executeSource": "{\n    try {\n      ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n      InitParameters initParams =\n          transaction\n              .getInitParameters(InitParameters.class)\n              .orElseThrow(() -> new IllegalStateException(\"InitParameters not found\"));\n\n      String resolvedReportEndDate = processTransaction.getResolvedReportEndDateOrThrow();\n\n      Asset.Credentials spCreds =\n          orchestratorService.assets().getCredentials(\"sharepoint_credentials\").execute();\n      try (SharePoint sharePoint =\n          SharePoint.builder()\n              .baseUrl(initParams.getSharepointBaseUrl())\n              .credentials(spCreds)\n              .defaultProject(initParams.getSharepointProject())\n              .build()) {\n\n        List<Task> tasks =\n            orchestratorService.tasks().listFromQueue(\"ICS-60001 Document review\").execute();\n        List<DocumentReviewResult> reviewResults = new ArrayList<>();\n        tasks.forEach(t -> parseTaskIntoResults(t, reviewResults));\n        log.info(\"Collected {} review results from tasks\", reviewResults.size());\n\n        Map<Long, DocumentReviewResult.UserInput> byDoc = new HashMap<>();\n        for (Docum"
+    }
+  ],
+  "initParamsFiles": [
+    "src/main/resources/initparams/test/ics60001_init_params.json"
+  ],
+  "emailTemplatesFile": "src/main/resources/ics60001_email_templates.json",
+  "serviceVariables": [
+    {
+      "name": "currency_rates_config",
+      "kind": "config",
+      "callStyles": [
+        "assets.get"
+      ],
+      "definedIn": "ProcessSetupStep.java"
+    },
+    {
+      "name": "document_type_classification",
+      "kind": "config",
+      "callStyles": [
+        "assets.get"
+      ],
+      "definedIn": "PrepareDocumentTypeListsStep.java"
+    },
+    {
+      "name": "document_type_comments",
+      "kind": "config",
+      "callStyles": [
+        "assets.get"
+      ],
+      "definedIn": "PrepareDocumentTypeListsStep.java"
+    },
+    {
+      "name": "mim_credentials",
+      "kind": "credentials",
+      "callStyles": [
+        "assets.getCredentials"
+      ],
+      "definedIn": "OwnersEnrichmentStep.java"
+    },
+    {
+      "name": "proxy_credentials",
+      "kind": "credentials",
+      "callStyles": [
+        "assets.getCredentials"
+      ],
+      "definedIn": "ProcessSetupStep.java"
+    },
+    {
+      "name": "sap_credentials",
+      "kind": "credentials",
+      "callStyles": [
+        "assets.getCredentials"
+      ],
+      "definedIn": "GetSapReportDataStep.java"
+    },
+    {
+      "name": "sap_settings",
+      "kind": "settings",
+      "callStyles": [
+        "assets.get"
+      ],
+      "definedIn": "GetSapReportDataStep.java"
+    },
+    {
+      "name": "sharepoint_credentials",
+      "kind": "credentials",
+      "callStyles": [
+        "assets.getCredentials"
+      ],
+      "definedIn": "FinalizeAndPublishResultsStep.java"
+    },
+    {
+      "name": "sherpa_api_credentials",
+      "kind": "credentials",
+      "callStyles": [
+        "assets.getCredentials"
+      ],
+      "definedIn": "SendMultitaskNotificationStep.java"
+    }
+  ],
+  "warnings": []
+}

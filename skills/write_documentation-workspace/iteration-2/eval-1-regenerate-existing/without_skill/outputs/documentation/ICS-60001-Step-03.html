@@ -1,0 +1,67 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-03</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Подготовка списков типов документов (allowed/denied/unclassified) и постановка задания в очередь редактора справочника</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Класс Java</strong></td>
+            <td><code>by.a1.ics60001.steps.PrepareDocumentTypeListsStep</code></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Transaction: <code>accounting.document.positions</code></li>
+                    <li>Ресурс <code>document_type_classification</code> (DocumentTypeClassification: allowedDocTypes/deniedDocTypes)</li>
+                    <li>Ресурс <code>document_type_comments</code> (Map&lt;String,String&gt;)</li>
+                    <li>InitParameters: <code>documentTypePolicyEditorActionLink</code>, <code>emailRecipients</code></li>
+                    <li>Системное свойство <code>transaction.path</code> (для имени транзакции)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот загружает <code>document_type_classification</code> (allowed/denied) и <code>document_type_comments</code>;</li>
+                    <li>Бот проходит по <code>AccountingDocumentPosition</code> и собирает коды видов документов, не входящие ни в allowed, ни в denied → <code>unclassified</code>;</li>
+                    <li>Бот формирует три списка пар <code>{code: comment}</code> (allowed, denied, unclassified), сортирует каждый по коду;</li>
+                    <li>Бот сохраняет в транзакцию <code>doc.types.white.list</code>, <code>doc.types.black.list</code>, <code>doc.types.unclassified.list</code>;</li>
+                    <li>Бот ставит в очередь Orchestrator <code>«ICS-60001 Document type policy editor»</code> задачу <code>documentTypePolicyEditor</code> с тегом <code>pendingPolicyUpdate</code> и параметрами <code>initialData={allowedDocList, deniedDocList}</code>, <code>transactionName</code>, <code>processStage=2</code>;</li>
+                    <li>Бот отправляет <code>sendTaskAssigned</code> с контекстом <code>actionUrl=documentTypePolicyEditorActionLink</code>, <code>mtName=«Обновление справочника»</code>.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Пустой/отсутствующий <code>document_type_comments</code> — бот использует пустой map и логирует warning. Ошибка постановки задачи в очередь — бот выбрасывает исключение, процесс завершается с ошибкой.</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Transaction: <code>doc.types.white.list</code>, <code>doc.types.black.list</code>, <code>doc.types.unclassified.list</code></li>
+                    <li>Задача в очереди «ICS-60001 Document type policy editor» с тегом <code>pendingPolicyUpdate</code></li>
+                    <li>Email task_assigned «Обновление справочника»</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Системное свойство <code>transaction.path</code> обязательно — без него бот выбрасывает <code>IllegalStateException</code>.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="ICS-60001-EX-01.html">ICS-60001-EX-01</a></td>
+        </tr>
+    </tbody>
+</table>

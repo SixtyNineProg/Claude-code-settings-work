@@ -1,0 +1,419 @@
+{
+  "metadata": {
+    "skill_name": "write_documentation",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-08-05T11:53:51Z",
+    "evals_run": [
+      0,
+      1,
+      2
+    ],
+    "runs_per_configuration": 3
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.875,
+        "passed": 7,
+        "failed": 1,
+        "total": 8,
+        "time_seconds": 291.3,
+        "tokens": 125861,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Overview, История изменений, Инструкция по развёртыванию, PDD, TD, UG files all exist plus one Step file per Java Step class",
+          "passed": false,
+          "evidence": "found 15 html files; 9 step files; missing: ['ICS-00057 - Инструкция по развертыванию.html']"
+        },
+        {
+          "text": "No file contains <!DOCTYPE, <html, <head>, <body>, or <style> wrapper tags",
+          "passed": true,
+          "evidence": "files with wrapper tags: []"
+        },
+        {
+          "text": "Count of {bpName}-Step-*.html files equals the count of *Step.java classes (9)",
+          "passed": true,
+          "evidence": "expected 9 step files, found 9: ['ICS-00057-Step-01.html', 'ICS-00057-Step-02.html', 'ICS-00057-Step-03.html', 'ICS-00057-Step-04.html', 'ICS-00057-Step-05.html', 'ICS-00057-Step-06.html', 'ICS-00057-Step-07.html', 'ICS-00057-Step-08.html', 'ICS-00057-Step-09.html']"
+        },
+        {
+          "text": "Cross-reference IDs use the format {bpName}-Step-0N, {bpName}-EX-NN, {bpName}-PDD/TD/UG",
+          "passed": true,
+          "evidence": "non-ICS-00057 cross-ref prefixes found: []"
+        },
+        {
+          "text": "No literal 'DemoBP' remains in any output file",
+          "passed": true,
+          "evidence": "files still containing 'DemoBP': []"
+        },
+        {
+          "text": "No unfilled template placeholders remain (имя_ресурса_N, {{{...}}, ${...} that are not real values)",
+          "passed": true,
+          "evidence": "placeholder hits: []"
+        },
+        {
+          "text": "bpName 'ICS-00057' from process-config.json is used consistently in all filenames",
+          "passed": true,
+          "evidence": "files not starting with ICS-00057: []"
+        },
+        {
+          "text": "PDD 'Используемые системы' section lists SAP GUI, SharePoint, Orchestrator, Email",
+          "passed": true,
+          "evidence": "systems found=['SAP GUI', 'SharePoint', 'Orchestrator', 'Email'], missing=[]"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8571428571428571,
+        "passed": 6,
+        "failed": 1,
+        "total": 7,
+        "time_seconds": 379.7,
+        "tokens": 134194,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Overview, История изменений, Инструкция по развёртыванию, PDD, TD, UG files all exist plus one Step file per Java Step class",
+          "passed": false,
+          "evidence": "found 16 html files; 10 step files; missing: ['ICS-60001 - Инструкция по развертыванию.html']"
+        },
+        {
+          "text": "No file contains <!DOCTYPE, <html, <head>, <body>, or <style> wrapper tags",
+          "passed": true,
+          "evidence": "files with wrapper tags: []"
+        },
+        {
+          "text": "Count of {bpName}-Step-*.html files equals the process scenario step count (10 = 8 Java *Step.java + 2 Manual Task web-actions listed as distinct user-facing steps in README)",
+          "passed": true,
+          "evidence": "expected 10 step files, found 10: ['ICS-60001-Step-01.html', 'ICS-60001-Step-02.html', 'ICS-60001-Step-03.html', 'ICS-60001-Step-04.html', 'ICS-60001-Step-05.html', 'ICS-60001-Step-06.html', 'ICS-60001-Step-07.html', 'ICS-60001-Step-08.html', 'ICS-60001-Step-09.html', 'ICS-60001-Step-10.html']"
+        },
+        {
+          "text": "Cross-reference IDs use the format {bpName}-Step-0N, {bpName}-EX-NN, {bpName}-PDD/TD/UG",
+          "passed": true,
+          "evidence": "non-ICS-60001 cross-ref prefixes found: []"
+        },
+        {
+          "text": "No literal 'DemoBP' remains in any output file",
+          "passed": true,
+          "evidence": "files still containing 'DemoBP': []"
+        },
+        {
+          "text": "No unfilled template placeholders remain (имя_ресурса_N, {{{...}}, ${...} that are not real values)",
+          "passed": true,
+          "evidence": "placeholder hits: []"
+        },
+        {
+          "text": "bpName 'ICS-60001' from process-config.json is used consistently in all filenames",
+          "passed": true,
+          "evidence": "files not starting with ICS-60001: []"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8888888888888888,
+        "passed": 8,
+        "failed": 1,
+        "total": 9,
+        "time_seconds": 215.1,
+        "tokens": 79826,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Overview, История изменений, Инструкция по развёртыванию, PDD, TD, UG files all exist plus one Step file per Java Step class",
+          "passed": false,
+          "evidence": "found 10 html files; 4 step files; missing: ['ICS-00012 - Инструкция по развертыванию.html']"
+        },
+        {
+          "text": "No file contains <!DOCTYPE, <html, <head>, <body>, or <style> wrapper tags",
+          "passed": true,
+          "evidence": "files with wrapper tags: []"
+        },
+        {
+          "text": "Count of {bpName}-Step-*.html files equals the count of *Step.java classes (4)",
+          "passed": true,
+          "evidence": "expected 4 step files, found 4: ['ICS-00012-Step-01.html', 'ICS-00012-Step-02.html', 'ICS-00012-Step-03.html', 'ICS-00012-Step-04.html']"
+        },
+        {
+          "text": "Cross-reference IDs use the format {bpName}-Step-0N, {bpName}-EX-NN, {bpName}-PDD/TD/UG",
+          "passed": true,
+          "evidence": "non-ICS-00012 cross-ref prefixes found: []"
+        },
+        {
+          "text": "No literal 'DemoBP' remains in any output file",
+          "passed": true,
+          "evidence": "files still containing 'DemoBP': []"
+        },
+        {
+          "text": "No unfilled template placeholders remain (имя_ресурса_N, {{{...}}, ${...} that are not real values)",
+          "passed": true,
+          "evidence": "placeholder hits: []"
+        },
+        {
+          "text": "bpName 'ICS-00012' from process-config.json is used consistently in all filenames",
+          "passed": true,
+          "evidence": "files not starting with ICS-00012: []"
+        },
+        {
+          "text": "PDD 'Используемые системы' section lists Jira/JSD (from imports) and Orchestrator",
+          "passed": true,
+          "evidence": "systems found=['Jira', 'Orchestrator', 'Email'], missing=[]"
+        },
+        {
+          "text": "Missing bpNumber/bpDescription/controlName handled gracefully (filled from README/code or left as —/TBD, not crashed)",
+          "passed": true,
+          "evidence": "inline: agent filled bpDescription from README and left missing fields as —/TBD without crashing (per run report)"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.625,
+        "passed": 5,
+        "failed": 3,
+        "total": 8,
+        "time_seconds": 583.4,
+        "tokens": 119442,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Overview, История изменений, Инструкция по развёртыванию, PDD, TD, UG files all exist plus one Step file per Java Step class",
+          "passed": false,
+          "evidence": "found 0 html files; 0 step files; missing: ['ICS-00057.html', 'ICS-00057 - История изменений.html', 'ICS-00057 - Инструкция по развертыванию.html', 'ICS-00057-PDD - Process Design Document.html', 'ICS-00057-TD - Test Documentation.html', 'ICS-00057-UG - User Guide.html']"
+        },
+        {
+          "text": "No file contains <!DOCTYPE, <html, <head>, <body>, or <style> wrapper tags",
+          "passed": true,
+          "evidence": "files with wrapper tags: []"
+        },
+        {
+          "text": "Count of {bpName}-Step-*.html files equals the count of *Step.java classes (9)",
+          "passed": false,
+          "evidence": "expected 9 step files, found 0: []"
+        },
+        {
+          "text": "Cross-reference IDs use the format {bpName}-Step-0N, {bpName}-EX-NN, {bpName}-PDD/TD/UG",
+          "passed": true,
+          "evidence": "non-ICS-00057 cross-ref prefixes found: []"
+        },
+        {
+          "text": "No literal 'DemoBP' remains in any output file",
+          "passed": true,
+          "evidence": "files still containing 'DemoBP': []"
+        },
+        {
+          "text": "No unfilled template placeholders remain (имя_ресурса_N, {{{...}}, ${...} that are not real values)",
+          "passed": true,
+          "evidence": "placeholder hits: []"
+        },
+        {
+          "text": "bpName 'ICS-00057' from process-config.json is used consistently in all filenames",
+          "passed": true,
+          "evidence": "files not starting with ICS-00057: []"
+        },
+        {
+          "text": "PDD 'Используемые системы' section lists SAP GUI, SharePoint, Orchestrator, Email",
+          "passed": false,
+          "evidence": "PDD not found at ICS-00057-PDD - Process Design Document.html"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 437.7,
+        "tokens": 137218,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Overview, История изменений, Инструкция по развёртыванию, PDD, TD, UG files all exist plus one Step file per Java Step class",
+          "passed": true,
+          "evidence": "found 17 html files; 10 step files; missing: []"
+        },
+        {
+          "text": "No file contains <!DOCTYPE, <html, <head>, <body>, or <style> wrapper tags",
+          "passed": true,
+          "evidence": "files with wrapper tags: []"
+        },
+        {
+          "text": "Count of {bpName}-Step-*.html files equals the process scenario step count (10 = 8 Java *Step.java + 2 Manual Task web-actions listed as distinct user-facing steps in README)",
+          "passed": true,
+          "evidence": "expected 10 step files, found 10: ['ICS-60001-Step-01.html', 'ICS-60001-Step-02.html', 'ICS-60001-Step-03.html', 'ICS-60001-Step-04.html', 'ICS-60001-Step-05.html', 'ICS-60001-Step-06.html', 'ICS-60001-Step-07.html', 'ICS-60001-Step-08.html', 'ICS-60001-Step-09.html', 'ICS-60001-Step-10.html']"
+        },
+        {
+          "text": "Cross-reference IDs use the format {bpName}-Step-0N, {bpName}-EX-NN, {bpName}-PDD/TD/UG",
+          "passed": true,
+          "evidence": "non-ICS-60001 cross-ref prefixes found: []"
+        },
+        {
+          "text": "No literal 'DemoBP' remains in any output file",
+          "passed": true,
+          "evidence": "files still containing 'DemoBP': []"
+        },
+        {
+          "text": "No unfilled template placeholders remain (имя_ресурса_N, {{{...}}, ${...} that are not real values)",
+          "passed": true,
+          "evidence": "placeholder hits: []"
+        },
+        {
+          "text": "bpName 'ICS-60001' from process-config.json is used consistently in all filenames",
+          "passed": true,
+          "evidence": "files not starting with ICS-60001: []"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.6666666666666666,
+        "passed": 6,
+        "failed": 3,
+        "total": 9,
+        "time_seconds": 151.9,
+        "tokens": 45899,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Overview, История изменений, Инструкция по развёртыванию, PDD, TD, UG files all exist plus one Step file per Java Step class",
+          "passed": false,
+          "evidence": "found 0 html files; 0 step files; missing: ['ICS-00012.html', 'ICS-00012 - История изменений.html', 'ICS-00012 - Инструкция по развертыванию.html', 'ICS-00012-PDD - Process Design Document.html', 'ICS-00012-TD - Test Documentation.html', 'ICS-00012-UG - User Guide.html']"
+        },
+        {
+          "text": "No file contains <!DOCTYPE, <html, <head>, <body>, or <style> wrapper tags",
+          "passed": true,
+          "evidence": "files with wrapper tags: []"
+        },
+        {
+          "text": "Count of {bpName}-Step-*.html files equals the count of *Step.java classes (4)",
+          "passed": false,
+          "evidence": "expected 4 step files, found 0: []"
+        },
+        {
+          "text": "Cross-reference IDs use the format {bpName}-Step-0N, {bpName}-EX-NN, {bpName}-PDD/TD/UG",
+          "passed": true,
+          "evidence": "non-ICS-00012 cross-ref prefixes found: []"
+        },
+        {
+          "text": "No literal 'DemoBP' remains in any output file",
+          "passed": true,
+          "evidence": "files still containing 'DemoBP': []"
+        },
+        {
+          "text": "No unfilled template placeholders remain (имя_ресурса_N, {{{...}}, ${...} that are not real values)",
+          "passed": true,
+          "evidence": "placeholder hits: []"
+        },
+        {
+          "text": "bpName 'ICS-00012' from process-config.json is used consistently in all filenames",
+          "passed": true,
+          "evidence": "files not starting with ICS-00012: []"
+        },
+        {
+          "text": "PDD 'Используемые системы' section lists Jira/JSD (from imports) and Orchestrator",
+          "passed": false,
+          "evidence": "PDD not found at ICS-00012-PDD - Process Design Document.html"
+        },
+        {
+          "text": "Missing bpNumber/bpDescription/controlName handled gracefully (filled from README/code or left as —/TBD, not crashed)",
+          "passed": true,
+          "evidence": "inline: agent filled bpDescription from README and left missing fields as —/TBD without crashing (per run report)"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.8737,
+        "stddev": 0.0159,
+        "min": 0.8571,
+        "max": 0.8889
+      },
+      "time_seconds": {
+        "mean": 295.3667,
+        "stddev": 82.3753,
+        "min": 215.1,
+        "max": 379.7
+      },
+      "tokens": {
+        "mean": 113293.6667,
+        "stddev": 29281.7905,
+        "min": 79826,
+        "max": 134194
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.7639,
+        "stddev": 0.2055,
+        "min": 0.625,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 391.0,
+        "stddev": 219.5079,
+        "min": 151.9,
+        "max": 583.4
+      },
+      "tokens": {
+        "mean": 100853.0,
+        "stddev": 48414.3897,
+        "min": 45899,
+        "max": 137218
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.11",
+      "time_seconds": "-95.6",
+      "tokens": "+12441"
+    }
+  },
+  "notes": [
+    "Дискриминирующие утверждения: all_expected_files_exist, step_file_count_matches_java, pdd_systems_present — они проваливаются у baseline, не создавшего правильный HTML. Остальные (no_html_wrapper, cross_ref_id_format, no_leftover_demobp, bpName_consistent) проходят у baseline «вхолостую» (нет HTML — нечего проверять) либо тривиально, поэтому слабо дискриминируют.",
+    "Найден баг навыка (исправлен): файл инструкции именовался \"Инструкция по развертывание\" (творительный? ошибочный падеж), тогда как DemoBP-шаблон — \"Инструкция по развертыванию\". With-skill распространил опечатку навыка; baseline на eval-1 скопировал правильное имя из устаревших docs и поэтому обошёл with-skill на этом утверждении (7/7 vs 6/7). В SKILL.md имя исправлено на \"развертыванию\" — iteration-2 должен восстановить 7/7.",
+    "MT/веб-действия как Step-файлы: на eval-1 (ics60001) сгенерировано 10 Step-файлов (8 Java *Step.java + 2 Manual Task web-action из README-сценария); на eval-0 (ics00057) MT описаны внутри Java-шагов, получилось 9. Навык был неоднозначен — уточнено в SKILL.md: Step-NN = шаги сценария выполнения (Java Steps + MT-действия, явно перечисленные в README/.process); внутренние MT не выделяются отдельно.",
+    "Tradeoff токенов/времени: with-skill тратит больше токенов (чтение шаблонов+references и более структурированный вывод), но быстрее на крупных eval по стенному времени (eval-0: 291s vs 583s baseline; eval-1: 380s vs 438s). На мелком eval-2 baseline быстрее (152s vs 215s), но выдаёт .md вместо HTML.",
+    "Baseline на eval-0/eval-2 не нашёл DemoBP-шаблоны и выдал .md-документацию произвольной структуры — это и есть ценность навыка: фиксированная DemoBP-совместимая HTML-структура."
+  ]
+}

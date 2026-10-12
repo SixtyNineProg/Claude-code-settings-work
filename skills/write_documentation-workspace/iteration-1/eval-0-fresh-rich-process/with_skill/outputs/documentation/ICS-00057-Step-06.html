@@ -1,0 +1,62 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-00057-Step-06</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td>SaveChangedStep — Обработка результатов MT №2</td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>InitParameters (emailRecipients)</li>
+                    <li>workflow_status — из транзакции</li>
+                    <li>checklistAccounts, mtComments — из транзакции</li>
+                    <li>задача MT №2 из очереди (тег reviewedChanged, статус IN_PROGRESS)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот ищет в очереди MT №2 задачу с именем processChanged, тегом reviewedChanged и статусом IN_PROGRESS;</li>
+                    <li>Если workflow_status="changed_accounts_exist" — Бот разбирает initialData задачи в ProcessChangedResult и извлекает processedAccounts;</li>
+                    <li>Бот обновляет checklistAccounts обработанными счетами (AccountChecklistHelper.updateWith);</li>
+                    <li>Бот объединяет комментарии processedAccounts с mtComments;</li>
+                    <li>Бот сохраняет обновлённые checklistAccounts и mtComments в транзакцию;</li>
+                    <li>Бот отправляет письмо task_processed;</li>
+                    <li>Бот переводит задачу в SUCCESS и заменяет все теги на processedChanged.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>2. Если workflow_status="no_changed_accounts" (auto-trigger путь) или неизвестный — Бот пропускает разбор processedAccounts, но ОБЯЗАТЕЛЬНО финализирует задачу (SUCCESS + processedChanged), чтобы снять её с триггера и предотвратить повторный запуск Stage3.</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>обновлённые checklistAccounts, mtComments — в ProcessTransaction</li>
+                    <li>финализированная задача MT №2 (SUCCESS, тег processedChanged)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Шаг запускается Orchestrator-триггером по тегу reviewedChanged в очереди «ICS-00057 Обновление справочника»</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-00057-EX-05</a>, <a href="">ICS-00057-EX-06</a>, <a href="">ICS-00057-EX-07</a></td>
+        </tr>
+    </tbody>
+</table>

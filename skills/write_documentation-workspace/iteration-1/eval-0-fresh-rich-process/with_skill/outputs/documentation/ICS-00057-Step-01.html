@@ -1,0 +1,57 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-00057-Step-01</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>InfrastructureStep — Подготовка инфраструктуры</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>InitParameters (emailRecipients, periodStart, periodEnd)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот читает InitParameters из транзакции;</li>
+                    <li>Бот отправляет уведомление <code>process_started</code> получателям из emailRecipients;</li>
+                    <li>Бот парсит periodStart/periodEnd в формате dd.MM.yyyy;</li>
+                    <li>Если оба парсятся — Бот валидирует periodStart &lt; periodEnd &lt; today (Europe/Minsk) и формирует ReportingPeriod;</li>
+                    <li>Если хотя бы один не парсится — Бот формирует отчётный период по умолчанию (прошлый квартал от даты запуска);</li>
+                    <li>Бот сохраняет ReportingPeriod (runDate, periodStart, periodEnd) в транзакцию.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>4. Если periodStart/periodEnd парсятся, но не проходят валидацию (periodStart &gt;= periodEnd или periodEnd &gt;= today), Бот выбрасывает BusinessException (ICS-00057-EX-01).</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>ReportingPeriod (runDate, periodStart, periodEnd) — в ProcessTransaction</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Часовой пояс Europe/Minsk</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-00057-EX-01</a>, <a href="">ICS-00057-EX-07</a></td>
+        </tr>
+    </tbody>
+</table>

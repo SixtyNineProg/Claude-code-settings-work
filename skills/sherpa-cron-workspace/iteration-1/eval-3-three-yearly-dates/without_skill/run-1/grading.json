@@ -1,0 +1,41 @@
+{
+  "expectations": [
+    {
+      "text": "Выражение ровно 0 9 30 9,11,12 *",
+      "passed": true,
+      "evidence": "Основное 5-полевое выражение `0 9 30 9,11,12 *` (рядом ошибочная 6-полевая форма `0 0 9 30 9,11,12 ?`)."
+    },
+    {
+      "text": "Назван часовой пояс Минск (UTC+3)",
+      "passed": false,
+      "evidence": "«Время запуска — по локальному времени машины/сервера»; Минск и UTC+3 не названы."
+    },
+    {
+      "text": "Приведены ближайшие даты запуска: 30.11.2026 и 30.12.2026",
+      "passed": false,
+      "evidence": "Даты не вычислены: «должны отобразиться 30.09, 30.11, 30.12 в 09:00» — без года и без проверки, какие из них в будущем."
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 2,
+    "total": 3,
+    "pass_rate": 0.3333
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Write": 2
+    },
+    "total_tool_calls": 2,
+    "total_steps": 2,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-3-three-yearly-dates\\without_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-3-three-yearly-dates\\without_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 39.5
+  },
+  "eval_feedback": ""
+}

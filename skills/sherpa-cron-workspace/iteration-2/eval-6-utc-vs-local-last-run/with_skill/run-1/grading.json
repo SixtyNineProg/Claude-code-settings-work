@@ -1,0 +1,43 @@
+{
+  "expectations": [
+    {
+      "text": "Ответ: да, расписание согласовано",
+      "passed": true,
+      "evidence": "«`cron_tab = 0 9 * * *` и `last_run = 2026-10-01T06:00:00Z` **согласуются друг с другом**. Это не ошибка в расписании и не сбой запуска» + «Вывод: **всё в порядке, задача отработала по своему расписанию.**»"
+    },
+    {
+      "text": "Названо правило: cron_tab в местном времени Sherpa, а last_run отдаётся в UTC",
+      "passed": true,
+      "evidence": "«`cron_tab` считается в **местном времени Sherpa — Минск, UTC+3**, а API `/schedules` отдаёт `last_run` (как и `created`, `enabled_at`) **в UTC**»."
+    },
+    {
+      "text": "06:00 UTC явно сопоставлено с 09:00 по Минску (UTC+3)",
+      "passed": true,
+      "evidence": "Таблица сверки «| `last_run` + 3 ч = Минск | **`09:00`** |» + «`06:00Z` + 3 часа = `09:00` по Минску — то есть ровно то время, которое задаёт выражение»."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 1,
+      "Bash": 4,
+      "Write": 2
+    },
+    "total_tool_calls": 7,
+    "total_steps": 3,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-6-utc-vs-local-last-run\\with_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-6-utc-vs-local-last-run\\with_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 89.5
+  },
+  "eval_feedback": "В этой итерации eval начал различать (со скиллом 3/3, без — 2/3), в отличие от iteration-1, где baseline тоже прошёл все три. Разница в A2: baseline излагает правило про UTC+3 как гипотезу и просит пользователя подтвердить таймзону планировщика, а не утверждает его как правило Sherpa. Утверждение на границе — стоит либо ужесточить формулировку («правило названо как факт о платформе, а не как предположение»), либо признать eval не различающим."
+}

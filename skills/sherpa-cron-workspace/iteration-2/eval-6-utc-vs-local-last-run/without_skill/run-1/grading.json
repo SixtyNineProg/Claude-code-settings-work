@@ -1,0 +1,41 @@
+{
+  "expectations": [
+    {
+      "text": "Ответ: да, расписание согласовано",
+      "passed": true,
+      "evidence": "«Скорее всего **всё в порядке** — расхождения нет, если планировщик работает в локальном времени **UTC+3** (Минск)»."
+    },
+    {
+      "text": "Названо правило: cron_tab в местном времени Sherpa, а last_run отдаётся в UTC",
+      "passed": false,
+      "evidence": "Правило не утверждается, а выносится в вопрос: «Один вопрос, от которого зависит ответ: **в какой таймзоне работает планировщик (TZ сервера / JVM / процесса)?**». Выражение «ежедневно в 09:00 по локальному времени того окружения, где работает планировщик» правила Sherpa не называет и оставляет UTC жизнеспособным вариантом."
+    },
+    {
+      "text": "06:00 UTC явно сопоставлено с 09:00 по Минску (UTC+3)",
+      "passed": true,
+      "evidence": "«Пересчёт: `06:00 UTC` = `09:00 UTC+3` (Минск, MSK). Это ровно то время, которое задано в cron.»"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 1,
+    "total": 3,
+    "pass_rate": 0.6667
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Write": 2
+    },
+    "total_tool_calls": 2,
+    "total_steps": 2,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-6-utc-vs-local-last-run\\without_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-6-utc-vs-local-last-run\\without_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 42.1
+  },
+  "eval_feedback": "В этой итерации eval начал различать (со скиллом 3/3, без — 2/3), в отличие от iteration-1, где baseline тоже прошёл все три. Разница в A2: baseline излагает правило про UTC+3 как гипотезу и просит пользователя подтвердить таймзону планировщика, а не утверждает его как правило Sherpa. Утверждение на границе — стоит либо ужесточить формулировку («правило названо как факт о платформе, а не как предположение»), либо признать eval не различающим."
+}

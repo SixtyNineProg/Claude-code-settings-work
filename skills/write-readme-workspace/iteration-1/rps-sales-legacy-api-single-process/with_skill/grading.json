@@ -1,0 +1,51 @@
+{
+  "eval_name": "rps-sales-legacy-api-single-process",
+  "run": "with_skill",
+  "expectations": [
+    {
+      "text": "Первая строка начинается с '# RPS-Sales'",
+      "passed": true,
+      "evidence": "first line: '# RPS-Sales — Сверка продаж 1C и SAP с эскалацией расхождений в Jira'"
+    },
+    {
+      "text": "Список шагов содержит 4 пунктов в ожидаемом порядке",
+      "passed": true,
+      "evidence": "got ['getOnecReportData', 'prepareInitialParameters', 'dataProcessing', 'getSapReportData']"
+    },
+    {
+      "text": "Каждая ссылка на шаг ведёт на существующий .java файл",
+      "passed": true,
+      "evidence": "4 links; broken: []"
+    },
+    {
+      "text": "Имена шагов совпадают с resolved stepName из отчёта",
+      "passed": true,
+      "evidence": "report: ['getOnecReportData', 'prepareInitialParameters', 'dataProcessing', 'getSapReportData']; readme: ['getOnecReportData', 'prepareInitialParameters', 'dataProcessing', 'getSapReportData']"
+    },
+    {
+      "text": "Секция параметров инициализации ссылается на rps_sales_init_params.json",
+      "passed": true,
+      "evidence": "init section present and references expected file"
+    },
+    {
+      "text": "Секция email-шаблонов присутствует и ссылается на реальный файл",
+      "passed": true,
+      "evidence": "emailTemplatesFile in report: src/main/resources/rps_sales_email_templates.json"
+    },
+    {
+      "text": "Таблица сервисных переменных содержит: 1c_ct_credentials, jira_jsd_credentials, sap_credentials",
+      "passed": true,
+      "evidence": "missing: []; present: ['1c_ct_credentials', 'jira_jsd_credentials', 'sap_credentials', 'sap_settings']"
+    },
+    {
+      "text": "В таблице нет неразрешённых идентификаторов-констант",
+      "passed": true,
+      "evidence": "unresolved identifiers: []"
+    },
+    {
+      "text": "Отключённый шаг _GetSapReportData не включён в нумерованный список",
+      "passed": true,
+      "evidence": "steps: ['getOnecReportData', 'prepareInitialParameters', 'dataProcessing', 'getSapReportData']"
+    }
+  ]
+}

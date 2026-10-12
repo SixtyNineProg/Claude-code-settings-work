@@ -1,0 +1,57 @@
+<table>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>
+                <p>Проверить, что все элементы процесса соответствуют <a
+                        href="https://wiki.a1.by/pages/viewpage.action?pageId=453837503">принятому стилю</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>
+                <p>Подготовить необходимые файлы и выполнить перенос процесса на прод согласно <a
+                        href="https://wiki.a1.by/pages/viewpage.action?pageId=474056373">общей инструкции</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>
+                <p>Проверяем/Создаем Ресурсы типа Credential на целевой среде (без них процесс не сможет авторизоваться
+                    в системах):</p>
+                <ul>
+                    <li>svc_wf_rm_credentials</li>
+                    <li>jira_jsd_credentials</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>
+                <p>Проверяем/Создаем Ресурсы типа Text на целевой среде:</p>
+                <ul>
+                    <li>ics00012_init_params</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td><strong>Опционально</strong> Проверяем/Создаем папку в Хранилище и загружаем туда нужные файлы</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td><strong>Опционально</strong> Проверяем/Создаем Очередь задач</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td><strong>Опционально</strong> Проверяем/Создаем Триггеры</td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Дополнительные действия (дополнения к указанному в таблице/прочая информация, которую удобнее расположить так):</p>
+<ol>
+    <li>Загрузить <code>ics00012_init_params.json</code> в ресурс <code>ics00012_init_params</code> для нужной среды (prod/test);</li>
+    <li>Проверить доступность удалённого сервера <code>srv-roamtrns-03</code> по WinRM с использованием <code>svc_wf_rm_credentials</code>;</li>
+    <li>Проверить доступность Jira (<code>jira.a1.by</code> на проде / <code>jira-test.a1.by</code> на тесте) с использованием <code>jira_jsd_credentials</code>.</li>
+</ol>

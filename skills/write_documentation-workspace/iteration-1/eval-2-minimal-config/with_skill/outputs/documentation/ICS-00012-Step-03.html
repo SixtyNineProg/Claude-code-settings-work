@@ -1,0 +1,63 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-00012-Step-03</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Jira Ticket Creation</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>init_params: jiraUrl, issueProject, issueType, issueComponent, issueAssignee,
+                        issueSummary, issueDescription, fileDirectory, countLimit</li>
+                    <li>credential: jira_jsd_credentials (login/password для Jira API)</li>
+                    <li>из транзакции: scriptResult (count), dateTime</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот получает credentials jira_jsd_credentials из Orchestrator;</li>
+                    <li>Бот формирует описание задачи, подставляя %{count}, %{directory}, %{count_limit}
+                        из init_params и scriptResult;</li>
+                    <li>Бот формирует заголовок задачи (issueSummary с подставленной датой/временем);</li>
+                    <li>Бот создаёт задачу в Jira (проект, тип, компонент, описание, customfield_18311);</li>
+                    <li>Бот назначает исполнителя issueAssignee на созданную задачу;</li>
+                    <li>Бот сохраняет ticketId в транзакцию.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Если полученный issueId пуст или null, Бот выбрасывает IllegalStateException и процесс
+                останавливается.</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>ticketId (String) — ключ созданной задачи Jira (например SOX-12345)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Учётная запись jira_jsd_credentials должна иметь права на создание задач в проекте SOX
+                и назначение исполнителя SC_SG_Mediation_Service.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-00012-EX-03</a></td>
+        </tr>
+    </tbody>
+</table>

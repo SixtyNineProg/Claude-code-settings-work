@@ -1,0 +1,15 @@
+{
+  "eval_id": 1,
+  "eval_name": "ics60001-multistage-derived-names",
+  "prompt": "Сгенерируй README для процесса ics60001. Каталог: C:\\Users\\dzmitry_klim\\IdeaProjects\\sherpa\\rpa-suite\\ics60001",
+  "assertions": [
+    "README.md существует в корне ics60001",
+    "Первая строка начинается с '# ICS-60001'",
+    "Список шагов содержит ровно 8 пунктов в порядке processSetup, getSapReportData, prepareDocumentTypeLists, persistDocumentTypeLists, samplePreparation, ownersEnrichment, sendMultitaskNotification, finalizeAndPublishResults",
+    "Каждая ссылка на шаг ведёт на существующий файл src/main/java/by/a1/ics60001/steps/*Step.java",
+    "Имя шага в пункте совпадает со значением StepName из .process (lowercase first char), а не с InternalName блока",
+    "Секция параметров инициализации ссылается на реальный путь src/main/resources/initparams/test/ics60001_init_params.json",
+    "В таблице сервисных переменных присутствуют sap_credentials, proxy_credentials, sharepoint_credentials, sherpa_api_credentials, mim_credentials, sap_settings, currency_rates_config",
+    "Секция email-шаблонов присутствует и ссылается на src/main/resources/ics60001_email_templates.json"
+  ]
+}

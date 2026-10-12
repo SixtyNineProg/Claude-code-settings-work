@@ -1,0 +1,63 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-09</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Обработка документа пользователем (web-интерфейс <code>document-review</code>)</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Класс Java / артефакт</strong></td>
+            <td>Web-действие <code>document-review.js</code> (ресурс <code>src/main/resources/actions/document-review.js</code>); визуализация через Shadow Core Engine</td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Исполнитель (владелец проводки)</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Задача из очереди «ICS-60001 Document review» с тегом <code>pendingReview</code></li>
+                    <li>Параметр задачи <code>initialData = {sampleDoc: AccountingDocumentGroup, bearerToken}</code></li>
+                    <li>Ссылка на действие <code>documentReviewActionLink</code></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Исполнитель открывает web-интерфейс «Обработка документа»;</li>
+                    <li>Таблица «Информация о документе» отображает атрибуты группы (номер документа, БЕ, валюта, дата проводки, имя пользователя, операция, признаки автоматически созданной позиции и красного сторно, вид документа, текст заголовка, код транзакции);</li>
+                    <li>Таблица «Позиции документа» отображает позиции (Позиция, Номер счета, Сумма ВВ, Текст);</li>
+                    <li>Исполнитель выбирает и загружает подтверждающий файл (обязательно);</li>
+                    <li>Исполнитель выбирает статус («OK» или «NOT OK») и вводит комментарий;</li>
+                    <li>При сохранении форма отправляет <code>userInput = {uploadedFileGuid, uploadedFileName, status, comment}</code> в задачу, завершая её.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Ошибка загрузки файла или сохранения результата — Исполнитель получает уведомление, повторяет попытку или обращается в support.</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Обновлённая задача в очереди «ICS-60001 Document review» с <code>userInput</code> (status, comment, uploadedFileGuid, uploadedFileName)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Возможность повторного открытия задания до завершения процесса; файл-доказательство должен быть сохранён в Storage Orchestrator (guid используется на шаге 10).</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="ICS-60001-EX-01.html">ICS-60001-EX-01</a></td>
+        </tr>
+    </tbody>
+</table>

@@ -1,0 +1,14 @@
+{
+  "eval_id": 2,
+  "eval_name": "ics00057-accounts-annotation-names-constants",
+  "prompt": "обнови README в rpa-suite/ics00057-accounts. Процесс лежит в C:\\Users\\dzmitry_klim\\IdeaProjects\\sherpa\\rpa-suite\\ics00057-accounts",
+  "assertions": [
+    "README.md существует в корне ics00057-accounts",
+    "Первая строка начинается с '# ICS-00057'",
+    "Список шагов содержит ровно 9 пунктов с именами из @StepName-аннотаций (InfrastructureStep, SapStep, PrepareNewStep, SaveNewStep, PrepareChangedStep, SaveChangedStep, PrepareAllStep, SaveAllStep, UploadEvidenceStep) в порядке Stage1..Stage4",
+    "Каждая ссылка на шаг ведёт на существующий файл src/main/java/by/a1/ics00057_accounts/steps/*Step.java",
+    "Секция параметров инициализации перечисляет оба файла: prod/ics00057_accounts_init_params.json и test/ics00057_accounts_init_params.json",
+    "В таблице сервисных переменных присутствуют sap_credentials, sap_settings, sharepoint_credentials, sherpa_api_credentials (имена разрешены из констант, не идентификаторы)",
+    "В таблице нет неразрешённых идентификаторов вида SAP_CREDENTIALS_ASSET"
+  ]
+}

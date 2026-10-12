@@ -1,0 +1,41 @@
+{
+  "expectations": [
+    {
+      "text": "Расшифровка содержит 25 декабря",
+      "passed": true,
+      "evidence": "«Задача (робот) запускается **25 декабря каждого года, четыре раза за сутки»."
+    },
+    {
+      "text": "Перечислены все четыре времени: 11:29, 13:29, 15:29, 17:29",
+      "passed": true,
+      "evidence": "«в 11:29, 13:29, 15:29 и 17:29» + «Интервалы между запусками — ровно 2 часа»."
+    },
+    {
+      "text": "Выражение не истолковано в UTC — подразумевается местное время Sherpa",
+      "passed": false,
+      "evidence": "Правило Sherpa не названо: «Время трактуется в часовом поясе планировщика (как правило — время сервера/машины, где выполняется агент), отдельного указания таймзоны в выражении нет». Ни Минска, ни UTC+3, ни разделения cron_tab/last_run."
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 1,
+    "total": 3,
+    "pass_rate": 0.6667
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Write": 2
+    },
+    "total_tool_calls": 2,
+    "total_steps": 1,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-4-decode-multi-hour-expression\\without_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-4-decode-multi-hour-expression\\without_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 58.5
+  },
+  "eval_feedback": "A1 и A2 проходят в обеих конфигурациях: разбор списка часов — общее знание cron. Различает A3 (часовой пояс + разделение cron_tab/last_run)."
+}

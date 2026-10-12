@@ -1,0 +1,18 @@
+{
+  "eval_id": 0,
+  "eval_name": "fresh-rich-process",
+  "prompt": "Сгенерируй полную документацию для RPA-процесса rpa-suite/ics00057-accounts. У процесса пока нет папки documentation — создай её с нуля по шаблонам DemoBP. Учти, что процесс использует SAP GUI, SharePoint, Email и Orchestrator, и содержит 9 шагов.",
+  "bpName": "ICS-00057",
+  "expected_step_count": 9,
+  "expected_systems": ["SAP GUI", "SharePoint", "Orchestrator", "Email"],
+  "assertions": [
+    {"id": "all_expected_files_exist", "text": "Overview, История изменений, Инструкция по развёртыванию, PDD, TD, UG files all exist plus one Step file per Java Step class", "auto": true},
+    {"id": "no_html_wrapper", "text": "No file contains <!DOCTYPE, <html, <head>, <body>, or <style> wrapper tags", "auto": true},
+    {"id": "step_file_count_matches_java", "text": "Count of {bpName}-Step-*.html files equals the count of *Step.java classes (9)", "auto": true},
+    {"id": "cross_ref_id_format", "text": "Cross-reference IDs use the format {bpName}-Step-0N, {bpName}-EX-NN, {bpName}-PDD/TD/UG", "auto": true},
+    {"id": "no_leftover_demobp", "text": "No literal 'DemoBP' remains in any output file", "auto": true},
+    {"id": "no_leftover_placeholder", "text": "No unfilled template placeholders remain (имя_ресурса_N, {{{...}}, ${...} that are not real values)", "auto": true},
+    {"id": "bpName_consistent", "text": "bpName 'ICS-00057' from process-config.json is used consistently in all filenames", "auto": true},
+    {"id": "pdd_systems_present", "text": "PDD 'Используемые системы' section lists SAP GUI, SharePoint, Orchestrator, Email", "auto": true}
+  ]
+}

@@ -1,0 +1,242 @@
+<h2>Общая информация</h2>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>Название бизнес-процесса</strong></td>
+      <td>ICS-60001 / Контроль корректности ручных бухгалтерских проводок</td>
+    </tr>
+    <tr>
+      <td><strong>Управление</strong></td>
+      <td>Группа разработки и поддержки роботизированных решений</td>
+    </tr>
+    <tr>
+      <td><strong>Владелец бизнес-процесса</strong></td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>Пользователи бизнес-процесса</strong></td>
+      <td>Бухгалтерия, внутренние контролёры, владельцы проводок</td>
+    </tr>
+    <tr>
+      <td><strong>Связанные документы</strong></td>
+      <td>
+        <ul>
+          <li><a href="ICS-60001-PDD - Process Design Document.html">ICS-60001-PDD: Process Design Document / Документ проектирования процесса</a></li>
+          <li><a href="ICS-60001-TD - Test Documentation.html">ICS-60001-TD: Test Documentation / Тестовая документация</a></li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>Статус документа</td>
+      <td>равно статусу и верификации PDD, если прямо не указано иное</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Краткое описание процесса</h2>
+<p>Процесс автоматически получает данные из SAP, формирует случайную выборку ручных проводок, обогащает их владельцами из MIM, рассылает задания на проверку и формирует итоговый отчёт с техническим архивом в SharePoint. В работе процесса задействованы два web-действия Orchestrator: <code>document-type-policy-editor</code> (редактор справочника типов документов) и <code>document-review</code> (проверка документа).</p>
+
+<h3>Упрощенная BPMN схема бизнес-процесса</h3>
+<p><img alt="BPMN схема ICS-60001" src="" /></p>
+
+<h2>Описание шагов процесса с точки зрения действий Исполнителя</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Шаг (со ссылкой на PDD)</th>
+      <th>Наименование</th>
+      <th>Действия Исполнителя</th>
+      <th>Действия Bot</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="ICS-60001-Step-01.html">ICS-60001-Step-01</a></td>
+      <td>Инициализация параметров, расчёт порога существенности, создание структуры папок в SharePoint</td>
+      <td>
+        <ul>
+          <li>Получает уведомление <code>process_started</code> о старте процесса</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Загружает InitParameters, вычисляет reportEndDate, получает курс валюты и считает materialityThreshold</li>
+          <li>Создаёт унифицированную структуру папок SharePoint</li>
+          <li>Отправляет уведомление о старте</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="ICS-60001-Step-02.html">ICS-60001-Step-02</a></td>
+      <td>Получение данных отчёта из SAP и парсинг позиций</td>
+      <td>Нет</td>
+      <td>
+        <ul>
+          <li>При реальном режиме — подключается к SAP GUI, заполняет параметры транзакции, делает скриншоты, экспортирует Excel</li>
+          <li>При mock-режиме — скачивает тестовый Excel из SharePoint</li>
+          <li>Загружает файлы в SharePoint, парсит позиции через Poiji</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="ICS-60001-Step-03.html">ICS-60001-Step-03</a></td>
+      <td>Подготовка списков типов документов</td>
+      <td>Нет</td>
+      <td>
+        <ul>
+          <li>Загружает классификатор и комментарии, формирует allowed/denied/unclassified списки</li>
+          <li>Ставит задачу <code>documentTypePolicyEditor</code> в очередь «ICS-60001 Document type policy editor»</li>
+          <li>Отправляет task_assigned «Обновление справочника»</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="ICS-60001-Step-04.html">ICS-60001-Step-04</a></td>
+      <td>Редактирование списков типов документов (web-интерфейс)</td>
+      <td>
+        <ul>
+          <li>Открывает web-интерфейс <code>document-type-policy-editor</code></li>
+          <li>Редактирует комментарии, включает/отключает типы документов</li>
+          <li>Сохраняет изменения (тег задачи меняется на <code>policyUpdated</code>)</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Предоставляет ссылку на редактор и начальные данные</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="ICS-60001-Step-05.html">ICS-60001-Step-05</a></td>
+      <td>Сохранение утверждённых списков в ресурсы Orchestrator</td>
+      <td>Нет</td>
+      <td>
+        <ul>
+          <li>Читает задачу с тегом <code>policyUpdated</code></li>
+          <li>Обновляет ресурсы <code>document_type_classification</code> и <code>document_type_comments</code></li>
+          <li>Отправляет task_completed «Обновление справочника»</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="ICS-60001-Step-06.html">ICS-60001-Step-06</a></td>
+      <td>Подготовка случайной выборки</td>
+      <td>Нет</td>
+      <td>
+        <ul>
+          <li>Группирует позиции по документам, фильтрует по allowed-типам</li>
+          <li>Считает размер выборки (2/5/15/25), перемешивает, сортирует</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="ICS-60001-Step-07.html">ICS-60001-Step-07</a></td>
+      <td>Обогащение выборки владельцами и контролёром через MIM</td>
+      <td>Нет</td>
+      <td>
+        <ul>
+          <li>Выполняет PowerShell-запросы к MIM (accounts, persons)</li>
+          <li>Формирует OwnerContact (email, fullName, active)</li>
+          <li>Определяет контролёра по controllerEmail</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="ICS-60001-Step-08.html">ICS-60001-Step-08</a></td>
+      <td>Рассылка заданий исполнителям и контролёру</td>
+      <td>
+        <ul>
+          <li>Получает письмо «multitask_new» (активные владельцы) с таблицей документов</li>
+          <li>Контролёр получает task_assigned «Проверка ручных проводок»</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Фильтрует активных владельцев, формирует mainTable</li>
+          <li>Отправляет письма через шаблон <code>multitask_new</code> и <code>task_assigned</code></li>
+          <li>Создаёт задачи <code>documentReview</code> в очереди «ICS-60001 Document review»</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="ICS-60001-Step-09.html">ICS-60001-Step-09</a></td>
+      <td>Обработка документа (web-интерфейс)</td>
+      <td>
+        <ul>
+          <li>Открывает web-интерфейс <code>document-review</code></li>
+          <li>Просматривает информацию о документе и позициях</li>
+          <li>Загружает подтверждающий файл, выбирает статус («OK»/«NOT OK»), вводит комментарий</li>
+          <li>Сохраняет результат</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Предоставляет интерфейс проверки и начальные данные</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="ICS-60001-Step-10.html">ICS-60001-Step-10</a></td>
+      <td>Финализация и публикация результатов</td>
+      <td>
+        <ul>
+          <li>Получает уведомление <code>process_completed</code> со ссылкой на результаты в SharePoint</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Собирает результаты проверки из очереди «ICS-60001 Document review»</li>
+          <li>Заполняет шаблон <code>ICS-60001.xlsx</code>, загружает доказательства</li>
+          <li>Собирает ZIP-технический архив, загружает в SharePoint</li>
+          <li>Отправляет task_completed и process_completed</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Работа Исполнителя с web-интерфейсами</h2>
+
+<h3>Редактор списков типов документов (<code>document-type-policy-editor</code>)</h3>
+<p>Открывается по ссылке из параметра <code>documentTypePolicyEditorActionLink</code>. В таблице представлены вид документа, комментарий и признак «Включены». Исполнитель:</p>
+<ol>
+  <li>редактирует комментарии к типам документов;</li>
+  <li>включает/отключает типы документов (allowed/denied) для проверки;</li>
+  <li>нажимает «Сохранить» — форма отправляет обновлённый <code>initialData</code> в задачу и меняет тег на <code>policyUpdated</code>.</li>
+</ol>
+<p><strong>Важно:</strong> форма должна отправлять валидный JSON-объект. Если в Orchestrator попадёт строка <code>[object Object]</code>, шаг 5 завершится с <code>BusinessException</code>.</p>
+
+<h3>Проверка документа (<code>document-review</code>)</h3>
+<p>Открывается по ссылке из параметра <code>documentReviewActionLink</code>. На экране две таблицы: «Информация о документе» (атрибуты группы) и «Позиции документа» (позиции проводки). Исполнитель:</p>
+<ol>
+  <li>выбирает подтверждающий файл (обязательно) и загружает его;</li>
+  <li>выбирает статус «OK» или «NOT OK»;</li>
+  <li>вводит комментарий (опционально);</li>
+  <li>нажимает «Сохранить» — форма отправляет <code>userInput = {uploadedFileGuid, uploadedFileName, status, comment}</code> в задачу.</li>
+</ol>
+<p>До завершения процесса задание можно повторно открыть и скорректировать.</p>
+
+<h2>Работа Исполнителя с исключениями</h2>
+<table>
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Описание</th>
+      <th>Тип исключения</th>
+      <th>Действие Исполнителя при наступлении</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="ICS-60001-EX-01.html">ICS-60001-EX-01</a></td>
+      <td>Ошибка интеграции с SAP/SharePoint/MIM/CurrencyRates, отсутствие данных, критическая ошибка Java-шага, некорректные параметры инициализации, ошибка web-формы</td>
+      <td>Системное/Бизнес</td>
+      <td>
+        <ul>
+          <li>Получить уведомление об ошибке от инфраструктуры Orchestrator;</li>
+          <li>Ожидать информации от support-группы или скоординировать действия самостоятельно.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>

@@ -1,0 +1,426 @@
+<h2 id="Общая информация">Общая информация</h2>
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Процесс</strong></td>
+            <td>ICS-00012 / Мониторинг каталога и создание тикета в Jira</td>
+        </tr>
+        <tr>
+            <td><strong>Название бизнес-процесса</strong></td>
+            <td>ICS-00012 / Мониторинг каталога и создание тикета в Jira</td>
+        </tr>
+        <tr>
+            <td><strong>Управление</strong></td>
+            <td>Группа разработки и поддержки роботизированных решений</td>
+        </tr>
+        <tr>
+            <td><strong>Версия и место хранения бизнес-процесса</strong></td>
+            <td><a href="">TBD</a>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Владелец бизнес-процесса</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Пользователи бизнес-процесса</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Связанные документы</strong></td>
+            <td>
+                <ul>
+                    <li><a href="">ICS-00012-TD: Test
+                            Documentation / Тестовая документация</a></li>
+                    <li><a href="">ICS-00012-UG: User Guide /
+                            Руководство пользователя</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Верифицировано</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Статус документа</td>
+            <td>DRAFT 05.08.2026</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Используемые системы">Используемые системы</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Наименование (полное)</th>
+            <th>Наименование (сокращение), используемое в документации</th>
+            <th>Примечания</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Sherpa Orchestrator</td>
+            <td>Orchestrator</td>
+            <td>Платформа роботизации, хранилище ресурсов и очереди задач</td>
+        </tr>
+        <tr>
+            <td>Почтовый сервер</td>
+            <td>SMTP</td>
+            <td>Отправка нотификаций о старте/завершении/ошибке процесса</td>
+        </tr>
+        <tr>
+            <td>Jira / JSD</td>
+            <td>Jira</td>
+            <td>Создание инцидентов/задач при превышении порога файлов</td>
+        </tr>
+        <tr>
+            <td>Удалённый сервер Windows (WinRM/PowerShell)</td>
+            <td>srv-roamtrns-03</td>
+            <td>Выполнение PowerShell-скрипта для подсчёта файлов в каталоге</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Описание процесса">Описание процесса</h2>
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Назначение бизнес-процесса</strong></td>
+        </tr>
+        <tr>
+            <td>Процесс проверяет количество файлов в заданном каталоге на удалённом сервере и при превышении
+                допустимого порога создаёт задачу в Jira. По завершении отправляет email-уведомление с ссылкой на
+                созданный тикет (если он создан).</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Упрощенная BPMN схема бизнес-процесса</h3>
+<p><img alt="BPMN схема ICS-00012" src="" />
+</p>
+<p>Файл-исходник: <a href="">ICS-00012.bpm</a>
+</p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Выходные данные бизнес-процесса</strong></td>
+        </tr>
+        <tr>
+            <td>Письмо с результатами работы (со ссылкой на созданный тикет Jira при наличии)</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Сценарий использования">Сценарий использования (перечень Steps)</h2>
+<table>
+    <tbody>
+        <tr>
+            <td><a href="">ICS-00012-Step-01</a></td>
+            <td>Start Notification</td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00012-Step-02</a></td>
+            <td>Script Executing</td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00012-Step-03</a></td>
+            <td>Jira Ticket Creation</td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00012-Step-04</a></td>
+            <td>End Notification</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Возможные исключения">Возможные исключения (Exceptions)</h2>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Описание</th>
+            <th>Тип исключения</th>
+            <th>Действие Bot при наступлении</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><a href="">ICS-00012-EX-01</a></td>
+            <td>Ошибка выполнения PowerShell-скрипта на удалённом сервере (завершён с ненулевым кодом или
+                некорректный ответ)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Отправить уведомление Исполнителю и support группе об ошибке выполнения скрипта;</li>
+                    <li>Остановить процесс с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00012-EX-02</a></td>
+            <td>Пустой или некорректный формат ответа скрипта (ожидается одно число — количество файлов)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Отправить уведомление Исполнителю и support группе о некорректном ответе скрипта;</li>
+                    <li>Остановить процесс с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00012-EX-03</a></td>
+            <td>Не удалось создать тикет в Jira (получен пустой issue id)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Отправить уведомление Исполнителю и support группе об ошибке создания тикета;</li>
+                    <li>Остановить процесс с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Конфигурируемые параметры">Конфигурируемые параметры</h2>
+<p>Входные параметры процесса, используемые нотификации и т.п.</p>
+<p>Все описанные параметры находятся в ресурсе <strong>ics00012_init_params</strong>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Параметр</th>
+            <th>Ресурс</th>
+            <th>Описание</th>
+            <th>Текущее значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="2">1</td>
+            <td>emailRecipients:to</td>
+            <td rowspan="2">ics00012_init_params</td>
+            <td rowspan="2">Email-адрес(а) для уведомлений о статусе процесса (старт, завершение, ошибки)</td>
+            <td>SOX_Workfusion_App_RPA_ICS-00012@a1.by</td>
+        </tr>
+        <tr>
+            <td>emailRecipients:cc</td>
+            <td>sc_sg_workfusion@a1.by</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>jiraUrl</td>
+            <td>ics00012_init_params</td>
+            <td>Адрес инстанса Jira для создания тикета</td>
+            <td>jira.a1.by</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>issueProject</td>
+            <td>ics00012_init_params</td>
+            <td>Ключ проекта Jira, в котором создаётся задача</td>
+            <td>SOX</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>issueType</td>
+            <td>ics00012_init_params</td>
+            <td>Тип создаваемой задачи</td>
+            <td>Task</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>issueComponent</td>
+            <td>ics00012_init_params</td>
+            <td>Компонент задачи в Jira</td>
+            <td>Mediation Service</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>issueAssignee</td>
+            <td>ics00012_init_params</td>
+            <td>Исполнитель создаваемой задачи (имя группы/учётки)</td>
+            <td>SC_SG_Mediation_Service</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>issueSummary</td>
+            <td>ics00012_init_params</td>
+            <td>Шаблон заголовка задачи (%s — дата/время)</td>
+            <td>ICS-00012 %s</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>issueDescription</td>
+            <td>ics00012_init_params</td>
+            <td>Шаблон описания задачи (%{count}, %{directory}, %{count_limit})</td>
+            <td>ALERT: %{count} files at %{directory} is over limit of %{count_limit}.</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>serverName</td>
+            <td>ics00012_init_params</td>
+            <td>Имя удалённого сервера для выполнения PowerShell</td>
+            <td>srv-roamtrns-03</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>fileDirectory</td>
+            <td>ics00012_init_params</td>
+            <td>Путь к каталогу, в котором подсчитываются файлы</td>
+            <td>D:\Inetpub\ftproot\NRTRDE\NRTRDE_OUT</td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td>countLimit</td>
+            <td>ics00012_init_params</td>
+            <td>Пороговое значение количества файлов</td>
+            <td>100</td>
+        </tr>
+        <tr>
+            <td>12</td>
+            <td>scriptBlock</td>
+            <td>ics00012_init_params</td>
+            <td>Тело PowerShell-скрипта (%{directory} подставляется из fileDirectory)</td>
+            <td>(Get-ChildItem '%{directory}' ).Count;</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Нотификации">Нотификации</h2>
+<p>Сообщения, отправляемые процессом на группы заказчиков, support группу и т.д.</p>
+<p>Процесс использует стандартные шаблоны EmailService Sherpa (отдельный файл email_templates не предусмотрен).</p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Наименование</th>
+            <th>Ресурс</th>
+            <th>Описание</th>
+            <th>Текущее значение</th>
+            <th>Тип</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>process_started</td>
+            <td>стандартный</td>
+            <td>Уведомление о старте процесса</td>
+            <td>Используется <a href="https://wiki.a1.by/pages/viewpage.action?pageId=474058264">стандартное
+                    значение</a></td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>process_error</td>
+            <td>стандартный</td>
+            <td>Уведомление об ошибке выполнения процесса</td>
+            <td>Используется <a href="https://wiki.a1.by/pages/viewpage.action?pageId=474058264">стандартное
+                    значение</a></td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>process_completed</td>
+            <td>стандартный</td>
+            <td>Уведомление о завершении процесса (с параметром controlResultsLink — ссылкой на тикет Jira, если создан)</td>
+            <td>Шаблон письма о завершении процесса с параметрами: ${processName}, ${bpNumber}, ${bpDescription},
+                ${controlResultsLink}, ${uuid}</td>
+            <td>Email</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Конфиденциальные значения">Конфиденциальные значения</h2>
+<p>Учетные данные и т.п.</p>
+<p>Необходимо проверять, что указанные ресурсы с нужной УЗ указаны в <a
+        href="https://wiki.a1.by/pages/viewpage.action?pageId=407798383">Интеграции со сторонними системами (учетные
+        записи)</a></p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Ресурс</th>
+            <th>Группа</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>svc_wf_rm_credentials</td>
+            <td>credentials</td>
+            <td>Учётные данные для запуска PowerShell на удалённом сервере (WinRM, Invoke-Command)</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>jira_jsd_credentials</td>
+            <td>credentials</td>
+            <td>Учётные данные для доступа к Jira/JSD API (создание и назначение задач)</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Прочие ресурсы">Прочие ресурсы</h2>
+<p>Не конфиденциальные данные, используемые в ходе работы процесса.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Ресурс</th>
+            <th>Группа</th>
+            <th>Описание</th>
+            <th>Текущее значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>—</td>
+            <td>—</td>
+            <td>—</td>
+            <td>Процесс не использует прочих (Text) ресурсов — только init_params и credentials</td>
+            <td>—</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Хранилище">Хранилище</h2>
+<p>Используемые папки и файлы в Хранилище файлов в Оркестраторе.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№ п/п</th>
+            <th>Наименование папки в Хранилище</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>—</td>
+            <td>—</td>
+            <td>Процесс не использует Хранилище Оркестратора</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Папки доступа">Папки доступа</h2>
+<p>Папки доступа, которые использует процесс.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№ п/п</th>
+            <th>Наименование папки доступа</th>
+            <th>Описание</th>
+            <th>Перечень объектов, которым присвоена папка</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>—</td>
+            <td>—</td>
+            <td>TBD</td>
+            <td>—</td>
+        </tr>
+    </tbody>
+</table>

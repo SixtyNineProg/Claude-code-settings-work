@@ -1,0 +1,292 @@
+<h2>Общая информация</h2>
+<table>
+  <tbody>
+    <tr>
+      <td><strong>Название бизнес-процесса</strong></td>
+      <td>ICS-00057 / Обновление справочника</td>
+    </tr>
+    <tr>
+      <td><strong>Управление</strong></td>
+      <td>Document Verification Accounting</td>
+    </tr>
+    <tr>
+      <td><strong>Владелец бизнес-процесса</strong></td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td><strong>Пользователи бизнес-процесса</strong></td>
+      <td>Контролёр счетов (Исполнитель MT №1/№2/№3), группа SOX</td>
+    </tr>
+    <tr>
+      <td><strong>Связанные документы</strong></td>
+      <td>
+        <ul>
+          <li>ICS-00057-PDD: Process Design Document / Документ проектирования процесса</li>
+          <li>ICS-00057-TD: Test Documentation / Тестовая документация</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td>Статус документа</td>
+      <td>равно статусу и верификации <a href="">ICS-00057-PDD</a>, если прямо не указано иное</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Краткое описание процесса</h2>
+<h3>Упрощенная BPMN схема бизнес-процесса</h3>
+<p><img alt="BPMN схема ICS-00057" src="" /></p>
+
+<h2>Описание шагов процесса с точки зрения действий Исполнителя</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Шаг (со ссылкой на PDD)</th>
+      <th>Наименование</th>
+      <th>Действия Исполнителя</th>
+      <th>Действия Bot</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="">ICS-00057-Step-01</a></td>
+      <td>InfrastructureStep — Подготовка инфраструктуры</td>
+      <td>
+        <ul>
+          <li>Получает уведомление <code>process_started</code> о начале работы процесса.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Бот читает InitParameters и отправляет уведомление о старте;</li>
+          <li>Бот формирует отчётный период (из periodStart/periodEnd или прошлый квартал по умолчанию);</li>
+          <li>Бот сохраняет ReportingPeriod в транзакцию.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-02</a></td>
+      <td>SapStep — Выгрузка справочника счетов из SAP</td>
+      <td>Исполнитель не участвует (процесс выполняется автоматически)</td>
+      <td>
+        <ul>
+          <li>Бот создаёт унифицированную структуру папок в SharePoint;</li>
+          <li>Бот выгружает справочник счетов из SAP (ZACCOUNTS, IFRS, БЕ 1320) в Excel;</li>
+          <li>Бот делает скриншоты параметров, первой и последней страницы отчёта;</li>
+          <li>Бот загружает выгрузку и скриншоты в Orchestrator Storage под плоским именем;</li>
+          <li>Бот сохраняет список счетов и имена файлов Storage в транзакцию.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-03</a></td>
+      <td>PrepareNewStep — Подготовка новых счетов для MT №1</td>
+      <td>
+        <ul>
+          <li>Получает письмо <code>new_tasks</code> со ссылкой на Action MT №1 «Проверка новых счетов»;</li>
+          <li>Открывает Action, проверяет новые счета и заполняет форму (process_new.js).</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Бот сравнивает SAP-выгрузку со справочником в Storage и определяет новые счета;</li>
+          <li>Бот создаёт задачу MT №1 в очереди Orchestrator с initialData (счета, комментарии, bearerToken);</li>
+          <li>При отсутствии новых счетов Бот создаёт auto-trigger задачу и отправляет письмо no_new_tasks.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-04</a></td>
+      <td>SaveNewStep — Обработка результатов MT №1</td>
+      <td>
+        <ul>
+          <li>Получает письмо <code>task_processed</code> после обработки MT №1.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Бот читает результат формы MT №1 (processedAccounts);</li>
+          <li>Бот обновляет справочник и комментарии, финализирует задачу (SUCCESS + processed).</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-05</a></td>
+      <td>PrepareChangedStep — Подготовка изменённых счетов для MT №2</td>
+      <td>
+        <ul>
+          <li>Получает письмо <code>new_tasks</code> со ссылкой на Action MT №2 «Проверка изменения меток счетов»;</li>
+          <li>Открывает Action, проверяет счета с изменёнными метками и заполняет форму (process_changed.js).</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Бот определяет счета с изменёнными метками и разбивает их на «с метками»/«без меток»;</li>
+          <li>Бот создаёт задачу MT №2 с initialData и отправляет письмо new_tasks;</li>
+          <li>При отсутствии изменений Бот создаёт auto-trigger задачу и отправляет no_new_tasks.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-06</a></td>
+      <td>SaveChangedStep — Обработка результатов MT №2</td>
+      <td>
+        <ul>
+          <li>Получает письмо <code>task_processed</code> после обработки MT №2.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Бот читает результат формы MT №2 (processedAccounts);</li>
+          <li>Бот обновляет справочник и комментарии, финализирует задачу (SUCCESS + processedChanged).</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-07</a></td>
+      <td>PrepareAllStep — Подготовка MT №3</td>
+      <td>
+        <ul>
+          <li>Получает письмо <code>new_tasks</code> со ссылкой на Action MT №3 «Внесение изменений по счетам»;</li>
+          <li>Открывает Action, выбирает счета для корректировки через autocomplete и заполняет форму (process_all.js).</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Бот читает полный справочник из транзакции;</li>
+          <li>Бот создаёт безусловную задачу MT №3 с initialData (allAccounts, comments, bearerToken) и отправляет new_tasks.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-08</a></td>
+      <td>SaveAllStep — Обработка результатов MT №3</td>
+      <td>
+        <ul>
+          <li>Получает письмо <code>task_processed</code> после обработки MT №3.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Бот читает результат формы MT №3 (processedAccounts, возможно пустой);</li>
+          <li>Бот обновляет справочник и комментарии, финализирует задачу (SUCCESS + processedAll).</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-Step-09</a></td>
+      <td>UploadEvidenceStep — Загрузка результатов на SharePoint и в Storage</td>
+      <td>
+        <ul>
+          <li>Получает письмо <code>work_end</code> со ссылкой на папку SharePoint с результатами;</li>
+          <li>Открывает ссылку и проверяет чек-лист, архив и доказательства.</li>
+        </ul>
+      </td>
+      <td>
+        <ul>
+          <li>Бот скачивает скриншоты и выгрузку из Storage;</li>
+          <li>Бот формирует чек-лист ICS-00057_01.xlsx и ZIP-архив;</li>
+          <li>Бот загружает чек-лист и архив в Storage и SharePoint;</li>
+          <li>Бот обновляет ассеты состояния (ics00057_accounts.json, ics00057_comments.json);</li>
+          <li>Бот отправляет письмо work_end.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Работа Исполнителя с исключениями</h2>
+<table>
+  <thead>
+    <tr>
+      <th>№</th>
+      <th>Описание</th>
+      <th>Тип исключения</th>
+      <th>Действие Исполнителя при наступлении</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="">ICS-00057-EX-01</a></td>
+      <td>Некорректный отчётный период (periodStart &gt;= periodEnd или periodEnd &gt;= дата запуска)</td>
+      <td>Бизнес</td>
+      <td>
+        <ul>
+          <li>Получить уведомление <code>process_error</code>: "Во время выполнения ботопроцесса 01_Обновление справочника возникла ошибка.";</li>
+          <li>Проверить значения periodStart/periodEnd в InitParams и привести их в соответствие требованиям (формат dd.MM.yyyy, periodStart &lt; periodEnd &lt; дата запуска);</li>
+          <li>Перезапустить процесс.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-EX-02</a></td>
+      <td>Ошибка SAP-сессии (сбой подключения к SAP Logon, транзакция ZACCOUNTS не выполнена)</td>
+      <td>Системное</td>
+      <td>
+        <ul>
+          <li>Получить уведомление <code>process_error</code>;</li>
+          <li>Проверить доступность SAP-сервера и корректность ассета sap_settings (language = "RU");</li>
+          <li>Ожидать информации от support-группы по решению проблемы либо скоординировать действия самостоятельно.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-EX-03</a></td>
+      <td>Прочий сбой шага SapStep (ошибка Robot, недоступен ресурсный файл mock-режима, ошибка выгрузки)</td>
+      <td>Системное</td>
+      <td>
+        <ul>
+          <li>Получить уведомление <code>process_error</code>;</li>
+          <li>Ожидать информацию от support-группы по решению проблемы в рамках задачи RPA.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-EX-04</a></td>
+      <td>Ошибка чтения/записи состояния справочника или комментариев (ics00057_accounts.json / ics00057_comments.json в Storage)</td>
+      <td>Системное</td>
+      <td>
+        <ul>
+          <li>Получить уведомление <code>process_error</code>;</li>
+          <li>Проверить наличие и целостность файлов состояния в Orchestrator Storage;</li>
+          <li>Ожидать информацию от support-группы.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-EX-05</a></td>
+      <td>Ошибка парсинга результата MT-задачи (initialData отсутствует, пуст или необрабатываемый формат)</td>
+      <td>Системное</td>
+      <td>
+        <ul>
+          <li>Получить уведомление <code>process_error</code>;</li>
+          <li>Проверить в Orchestrator задачу MT (initialData, теги, статус) и при необходимости переотправить форму;</li>
+          <li>Ожидать информацию от support-группы.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-EX-06</a></td>
+      <td>Не найдена MT-задача в очереди (сработал триггер, но задача с ожидаемым именем/тегом/статусом не найдена)</td>
+      <td>Системное</td>
+      <td>
+        <ul>
+          <li>Получить уведомление <code>process_error</code>;</li>
+          <li>Проверить в Orchestrator очередь «ICS-00057 Обновление справочника» на наличие зависших задач;</li>
+          <li>Ожидать информацию от support-группы.</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="">ICS-00057-EX-07</a></td>
+      <td>Отсутствует обязательный параметр транзакции или InitParameters (SAP accounts / Checklist accounts / InitParameters / системное свойство transaction.path)</td>
+      <td>Системное</td>
+      <td>
+        <ul>
+          <li>Получить уведомление <code>process_error</code>;</li>
+          <li>Ожидать информацию от support-группы по восстановлению целостности данных процесса.</li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>

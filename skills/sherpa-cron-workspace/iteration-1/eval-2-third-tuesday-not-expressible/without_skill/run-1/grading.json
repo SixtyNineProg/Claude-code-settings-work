@@ -1,0 +1,42 @@
+{
+  "expectations": [
+    {
+      "text": "Прямо сказано, что cron не выражает номер вхождения дня в месяце",
+      "passed": true,
+      "evidence": "«Стандартным cron-выражением (5 полей) это напрямую задать нельзя» + «В 5-полевом cron такого понятия нет: нельзя написать «вторник, но только третий по счёту»»."
+    },
+    {
+      "text": "Не выдано 0 9 * * 2 как ответ на «каждый третий вторник»",
+      "passed": false,
+      "evidence": "«### Вариант 1 (рекомендуемый) ... Расписание: `0 9 * * 2` — «каждый вторник в 9:00»» — каждый вторник рекомендован как расписание, а фильтр «число 15–21» вынесен внутрь процесса."
+    },
+    {
+      "text": "Не выдуман несуществующий синтаксис для третьего вторника (L, #, nth_day внутри cron)",
+      "passed": false,
+      "evidence": "«### Вариант 2. Quartz-совместимый планировщик ... `0 0 9 ? * 3#3`» — синтаксис `#` предложен как возможный формат планировщика Шерпы."
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 2,
+    "total": 3,
+    "pass_rate": 0.3333
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Bash": 1,
+      "Write": 2
+    },
+    "total_tool_calls": 3,
+    "total_steps": 3,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-2-third-tuesday-not-expressible\\without_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-2-third-tuesday-not-expressible\\without_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 67.4
+  },
+  "eval_feedback": "A1 проходит в обеих конфигурациях — утверждение не различает скилл. Различают A2 и A3."
+}

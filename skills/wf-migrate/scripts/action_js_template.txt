@@ -1,0 +1,79 @@
+// ============================================================================
+// ШАБЛОН: Manual Task (MT) — сгенерировано wf-migrate
+// MT №{MT_NUMBER}: {MT_TITLE}
+// Описание: Каркас ручной задачи на платформе Sherpa RPA (Shadow DOM).
+//           Финализирует задачу final-тегом через ShadowCore.checkAndMarkLastTask
+//           и отправляет результат в процесс через ShadowCore.submit.
+// Зависимости: Shadow Core Engine (core.js)
+// ВНИМАНИЕ: Это минимальный скелет. Перенесите разметку и логику формы из
+//           исходного WF .html (FreeMarker-конструкции <@hit>/<@answers>
+//           замените на обычный JS) и при необходимости доработайте.
+// ============================================================================
+ShadowCore.render({
+  debug: true,
+
+  // =================================================================
+  // 1. ЛОКАЛЬНЫЕ СТИЛИ (CSS)
+  // Действуют внутри Shadow DOM. При необходимости добавьте стили из WF .html.
+  // =================================================================
+  css: `
+        .mt-title {
+            margin-bottom: 12px;
+        }
+    `,
+
+  // =================================================================
+  // 2. МАКЕТ ФОРМЫ (HTML)
+  // Заглушка: одна кнопка «Завершить». Замените на реальную форму из WF .html.
+  // Вся структура автоматически обернётся в .a1-custom-block.
+  // =================================================================
+  html: `
+        <div class="card">
+            <h3 class="mt-title">{MT_TITLE} | MT №{MT_NUMBER}</h3>
+
+            <div class="form-group mb-0">
+                <button class="btn" id="submitBtn" type="button">Завершить</button>
+            </div>
+        </div>
+    `,
+
+  // =================================================================
+  // 3. БИЗНЕС-ЛОГИКА (JS)
+  // shadow - корень изолированной формы (используйте вместо document)
+  // initialData - начальные данные (JSON или строка)
+  // =================================================================
+  onReady: function (shadow, initialData) {
+    var data = initialData && typeof initialData === "object" ? initialData : {};
+    var token = data.bearerToken || null;
+
+    var submitBtn = shadow.getElementById("submitBtn");
+
+    // Обработка финального действия.
+    submitBtn.addEventListener("click", async function () {
+      submitBtn.disabled = true;
+      try {
+        // Отметить последнюю оставшуюся задачу final-тегом для Orchestrator-триггера.
+        // Триггер срабатывает на статусе NEW + final-тег; статус задачи не меняется.
+        if (token) {
+          await ShadowCore.checkAndMarkLastTask(
+            token,
+            "{QUEUE_NAME}",
+            "{PENDING_TAG}",
+            "{FINAL_TAG}"
+          );
+        }
+
+        // Сформируйте полезную нагрузку из полей формы.
+        var payload = {
+          userInput: {
+            processedAccounts: [], // TODO: соберите результат формы
+          },
+        };
+        ShadowCore.submit(payload);
+      } catch (error) {
+        console.error("MT №{MT_NUMBER} submit failed", error);
+        submitBtn.disabled = false;
+      }
+    });
+  },
+});

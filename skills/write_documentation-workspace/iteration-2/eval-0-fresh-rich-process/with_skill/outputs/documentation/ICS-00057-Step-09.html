@@ -1,0 +1,87 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-00057-Step-09</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>UploadEvidenceStep</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>ReportingPeriod из Step-01</li>
+                    <li>sapScreenshotsStorageName, sapUnloadingStorageName из Step-02</li>
+                    <li>checklistAccounts, mtComments из Step-08</li>
+                    <li>InitParameters: storageFolderName, spVactpro*, unloadingFileName, screenshotsFileName,
+                        emailRecipients</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот создаёт временную папку и скачивает из Хранилища скриншоты и выгрузку (в подкаталоги
+                        screenshots/ и input data/);</li>
+                    <li>Бот формирует чек-лист ICS-00057_01.xlsx (ExcelChecklistHelper, сортировка по номеру
+                        счета);</li>
+                    <li>Бот упаковывает скриншоты, выгрузку и чек-лист в ZIP-архив технической проверки и считает
+                        MD5-контрольную сумму;</li>
+                    <li>Бот загружает чек-лист и архив в Orchestrator Storage (плоское имя с суффиксом даты-времени);</li>
+                    <li>Бот загружает файлы в SharePoint по унифицированной структуре папок периода (выгрузка →
+                        input data, скриншоты → screenshots, чек-лист и архив → корень рабочей папки);</li>
+                    <li>Бот обновляет файлы состояния ics00057_accounts.json и ics00057_comments.json в Хранилище
+                        (ProcessStateService);</li>
+                    <li>Бот удаляет временный каталог и отправляет письмо work_end со ссылкой на папку SharePoint.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>чек-лист ICS-00057_01.xlsx и технический ZIP-архив в SharePoint и Хранилище;</li>
+                    <li>обновлённые ics00057_accounts.json и ics00057_comments.json;</li>
+                    <li>md5Checksum в транзакции;</li>
+                    <li>письмо work_end со ссылкой на результаты.</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>Бот-сессия разрывается на MT-шагах, поэтому локальные файлы из Step-02 не переживают запуск —
+                выгрузка и скриншоты скачиваются из Хранилища заново.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td>—</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Приложения</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Пример письма с результатом работы</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Тема: «01 Обновление справочника: Работа завершена». Тело: «Работа процесса 01 Обновление
+                справочника завершена. Ссылка на результаты: https://vactpro.main.velcom.by/Lists/documents/...
+                Дата: &lt;currentDate&gt;».</td>
+        </tr>
+    </tbody>
+</table>

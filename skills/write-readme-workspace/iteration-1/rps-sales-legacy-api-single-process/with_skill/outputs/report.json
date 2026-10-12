@@ -1,0 +1,77 @@
+{
+  "processDir": "C:\\Users\\dzmitry_klim\\IdeaProjects\\sherpa\\rpa-suite\\rps-sales",
+  "config": {
+    "bpName": "RPS-Sales"
+  },
+  "steps": [
+    {
+      "order": 1,
+      "displayName": "GetOnecReportData",
+      "stepName": "getOnecReportData",
+      "className": "GetOnecReportDataStep",
+      "javaPath": "src/main/java/by/a1/rps_sales/steps/GetOnecReportDataStep.java",
+      "processFile": "Главная.process",
+      "executeSource": "{\n    ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n\n    InitParameters initParams = getInitParameters(transaction);\n\n    Asset.Credentials onecCredentials = orchestratorService.getCredentials(\"1c_ct_credentials\");\n\n    long startTime = System.currentTimeMillis();\n    List<OnecOrder> onecOrders =\n        fetchOnecOrders(\n            initParams.onecUrlSpec(),\n            onecCredentials,\n            processTransaction.getStartDate(),\n            processTransaction.getEndDate(),\n            initParams.sapDataType());\n    long duration = System.currentTimeMillis() - startTime;\n    log.info(\"{} orders received from 1C report in {} ms\", onecOrders.size(), duration);\n    processTransaction.storeOnecOrders(onecOrders);\n  }"
+    },
+    {
+      "order": 2,
+      "displayName": "PrepareInitialParameters",
+      "stepName": "prepareInitialParameters",
+      "className": "PrepareInitialParametersStep",
+      "javaPath": "src/main/java/by/a1/rps_sales/steps/PrepareInitialParametersStep.java",
+      "processFile": "Главная.process",
+      "executeSource": "{\n\n    try {\n      ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n      InitParameters initParams = getInitParameters(transaction);\n\n      log.info(\"Sending process started notification to recipients\");\n      emailService.sendProcessStarted(initParams.emailRecipients());\n\n      calculateAndStoreSapDateRange(processTransaction, initParams.endDateString());\n    } catch (Exception e) {\n      log.error(\"Failed to prepare initial parameters\", e);\n      throw new BusinessException(\"Initial parameters preparation failed\", e);\n    }\n  }"
+    },
+    {
+      "order": 3,
+      "displayName": "DataProcessing",
+      "stepName": "dataProcessing",
+      "className": "DataProcessingStep",
+      "javaPath": "src/main/java/by/a1/rps_sales/steps/DataProcessingStep.java",
+      "processFile": "Главная.process",
+      "executeSource": "{\n    try {\n      ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n      InitParameters initParams = getInitParameters(transaction);\n\n      List<Pair<OnecOrder, SapOrder>> discrepancies = findOrderDiscrepancies(processTransaction);\n\n      if (discrepancies.isEmpty()) {\n        handleNoDiscrepancies(initParams);\n      } else {\n        handleDiscrepanciesFound(processTransaction, initParams, discrepancies);\n      }\n    } catch (Exception e) {\n      log.error(\"Data processing failed\", e);\n      throw new BusinessException(\"Data processing failed\", e);\n    }\n  }"
+    },
+    {
+      "order": 4,
+      "displayName": "GetSapReportData",
+      "stepName": "getSapReportData",
+      "className": "GetSapReportDataStep",
+      "javaPath": "src/main/java/by/a1/rps_sales/steps/GetSapReportDataStep.java",
+      "processFile": "Главная.process",
+      "executeSource": "{\n\n    ProcessTransaction processTransaction = new ProcessTransaction(transaction);\n\n    InitParameters initParams = getInitParameters(transaction);\n    SapSettings sapSettings = getSapSettings();\n\n    SapGuiConfig sapConfig =\n        SapGuiConfig.builder()\n            .elementTimeout(60)\n            .handleCopyrightDialog(true)\n            .autoMaximizeWindows(false)\n            .sapLogonPath(sapSettings.sapLogonPath())\n            .autoLaunchSapLogon(true)\n            .build();\n\n    try (SapGuiSession session = SapGuiAutomation.connect(sapSettings.systemName(), sapConfig)) {\n\n      Asset.Credentials credentials = orchestratorService.getCredentials(\"sap_credentials\");\n\n      session.login(\n          credentials.login(),\n          credentials.password(),\n          sapSettings.client(),\n          sapSettings.language());\n\n      session.runTransaction(initParams.sapTransactionName());\n\n      log.info(\n          \"Configuring report parameters: layout={}, dateRange={}-{}\",\n          initParams.sapReportLayout(),\n          processTransaction.getStartDate(),\n          processTransaction.getEndDate());\n\n      session.findElement(\"wnd[0]/usr/ctxt%LAYOUT\").setText(initParams.sapReportLayout"
+    }
+  ],
+  "initParamsFiles": [
+    "src/main/resources/rps_sales_init_params.json"
+  ],
+  "emailTemplatesFile": "src/main/resources/rps_sales_email_templates.json",
+  "serviceVariables": [
+    {
+      "name": "1c_ct_credentials",
+      "kind": "credentials",
+      "callStyles": [
+        "legacy.getCredentials"
+      ],
+      "definedIn": "GetOnecReportDataStep.java"
+    },
+    {
+      "name": "jira_jsd_credentials",
+      "kind": "credentials",
+      "callStyles": [
+        "legacy.getCredentials"
+      ],
+      "definedIn": "DataProcessingStep.java"
+    },
+    {
+      "name": "sap_credentials",
+      "kind": "credentials",
+      "callStyles": [
+        "legacy.getCredentials"
+      ],
+      "definedIn": "_GetSapReportDataStep.java"
+    }
+  ],
+  "warnings": [
+    "Java step '_GetSapReportData' (_GetSapReportDataStep.java) is not referenced by any .process file."
+  ]
+}

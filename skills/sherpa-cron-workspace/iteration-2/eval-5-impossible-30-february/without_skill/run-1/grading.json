@@ -1,0 +1,42 @@
+{
+  "expectations": [
+    {
+      "text": "Ответ: срабатываний не будет никогда (30 февраля не существует)",
+      "passed": true,
+      "evidence": "«**Следующего запуска не будет. Никогда.** Это не «далёкая дата» и не «раз в 4 года» — задача не сработает вообще ни разу.»"
+    },
+    {
+      "text": "Не выдумана конкретная дата следующего запуска",
+      "passed": true,
+      "evidence": "Дата не выдумана: «ни один корректный планировщик не выдаст вам дату следующего запуска, потому что её нет»; приведены варианты исправления."
+    },
+    {
+      "text": "Отмечено, что выражение синтаксически корректно, но недостижимо",
+      "passed": false,
+      "evidence": "Разбирается поведение планировщиков вообще («Quartz ... отвергает такое выражение на этапе разбора ... часть вернёт ошибку»), но про Sherpa не сказано, что он сохранит выражение молча. Различия «синтаксически корректно, но недостижимо» ответ не проводит."
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 1,
+    "total": 3,
+    "pass_rate": 0.6667
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Bash": 1,
+      "Write": 2
+    },
+    "total_tool_calls": 3,
+    "total_steps": 2,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-5-impossible-30-february\\without_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-5-impossible-30-february\\without_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 77.0
+  },
+  "eval_feedback": "A1 и A2 проходят в обеих конфигурациях. Различает A3: baseline перечисляет, как ведут себя разные планировщики, но про Sherpa не говорит, что тот сохранит выражение молча и оно не сработает ни разу — а именно это операционно важно. В этой итерации baseline уже не называет выражение «невалидным», как в iteration-1, — формулировка стала ближе, утверждение на границе."
+}

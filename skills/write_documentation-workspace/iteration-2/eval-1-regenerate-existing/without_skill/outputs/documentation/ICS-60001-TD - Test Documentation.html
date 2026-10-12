@@ -1,0 +1,118 @@
+<table>
+  <thead>
+    <tr>
+      <th>Проверяемая область</th>
+      <th>Описание тест-кейса</th>
+      <th>Условия выполнения</th>
+      <th>Ожидаемый результат</th>
+      <th>Критерий успешности</th>
+      <th>Полученный результат</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Шаг 1. Инициализация и расчёт даты</td>
+      <td>Проверка вычисления <code>resolvedReportEndDate</code> для значений: пусто, <code>yyyy-MM-dd</code>, целое смещение, дата в будущем, некорректное значение</td>
+      <td>Ресурс <code>ics60001_init_params</code> с разными <code>reportEndDate</code></td>
+      <td>Пусто → последний день прошлого месяца; дата → дата (не в будущем); смещение → последний день месяца со смещением; некорректное → <code>IllegalArgumentException</code></td>
+      <td>Значение сохранено в транзакцию <code>resolved.report.end.date</code>; для некорректного — исключение</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Шаг 1. Курс валюты и порог существенности</td>
+      <td>Получение курса <code>currencyCode</code> на <code>resolvedReportEndDate</code> и расчёт <code>materialityThreshold = rate × materialityLevel</code></td>
+      <td>Доступны <code>currency_rates_config</code>, <code>proxy_credentials</code>, <code>sap_credentials</code></td>
+      <td><code>ExchangeRate(eurRate, materialityThreshold)</code> сохранён в транзакцию <code>exchange.rate</code></td>
+      <td>Курс получен, threshold &gt; 0</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Шаг 1. Создание структуры папок SharePoint</td>
+      <td>Формирование унифицированных папок через <code>UnifiedFoldersUtil.monthly</code></td>
+      <td>Доступны <code>sharepoint_credentials</code>, корректные параметры SharePoint</td>
+      <td>Папки work/screenshots, work/input data, work/working, work/other evidence созданы; пути сохранены в транзакцию</td>
+      <td>Все пути из <code>getAllPaths()</code> существуют в SharePoint</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Шаг 2. SAP-экспорт (реальный режим)</td>
+      <td>Запуск транзакции <code>ZFI_FCRP1</code> с параметрами year/month/P_SUM, экспорт в Excel, скриншоты</td>
+      <td><code>sapMocked=false</code>, валидные <code>sap_credentials</code>, <code>sap_settings</code>, установлен SAP GUI</td>
+      <td>Excel-отчёт и <code>screenshots.xlsx</code> загружены в SharePoint; позиции распарсены в <code>accounting.document.positions</code></td>
+      <td>Список позиций не пуст, файлы доступны в SharePoint</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Шаг 2. Mock-режим SAP</td>
+      <td>Скачивание тестового Excel по <code>testExcelPath</code> и загрузка в папку input data</td>
+      <td><code>sapMocked=true</code>, корректный <code>testExcelPath</code></td>
+      <td>Файл скачан и загружен как <code>&lt;tcode&gt;.xlsx</code>, позиции распарсены</td>
+      <td>Позиции соответствуют тестовому файлу</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Шаг 3. Подготовка списков типов документов</td>
+      <td>Формирование allowed/denied/unclassified списков и постановка задачи <code>documentTypePolicyEditor</code></td>
+      <td>Ресурсы <code>document_type_classification</code>, <code>document_type_comments</code>; транзакция с позициями</td>
+      <td>Списки сохранены в транзакцию; задача создана в очереди «ICS-60001 Document type policy editor» с тегом <code>pendingPolicyUpdate</code></td>
+      <td>Unclassified-коды корректно вычислены; email task_assigned отправлен</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Шаг 4–5. Редактирование и сохранение справочника</td>
+      <td>Web-редактор сохраняет обновлённый <code>initialData</code>; шаг 5 обновляет ресурсы</td>
+      <td>Опубликованное web-действие <code>document-type-policy-editor</code>; очередь задач</td>
+      <td>Задача переведена в тег <code>policyUpdated</code>; ресурсы <code>document_type_classification</code> и <code>document_type_comments</code> обновлены</td>
+      <td>Списки allowed/denied и комментарии сохранены в Orchestrator</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Шаг 6. Подготовка выборки</td>
+      <td>Группировка, фильтрация по allowed, расчёт размера выборки, перемешивание, сортировка</td>
+      <td>Транзакция с позициями и allowed-списком</td>
+      <td><code>sample.documents</code>, <code>sample.owners</code>, <code>documents.filtered</code> сохранены</td>
+      <td>Размер выборки соответствует правилам (2/5/15/25); порядок сортировки по первому вхождению</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Шаг 7. Обогащение владельцами через MIM</td>
+      <td>PowerShell-запросы accounts/persons, построение mapping, формирование OwnerContact</td>
+      <td>Доступен MIM, <code>mim_credentials</code>, корректные <code>mimCommand</code>/<code>mimUrl</code></td>
+      <td><code>owners.enriched</code> заполнен; при наличии <code>controllerEmail</code> — <code>controller.name</code>/<code>controller.position</code> сохранены</td>
+      <td>Активные владельцы корректно определены; контролёр найден</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Шаг 8. Рассылка заданий</td>
+      <td>Отправка <code>multitask_new</code> и <code>task_assigned</code>, создание задач <code>documentReview</code></td>
+      <td>Шаблон <code>multitask_new</code> в <code>ics60001_email_templates</code>; <code>sherpa_api_credentials</code></td>
+      <td>Письма отправлены активным владельцам и контролёру; задачи <code>documentReview</code> созданы в очереди «ICS-60001 Document review»</td>
+      <td>Число задач равно числу документов выборки; inactive owners отражены в письме</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Шаг 9. Проверка документа</td>
+      <td>Web-форма <code>document-review</code>: загрузка файла, выбор статуса, комментарий</td>
+      <td>Опубликованное web-действие <code>document-review</code>; активные задания <code>pendingReview</code></td>
+      <td>Задача обновлена <code>userInput</code> с <code>uploadedFileGuid</code>, <code>status</code>, <code>comment</code></td>
+      <td>Файл сохранён в Storage Orchestrator; статус — «OK» или «NOT OK»</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Шаг 10. Финализация и публикация</td>
+      <td>Сбор результатов, заполнение шаблона <code>ICS-60001.xlsx</code>, формирование ZIP-архива, отправка уведомлений</td>
+      <td>Задачи в очереди «ICS-60001 Document review» с <code>userInput</code>; шаблон-файл доступен; <code>sharepoint_credentials</code></td>
+      <td><code>ICS-60001.xlsx</code> и ZIP загружены в <code>work/working</code>; доказательства — в <code>work/other evidence</code>; отправлены task_completed и process_completed</td>
+      <td>controlStatus корректно отражает наличие «NOT OK»; controlResultsLink открывает папку результатов</td>
+      <td>—</td>
+    </tr>
+    <tr>
+      <td>Обработка ошибок</td>
+      <td>Проверка реакции на отсутствие данных, ошибки интеграции, некорректные параметры, <code>[object Object]</code> из web-формы</td>
+      <td>Искусственно вызвать ошибку (неверные credentials, пустые ресурсы, некорректный <code>reportEndDate</code>)</td>
+      <td>Процесс завершён с <code>BusinessException</code>/<code>IllegalStateException</code>; ошибка залогирована с контекстом</td>
+      <td>Ошибка корректно зафиксирована; процесс завершился неуспешно</td>
+      <td>—</td>
+    </tr>
+  </tbody>
+</table>

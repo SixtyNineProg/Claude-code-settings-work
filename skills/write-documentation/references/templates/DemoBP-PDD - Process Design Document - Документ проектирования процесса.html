@@ -1,0 +1,371 @@
+<h2 id="Общая информация">Общая информация</h2>
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Процесс</strong></td>
+            <td>DemoBP / Демонстрационный бизнес-процесс</td>
+        </tr>
+        <tr>
+            <td><strong>Название бизнес-процесса</strong></td>
+            <td>DemoBP / Демонстрационный бизнес-процесс</td>
+        </tr>
+        <tr>
+            <td><strong>Управление</strong></td>
+            <td>Группа разработки и поддержки роботизированных решений</td>
+        </tr>
+        <tr>
+            <td><strong>Версия и место хранения бизнес-процесса</strong></td>
+            <td><a
+                    href="">http://srv-gitlabprod-001.main.velcom.by/workfusion/sherpa/-/tree/master/rpa-suite/rpa-process-demo</a>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Владелец бизнес-процесса</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Пользователи бизнес-процесса</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Связанные документы</strong></td>
+            <td>
+                <ul>
+                    <li><a href="">DemoBP-TD: Test
+                            Documentation / Тестовая документация</a></li>
+                    <li><a href="">DemoBP-UG: User Guide /
+                            Руководство пользователя</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Верифицировано</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Статус документа</td>
+            <td>DRAFT 09.12.2025</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Используемые системы">Используемые системы</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Наименование (полное)</th>
+            <th>Наименование (сокращение), используемое в документации</th>
+            <th>Примечания</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Sherpa Orchestrator</td>
+            <td>Orchestrator</td>
+            <td>Платформа роботизации</td>
+        </tr>
+        <tr>
+            <td>—</td>
+            <td>Почтовый сервер</td>
+            <td>Или его аналог (SMTP)</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Описание процесса">Описание процесса</h2>
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Назначение бизнес-процесса</strong></td>
+        </tr>
+        <tr>
+            <td>Демонстрация реализации бизнес-процесса на платформе Sherpa</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Упрощенная BPMN схема бизнес-процесса</h3>
+<p><img alt="BPMN схема DemoBP" src="" />
+</p>
+<p>Файл-исходник: <a href="">DempBP.bpm</a>
+</p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Выходные данные бизнес-процесса</strong></td>
+        </tr>
+        <tr>
+            <td>Письмо с информацией о результатах работы</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Сценарий использования">Сценарий использования (перечень Steps)</h2>
+<table>
+    <tbody>
+        <tr>
+            <td><a href="">DemoBP-Step-01</a></td>
+            <td>Начало работы</td>
+        </tr>
+        <tr>
+            <td><a href="">DemoBP-Step-02</a></td>
+            <td>Валидация параметров заказа</td>
+        </tr>
+        <tr>
+            <td><a href="">DemoBP-Step-03</a></td>
+            <td>Обработка заказа</td>
+        </tr>
+        <tr>
+            <td><a href="">DemoBP-Step-04</a></td>
+            <td>Завершение работы</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Возможные исключения">Возможные исключения (Exceptions)</h2>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Описание</th>
+            <th>Тип исключения</th>
+            <th>Действие Bot при наступлении</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><a href="">DemoBP-EX-01</a></td>
+            <td>Неизвестная системная ошибка</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Отправить уведомление Исполнителю и support группе: "Процесс DemoBP остановлен из-за ошибки."
+                    </li>
+                    <li>Остановить процесс с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Конфигурируемые параметры">Конфигурируемые параметры</h2>
+<p>Входные параметры процесса, используемые нотификации и т.п.</p>
+<p>Все описанные параметры находятся в ресурсах из группы <strong>demobp</strong>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Параметр</th>
+            <th>Ресурс</th>
+            <th>Описание</th>
+            <th>Текущее значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="3">1</td>
+            <td>emailRecipients:to</td>
+            <td rowspan="3">demo_initial_params</td>
+            <td rowspan="2">Email-адрес(а) для уведомлений о статусе процесса (старт, завершение, ошибки)</td>
+            <td>почтовый адрес исполнителя</td>
+        </tr>
+        <tr>
+            <td>emailRecipients:cc</td>
+            <td>SC_SG_Sherpa@a1.by</td>
+        </tr>
+        <tr>
+            <td>emailRecipients:bcc</td>
+            <td>Email-адрес(а) для скрытых копий уведомлений</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>smsRecipient</td>
+            <td>demo_initial_params</td>
+            <td>Номер для отправки СМС</td>
+            <td>номер от заказчика</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>orderId</td>
+            <td>demo_initial_params</td>
+            <td>Номер нового заказа</td>
+            <td>12345</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>orderAmount</td>
+            <td>demo_initial_params</td>
+            <td>Кол-во товаров для заказа</td>
+            <td>100.0</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>orderStatus</td>
+            <td>demo_initial_params</td>
+            <td>Статус для создаваемого заказа</td>
+            <td>NEW</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>calendar</td>
+            <td>test_calendar</td>
+            <td>Календарь для пробного запроса.</td>
+            <td>Sherpa Orchestrator</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Нотификации">Нотификации</h2>
+<p>Сообщения, отправляемые процессом на группы заказчиков, support группу и т.д.</p>
+<p>Все описанные параметры (кроме стандартных) находятся в ресурсах из группы <strong>demobp</strong>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Наименование</th>
+            <th>Ресурс</th>
+            <th>Описание</th>
+            <th>Текущее значение</th>
+            <th>Тип</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>process_started</td>
+            <td>_email_templates</td>
+            <td>Текст и оформление сообщения о начале работы</td>
+            <td>Используется <a href="https://wiki.a1.by/pages/viewpage.action?pageId=474058264">стандартное
+                    значение</a></td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>process_error</td>
+            <td>_email_templates</td>
+            <td>Текст и оформление сообщения об ошибке</td>
+            <td>Используется <a href="https://wiki.a1.by/pages/viewpage.action?pageId=474058264">стандартное
+                    значение</a></td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>process_completed</td>
+            <td>demo_email_templates</td>
+            <td>Текст и оформление сообщения о завершении работы</td>
+            <td>Шаблон письма о завершении процесса с параметрами: ${processName}, ${bpNumber}, ${bpDescription},
+                ${ticketLink}, ${uuid}</td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>critical_error</td>
+            <td>demo_sms_templates</td>
+            <td>Сообщение о критической ошибке</td>
+            <td>"subjectTemplate":"${processName}: ошибка!","bodyTemplate":"Обнаружена критическая ошибка:
+                ${errorDescription}"</td>
+            <td>SMS</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Конфиденциальные значения">Конфиденциальные значения</h2>
+<p>Учетные данные и т.п.</p>
+<p>Необходимо проверять, что указанные ресурсы с нужной УЗ указаны в <a
+        href="https://wiki.a1.by/pages/viewpage.action?pageId=407798383">Интеграции со сторонними системами (учетные
+        записи)</a></p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Ресурс</th>
+            <th>Группа</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>sherpa_api_credentials</td>
+            <td>credentials</td>
+            <td>Токен для работы с API Sherpa</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td><a href="https://wiki.a1.by/spaces/SRPA/pages/407798383">smtp_credentials</a>
+            </td>
+            <td>rpa_configurations</td>
+            <td>Настройки почтового сервера + данные УЗ, используемой для отправки нотификаций</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Прочие ресурсы">Прочие ресурсы</h2>
+<p>Не конфиденциальные данные, используемые в ходе работы процесса.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Ресурс</th>
+            <th>Группа</th>
+            <th>Описание</th>
+            <th>Текущее значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>ics60187_processed_files_cache</td>
+            <td>ics60187</td>
+            <td>Информация об обработанных файлах (пример из другого процесса)</td>
+            <td>Sherpa Orchestrator</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Хранилище">Хранилище</h2>
+<p>Используемые папки и файлы в Хранилище файлов в Оркестраторе.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№ п/п</th>
+            <th>Наименование папки в Хранилище</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>Test</td>
+            <td>test</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Папки доступа">Папки доступа</h2>
+<p>Папки доступа, которые использует процесс.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№ п/п</th>
+            <th>Наименование папки доступа</th>
+            <th>Описание</th>
+            <th>Перечень объектов, которым присвоена папка</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>DemoBP</td>
+            <td>Папка для Бота "Демонстрационный бизнес-процесс" и его компонентов</td>
+            <td>
+                <ul>
+                    <li>Action "DemoBP with native blocks"</li>
+                    <li>Action "DemoBP with HTML blocks"</li>
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>

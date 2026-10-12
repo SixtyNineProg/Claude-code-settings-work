@@ -1,0 +1,46 @@
+{
+  "expectations": [
+    {
+      "text": "Прямо сказано, что cron не выражает окно активности 10:00–22:00",
+      "passed": false,
+      "evidence": "Окно зашито прямо в cron: «## Вариант A ... `*/30 10-21 * * *` ... ровно 24 запуска в сутки, всё внутри окна». Тезиса «cron окна не выражает» нет."
+    },
+    {
+      "text": "Названы поля расписания daily_start_time и/или daily_finish_time",
+      "passed": false,
+      "evidence": "`daily_start_time` / `daily_finish_time` не упомянуты. Вместо них «## Что нужно уточнить» — список вопросов без имён полей."
+    },
+    {
+      "text": "Опрос очереди описан через queue_id и max_runs, а cron отведён только такту опроса",
+      "passed": false,
+      "evidence": "Ни `queue_id`, ни `max_runs` не упомянуты ни разу. Ближайшее по смыслу — «4. Длина одного прохода. Если обработка очереди может идти дольше 30 минут, запуски начнут накладываться», но это рассуждение о перекрытии запусков, а не поля расписания Sherpa. Такт опроса здесь и есть само выражение `*/30 10-21 * * *`, отдельно он не выделен."
+    },
+    {
+      "text": "Не выдано выдуманное выражение (например */30 10-22 * * *) как полное решение",
+      "passed": false,
+      "evidence": "`*/30 10-21 * * *` выдано итогом: «Мой дефолт по умолчанию: `*/30 10-21 * * *`» и «Вариант A ... ровно 24 запуска в сутки»."
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 4,
+    "total": 4,
+    "pass_rate": 0.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Write": 2
+    },
+    "total_tool_calls": 2,
+    "total_steps": 1,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-1-queue-window-not-cron\\without_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-1-queue-window-not-cron\\without_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 64.6
+  },
+  "eval_feedback": "A3 переписано: раньше оно требовало буквально `* * * * *`, хотя в промпте просят полчаса, и карало правильный ответ со скиллом. Теперь оно проверяет смысл — что опрос очереди описан через `queue_id` и `max_runs`, а cron отведён только такту. Со скиллом 4/4, без — 0/4. A5 (про Quartz) убрано: это был post-hoc критерий, добавленный после просмотра baseline'ов iteration-1, и в этой итерации он никого не различал — baseline не предлагал 6-полевой формат ни разу."
+}

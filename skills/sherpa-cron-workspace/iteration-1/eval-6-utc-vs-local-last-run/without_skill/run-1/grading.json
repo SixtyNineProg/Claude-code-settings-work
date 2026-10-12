@@ -1,0 +1,41 @@
+{
+  "expectations": [
+    {
+      "text": "Ответ: да, расписание согласовано",
+      "passed": true,
+      "evidence": "«`cron_tab = 0 9 * * *` и `last_run = 2026-10-01T06:00:00Z` описывают **один и тот же запуск**»."
+    },
+    {
+      "text": "Названо правило: cron_tab в местном времени Sherpa, а last_run отдаётся в UTC",
+      "passed": true,
+      "evidence": "«Выражение cron у планировщика Sherpa RPA вычисляется в **локальном времени** машины ... Поле `last_run` отдаётся в **UTC** ... Для Минска пояс — `Europe/Minsk`, это фиксированный **UTC+3**»."
+    },
+    {
+      "text": "06:00 UTC явно сопоставлено с 09:00 по Минску (UTC+3)",
+      "passed": true,
+      "evidence": "«09:00 (локально, Europe/Minsk) − 3 ч = 06:00 UTC» и «06:00 UTC = 2026-10-01T06:00:00Z ✔ ровно то, что в last_run»."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Write": 2
+    },
+    "total_tool_calls": 2,
+    "total_steps": 2,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-6-utc-vs-local-last-run\\without_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-6-utc-vs-local-last-run\\without_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 60.6
+  },
+  "eval_feedback": "Все три утверждения проходят в обеих конфигурациях — eval не различает скилл. Baseline вывел Минск/UTC+3 сам, из трёхчасовой разницы и профиля компании."
+}

@@ -1,0 +1,51 @@
+{
+  "eval_name": "rps-sales-legacy-api-single-process",
+  "run": "without_skill",
+  "expectations": [
+    {
+      "text": "Первая строка начинается с '# RPS-Sales'",
+      "passed": true,
+      "evidence": "first line: '# RPS-Sales — Автоматизированная сверка продаж между SAP и 1С'"
+    },
+    {
+      "text": "Список шагов содержит 4 пунктов в ожидаемом порядке",
+      "passed": false,
+      "evidence": "got ['PrepareInitialParametersStep', 'GetSapReportDataStep', 'GetOnecReportDataStep', 'DataProcessingStep']"
+    },
+    {
+      "text": "Каждая ссылка на шаг ведёт на существующий .java файл",
+      "passed": true,
+      "evidence": "4 links; broken: []"
+    },
+    {
+      "text": "Имена шагов совпадают с resolved stepName из отчёта",
+      "passed": false,
+      "evidence": "report: ['getOnecReportData', 'prepareInitialParameters', 'dataProcessing', 'getSapReportData']; readme: ['PrepareInitialParametersStep', 'GetSapReportDataStep', 'GetOnecReportDataStep', 'DataProcessingStep']"
+    },
+    {
+      "text": "Секция параметров инициализации ссылается на rps_sales_init_params.json",
+      "passed": false,
+      "evidence": "missing or wrong reference"
+    },
+    {
+      "text": "Секция email-шаблонов присутствует и ссылается на реальный файл",
+      "passed": false,
+      "evidence": "emailTemplatesFile in report: src/main/resources/rps_sales_email_templates.json"
+    },
+    {
+      "text": "Таблица сервисных переменных содержит: 1c_ct_credentials, jira_jsd_credentials, sap_credentials",
+      "passed": false,
+      "evidence": "missing: ['1c_ct_credentials', 'jira_jsd_credentials', 'sap_credentials']; present: []"
+    },
+    {
+      "text": "В таблице нет неразрешённых идентификаторов-констант",
+      "passed": true,
+      "evidence": "unresolved identifiers: []"
+    },
+    {
+      "text": "Отключённый шаг _GetSapReportData не включён в нумерованный список",
+      "passed": true,
+      "evidence": "steps: ['PrepareInitialParametersStep', 'GetSapReportDataStep', 'GetOnecReportDataStep', 'DataProcessingStep']"
+    }
+  ]
+}

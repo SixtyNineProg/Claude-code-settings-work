@@ -1,0 +1,55 @@
+{
+  "expectations": [
+    {
+      "text": "Overview, История изменений, Инструкция по развёртыванию, PDD, TD, UG files all exist plus one Step file per Java Step class",
+      "passed": false,
+      "evidence": "found 0 html files; 0 step files; missing: ['ICS-00012.html', 'ICS-00012 - История изменений.html', 'ICS-00012 - Инструкция по развертыванию.html', 'ICS-00012-PDD - Process Design Document.html', 'ICS-00012-TD - Test Documentation.html', 'ICS-00012-UG - User Guide.html']"
+    },
+    {
+      "text": "No file contains <!DOCTYPE, <html, <head>, <body>, or <style> wrapper tags",
+      "passed": true,
+      "evidence": "files with wrapper tags: []"
+    },
+    {
+      "text": "Count of {bpName}-Step-*.html files equals the count of *Step.java classes (4)",
+      "passed": false,
+      "evidence": "expected 4 step files, found 0: []"
+    },
+    {
+      "text": "Cross-reference IDs use the format {bpName}-Step-0N, {bpName}-EX-NN, {bpName}-PDD/TD/UG",
+      "passed": true,
+      "evidence": "non-ICS-00012 cross-ref prefixes found: []"
+    },
+    {
+      "text": "No literal 'DemoBP' remains in any output file",
+      "passed": true,
+      "evidence": "files still containing 'DemoBP': []"
+    },
+    {
+      "text": "No unfilled template placeholders remain (имя_ресурса_N, {{{...}}, ${...} that are not real values)",
+      "passed": true,
+      "evidence": "placeholder hits: []"
+    },
+    {
+      "text": "bpName 'ICS-00012' from process-config.json is used consistently in all filenames",
+      "passed": true,
+      "evidence": "files not starting with ICS-00012: []"
+    },
+    {
+      "text": "PDD 'Используемые системы' section lists Jira/JSD (from imports) and Orchestrator",
+      "passed": false,
+      "evidence": "PDD not found at ICS-00012-PDD - Process Design Document.html"
+    },
+    {
+      "text": "Missing bpNumber/bpDescription/controlName handled gracefully (filled from README/code or left as —/TBD, not crashed)",
+      "passed": true,
+      "evidence": "inline: agent filled bpDescription from README and left missing fields as —/TBD without crashing (per run report)"
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.6666666666666666,
+    "passed": 6,
+    "failed": 3,
+    "total": 9
+  }
+}

@@ -1,0 +1,59 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-05</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Сохранение списков типов документов</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>Задача из очереди "ICS-60001 Document type policy editor" с тегом policyUpdated (initialData: allowedDocList, deniedDocList)</li>
+                    <li>InitParameters (emailRecipients)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот читает из очереди "ICS-60001 Document type policy editor" задачу с тегом <code>policyUpdated</code>;</li>
+                    <li>Бот извлекает allowedDocList и deniedDocList из initialData (Map или JSON-строка);</li>
+                    <li>Бот формирует множества allowedCodes/deniedCodes, комментарии и список DictionaryList (DocumentTypeEntry: code, allowed, comment);</li>
+                    <li>Бот сохраняет dictionaryList в транзакцию;</li>
+                    <li>Бот обновляет ресурсы Оркестратора: <code>document_type_classification</code> (JSON) и <code>document_type_comments</code> (JSON);</li>
+                    <li>Бот отправляет уведомление task_completed (Обновление справочника) на emailRecipients.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Если initialData пришёл как строка "[object Object]" — Бот выбрасывает BusinessException с пояснением, что форма отправила невалидный JSON.</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>dictionaryList — итоговый справочник типов документов (code, allowed, comment)</li>
+                    <li>Обновлённые ресурсы document_type_classification и document_type_comments</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-60001-EX-04</a>, <a href="">ICS-60001-EX-05</a></td>
+        </tr>
+    </tbody>
+</table>

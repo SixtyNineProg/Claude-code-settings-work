@@ -1,0 +1,88 @@
+<table>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>
+                <p>Проверить, что все элементы процесса соответствуют <a
+                        href="https://wiki.a1.by/pages/viewpage.action?pageId=453837503">принятому стилю</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>
+                <p>Подготовить необходимые файлы и выполнить перенос процесса на прод согласно <a
+                        href="https://wiki.a1.by/pages/viewpage.action?pageId=474056373">общей инструкции</a></p>
+            </td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>
+                <p>Проверяем/Создаем Ресурсы типа Credential на целевой среде (без них процесс не сможет авторизоваться
+                    в системах):</p>
+                <ul>
+                    <li>sap_credentials — логин и пароль Робота для доступа к серверу SAP</li>
+                    <li>sharepoint_credentials — логин и пароль Робота для доступа к каталогам SharePoint</li>
+                    <li>sherpa_api_credentials — Bearer-токен для JS-вызовов Manual Task (/api/task/*)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>
+                <p>Проверяем/Создаем Ресурсы типа Text на целевой среде:</p>
+                <ul>
+                    <li>sap_settings — JSON SapGuiSettings (путь к SAP Logon, systemName, client, language = "RU")</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>
+                <p><strong>Опционально</strong> Проверяем/Создаем папку в Хранилище и загружаем туда нужные файлы.
+                    Процесс использует папку Хранилища с именем из параметра <code>storageFolderName</code>
+                    (по умолчанию <code>ICS-00057</code>) для выгрузки SAP, скриншотов, чек-листа и технического
+                    архива. Файлы хранятся под плоским уникальным именем с суффиксом даты-времени.</p>
+                <p>Также процесс читает и обновляет файлы состояния в Хранилище: <code>ics00057_accounts.json</code>
+                    (справочник счетов) и <code>ics00057_comments.json</code> (комментарии MT).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>
+                <p><strong>Опционально</strong> Проверяем/Создаем Очередь задач с именем
+                    <code>ICS-00057 Обновление справочника</code> (общая для MT №1/№2/№3; теги процессов не
+                    конфликтуют: <code>pending</code>/<code>reviewed</code>/<code>processed</code>,
+                    <code>pendingChanged</code>/<code>reviewedChanged</code>/<code>processedChanged</code>,
+                    <code>pendingAll</code>/<code>reviewedAll</code>/<code>processedAll</code>).</p>
+            </td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>
+                <p><strong>Опционально</strong> Проверяем/Создаем Триггеры Orchestrator (Task Queue, очередь
+                    <code>ICS-00057 Обновление справочника</code>):</p>
+                <ul>
+                    <li>по final-тегу <code>reviewed</code> → статус задачи In Progress → запуск Stage2
+                        (<code>SaveNewStep</code>);</li>
+                    <li>по final-тегу <code>reviewedChanged</code> → статус задачи In Progress → запуск Stage3
+                        (<code>SaveChangedStep</code>);</li>
+                    <li>по final-тегу <code>reviewedAll</code> → статус задачи In Progress → запуск Stage4
+                        (<code>SaveAllStep</code> → <code>UploadEvidenceStep</code>).</li>
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<p>Дополнительные действия (дополнения к указанному в таблице/прочая информация, которую удобнее расположить так):</p>
+<ol>
+    <li>Загрузить в файловое хранилище скрипты форм Manual Task: <code>actions/process_new.js</code>,
+        <code>actions/process_changed.js</code>, <code>actions/process_all.js</code> (общие
+        <code>core.js</code> и <code>style.css</code> — из <code>rpa-core/src/test/resources/manualtask/</code>);</li>
+    <li>Прописать в init_params ссылки на загруженные формы (<code>processNewActionLink</code>,
+        <code>processChangedActionLink</code>, <code>processAllActionLink</code>) и параметры отчётного периода
+        (<code>periodStart</code>/<code>periodEnd</code> в формате <code>dd.MM.yyyy</code>, либо
+        <code>-</code> для расчёта прошлого квартала по умолчанию);</li>
+    <li>Убедиться, что на Бот-машине установлен SAP Logon 750 и настроен Shortcut, описанный в
+        <code>sap_settings</code> (язык <code>RU</code> — имена счетов зависят от языка).</li>
+</ol>

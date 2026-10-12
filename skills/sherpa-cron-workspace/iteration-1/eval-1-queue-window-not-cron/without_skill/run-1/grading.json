@@ -1,0 +1,51 @@
+{
+  "expectations": [
+    {
+      "text": "Прямо сказано, что cron не выражает окно активности 10:00–22:00",
+      "passed": false,
+      "evidence": "Окно зашито прямо в cron: «## Короткий ответ ... `0 0/30 10-21 * * ?`». Тезиса «cron окна не выражает» нет."
+    },
+    {
+      "text": "Названы поля расписания daily_start_time и/или daily_finish_time",
+      "passed": false,
+      "evidence": "`daily_start_time` / `daily_finish_time` не упомянуты."
+    },
+    {
+      "text": "Опрос очереди описан как * * * * * вместе с queue_id и max_runs",
+      "passed": false,
+      "evidence": "`queue_id` и `max_runs` не упомянуты; `* * * * *` не предложен. Пункт 5 говорит про «период опроса и окно работы задаются в настройках очереди» без имён полей."
+    },
+    {
+      "text": "Не выдано выдуманное выражение (например */30 10-22 * * *) как полное решение",
+      "passed": false,
+      "evidence": "`0 0/30 10-21 * * ?` и `0,30 10-21 * * *` выданы как полное решение («Итого 24 запуска в сутки»)."
+    },
+    {
+      "text": "Не предложен 6-полевой Quartz-формат (с секундами или «?») как формат Sherpa",
+      "passed": false,
+      "evidence": "Первым идёт 6-полевое `0 0/30 10-21 * * ?` с «?», объявленное форматом планировщика Sherpa RPA."
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 5,
+    "total": 5,
+    "pass_rate": 0.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Write": 2
+    },
+    "total_tool_calls": 2,
+    "total_steps": 2,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-1-queue-window-not-cron\\without_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-1-queue-window-not-cron\\without_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 41.6
+  },
+  "eval_feedback": "Утверждение A5 («не предложен 6-полевой Quartz-формат») добавлено после просмотра ответов baseline: и здесь, и в eval-3 baseline выдал 6-полевую форму с «?». Добавлено после наблюдения результата — это следует учитывать при чтении цифр."
+}

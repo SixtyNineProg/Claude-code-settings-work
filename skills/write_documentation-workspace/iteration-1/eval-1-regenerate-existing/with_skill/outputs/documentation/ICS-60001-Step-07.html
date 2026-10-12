@@ -1,0 +1,59 @@
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Идентификатор</strong></td>
+            <td>ICS-60001-Step-07</td>
+        </tr>
+        <tr>
+            <td><strong>Определение</strong></td>
+            <td><strong>Обогащение выборки владельцами</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Пользователь</strong></td>
+            <td>Bot</td>
+        </tr>
+        <tr>
+            <td><strong>Входные данные</strong></td>
+            <td>
+                <ul>
+                    <li>sampleOwners — SAP-логины владельцев проводок</li>
+                    <li>InitParameters (mimCommand, mimUrl, mimAccountsAttributesToGet, mimPersonsAttributesToGet, mimAccountsFilter, mimPersonsFilter, mimCommandTimeoutMs, controllerEmail)</li>
+                    <li>mim_credentials</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Основной путь</strong></td>
+            <td>
+                <ol>
+                    <li>Бот открывает PowerShell-сессию и выполняет две команды MIM (mimCommand) для аккаунтов и сотрудников с фильтрами и атрибутами из InitParameters;</li>
+                    <li>Бот строит карту sapLogin → personId (по DisplayedOwner/vc_AppAccountName) и карту personId → атрибуты сотрудника;</li>
+                    <li>Бот для каждого sampleOwner находит personId и запись сотрудника, формирует OwnerContact (email, sapLogin, fullName, active по vc_EmployeeStatus="Активен");</li>
+                    <li>Бот сохраняет ownersEnriched в транзакцию;</li>
+                    <li>Если задан controllerEmail, Бот ищет сотрудника с таким email и сохраняет controllerName и controllerPosition (vc_JobTitleRus).</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Альтернативные пути</strong></td>
+            <td>Владельцы без сопоставления с personId или без записи сотрудника пропускаются; если persons пуст — контролёр не обогащается.</td>
+        </tr>
+        <tr>
+            <td><strong>Выходные данные</strong></td>
+            <td>
+                <ul>
+                    <li>ownersEnriched — список OwnerContact с email, sapLogin, fullName, active</li>
+                    <li>controllerName, controllerPosition — данные контролёра (если найден)</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Дополнительные требования</strong></td>
+            <td>На рабочем месте Бота должен быть доступен PowerShell; ресурс mim_credentials должен быть настроен; MIM-сервис должен быть доступен по mimUrl.</td>
+        </tr>
+        <tr>
+            <td><strong>Возможные исключения</strong></td>
+            <td><a href="">ICS-60001-EX-07</a></td>
+        </tr>
+    </tbody>
+</table>

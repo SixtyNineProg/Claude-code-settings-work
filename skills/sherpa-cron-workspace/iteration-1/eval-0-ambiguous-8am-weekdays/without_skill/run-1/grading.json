@@ -1,0 +1,46 @@
+{
+  "expectations": [
+    {
+      "text": "Задан уточняющий вопрос: 8 утра или 8 вечера",
+      "passed": false,
+      "evidence": "Вопроса нет — таблица допущений «Время суток | 08:00 (утро, AM)» и приписка в конце «Подтвердите время суток и часовой пояс»."
+    },
+    {
+      "text": "Выражение не выдано как окончательное решение без снятия этой двусмысленности",
+      "passed": false,
+      "evidence": "`0 8 * * 1-5` выдан в разделе «## Cron-выражение» до подтверждения времени суток."
+    },
+    {
+      "text": "Назван часовой пояс Минск (UTC+3)",
+      "passed": false,
+      "evidence": "Пояс назван расплывчато: «часовой пояс сервера/Оркестратора Sherpa RPA». Ни Минска, ни UTC+3 нет."
+    },
+    {
+      "text": "Сказано, что «по будням» принято за Пн–Пт (1-5)",
+      "passed": true,
+      "evidence": "«Дни недели | **Пн–Пт** (будни)» и «`1-5` — дни недели с 1 (понедельник) по 5 (пятница)»."
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 3,
+    "total": 4,
+    "pass_rate": 0.25
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Write": 2
+    },
+    "total_tool_calls": 2,
+    "total_steps": 2,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-0-ambiguous-8am-weekdays\\without_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-1\\eval-0-ambiguous-8am-weekdays\\without_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 39.5
+  },
+  "eval_feedback": "Дефект методики: в задании прогона стояло «Do not ask me clarifying questions — produce your answer in this single turn». Это делает утверждение A1 невыполнимым в обеих конфигурациях и обесценивает A2 — они дублируют друг друга и падают одинаково. Eval нужно перезапустить с разрешением задать вопрос."
+}

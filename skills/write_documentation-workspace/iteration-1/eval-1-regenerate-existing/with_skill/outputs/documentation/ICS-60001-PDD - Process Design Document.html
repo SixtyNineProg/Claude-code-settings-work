@@ -1,0 +1,709 @@
+<h2 id="Общая информация">Общая информация</h2>
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Процесс</strong></td>
+            <td>ICS-60001 / Контроль корректности ручных бухгалтерских проводок</td>
+        </tr>
+        <tr>
+            <td><strong>Название бизнес-процесса</strong></td>
+            <td>ICS-60001 / Контроль корректности ручных бухгалтерских проводок</td>
+        </tr>
+        <tr>
+            <td><strong>Управление</strong></td>
+            <td>Correctness of manual journal entries</td>
+        </tr>
+        <tr>
+            <td><strong>Версия и место хранения бизнес-процесса</strong></td>
+            <td><a
+                    href="http://srv-gitlabprod-001.main.velcom.by/workfusion/sherpa/-/tree/master/rpa-suite/ics60001">http://srv-gitlabprod-001.main.velcom.by/workfusion/sherpa/-/tree/master/rpa-suite/ics60001</a>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Владелец бизнес-процесса</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Пользователи бизнес-процесса</strong></td>
+            <td>Бухгалтерия, внутренние контролёры</td>
+        </tr>
+        <tr>
+            <td><strong>Связанные документы</strong></td>
+            <td>
+                <ul>
+                    <li><a href="ICS-60001-TD - Test Documentation.html">ICS-60001-TD: Test
+                            Documentation / Тестовая документация</a></li>
+                    <li><a href="ICS-60001-UG - User Guide.html">ICS-60001-UG: User Guide /
+                            Руководство пользователя</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Верифицировано</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Статус документа</td>
+            <td>DRAFT 05.08.2026</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Используемые системы">Используемые системы</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Наименование (полное)</th>
+            <th>Наименование (сокращение), используемое в документации</th>
+            <th>Примечания</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Sherpa Orchestrator</td>
+            <td>Orchestrator</td>
+            <td>Платформа роботизации: assets, tasks, files, storage</td>
+        </tr>
+        <tr>
+            <td>SAP ERP</td>
+            <td>SAP</td>
+            <td>Источник бухгалтерских данных, выгрузка отчёта по транзакции ZFI_FCRP1 через SAP GUI</td>
+        </tr>
+        <tr>
+            <td>SharePoint</td>
+            <td>SharePoint</td>
+            <td>Хранилище входных данных, скриншотов, результатов и доказательств проверки</td>
+        </tr>
+        <tr>
+            <td>Email (SMTP)</td>
+            <td>Email</td>
+            <td>Рассылка уведомлений о старте/завершении, назначении и завершении задач, письмо владельцам проводок</td>
+        </tr>
+        <tr>
+            <td>Microsoft Identity Manager</td>
+            <td>MIM</td>
+            <td>Каталог сотрудников для обогащения выборки владельцами (через PowerShell)</td>
+        </tr>
+        <tr>
+            <td>Proxy-сервер</td>
+            <td>Proxy</td>
+            <td>Прокси для внешних соединений при получении курсов валют</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Описание процесса">Описание процесса</h2>
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Назначение бизнес-процесса</strong></td>
+        </tr>
+        <tr>
+            <td>Автоматизация контроля корректности ручных бухгалтерских проводок: извлечение параметров и данных отчёта из SAP, расчёт порога существенности по курсу валюты, формирование структуры папок в SharePoint, подготовка и сохранение списков типов документов с участием пользователя, формирование выборки проводок, обогащение её владельцами из MIM, рассылка заданий исполнителям и финализация результатов с публикацией отчёта и технического архива.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Упрощенная BPMN схема бизнес-процесса</h3>
+<p><img alt="BPMN схема ICS-60001" src="" />
+</p>
+<p>Файл-исходник: <a href="ICS-60001.bpmn">ICS-60001.bpm</a>
+</p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Выходные данные бизнес-процесса</strong></td>
+        </tr>
+        <tr>
+            <td>Excel-отчёт о результатах проверки (ICS-60001.xlsx), технический архив (zip), письмо с итоговым статусом контроля и ссылкой на результаты в SharePoint.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Сценарий использования">Сценарий использования (перечень Steps)</h2>
+<table>
+    <tbody>
+        <tr>
+            <td><a href="ICS-60001-Step-01.html">ICS-60001-Step-01</a></td>
+            <td>Инициализация параметров и создание структуры папок</td>
+        </tr>
+        <tr>
+            <td><a href="ICS-60001-Step-02.html">ICS-60001-Step-02</a></td>
+            <td>Получение данных отчёта из SAP</td>
+        </tr>
+        <tr>
+            <td><a href="ICS-60001-Step-03.html">ICS-60001-Step-03</a></td>
+            <td>Подготовка списков типов документов</td>
+        </tr>
+        <tr>
+            <td><a href="ICS-60001-Step-04.html">ICS-60001-Step-04</a></td>
+            <td>Редактирование списков типов документов (пользовательское действие)</td>
+        </tr>
+        <tr>
+            <td><a href="ICS-60001-Step-05.html">ICS-60001-Step-05</a></td>
+            <td>Сохранение списков типов документов</td>
+        </tr>
+        <tr>
+            <td><a href="ICS-60001-Step-06.html">ICS-60001-Step-06</a></td>
+            <td>Подготовка выборки для проверки</td>
+        </tr>
+        <tr>
+            <td><a href="ICS-60001-Step-07.html">ICS-60001-Step-07</a></td>
+            <td>Обогащение выборки владельцами</td>
+        </tr>
+        <tr>
+            <td><a href="ICS-60001-Step-08.html">ICS-60001-Step-08</a></td>
+            <td>Рассылка заданий исполнителям</td>
+        </tr>
+        <tr>
+            <td><a href="ICS-60001-Step-09.html">ICS-60001-Step-09</a></td>
+            <td>Обработка документа (пользовательское действие)</td>
+        </tr>
+        <tr>
+            <td><a href="ICS-60001-Step-10.html">ICS-60001-Step-10</a></td>
+            <td>Финализация и публикация результатов</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Возможные исключения">Возможные исключения (Exceptions)</h2>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Описание</th>
+            <th>Тип исключения</th>
+            <th>Действие Bot при наступлении</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><a href="">ICS-60001-EX-01</a></td>
+            <td>Ошибка создания структуры папок в SharePoint (SharePoint folder creation failed)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Записать ошибку в лог;</li>
+                    <li>Остановить процесс с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-60001-EX-02</a></td>
+            <td>Ошибка выгрузки отчёта из SAP или работы с SAP GUI сессией (SAP export failed / SAP session failed)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Записать ошибку и цепочку причин в лог;</li>
+                    <li>Остановить процесс с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-60001-EX-03</a></td>
+            <td>Ошибка создания скриншота или формирования книги скриншотов (Cannot create screenshot / Failed to build screenshots workbook)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Записать ошибку в лог;</li>
+                    <li>Остановить процесс с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-60001-EX-04</a></td>
+            <td>Некорректные данные из формы редактора списков типов документов: получен '[object Object]' вместо JSON (Invalid initialData)</td>
+            <td>Бизнес</td>
+            <td>
+                <ol>
+                    <li>Записать ошибку в лог;</li>
+                    <li>Остановить процесс с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-60001-EX-05</a></td>
+            <td>Ошибка сохранения списков типов документов в ресурсы Оркестратора (Persist document type lists failed)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Записать ошибку в лог;</li>
+                    <li>Остановить процесс с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-60001-EX-06</a></td>
+            <td>Ошибка подготовки выборки проводок для проверки (Sample preparation failed)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Записать ошибку в лог;</li>
+                    <li>Остановить процесс с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-60001-EX-07</a></td>
+            <td>Ошибка обогащения выборки владельцами через MIM/PowerShell (Owners enrichment failed)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Записать ошибку в лог;</li>
+                    <li>Остановить процесс с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-60001-EX-08</a></td>
+            <td>Ошибка рассылки заданий исполнителям и создания задач documentReview (Send multitask notifications failed)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Записать ошибку в лог;</li>
+                    <li>Остановить процесс с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-60001-EX-09</a></td>
+            <td>Ошибка финализации и публикации результатов в SharePoint (Finalize and publish results failed)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Записать ошибку в лог;</li>
+                    <li>Остановить процесс с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Конфигурируемые параметры">Конфигурируемые параметры</h2>
+<p>Входные параметры процесса, используемые нотификации и т.п.</p>
+<p>Все описанные параметры находятся в ресурсах из группы <strong>ics60001</strong>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Параметр</th>
+            <th>Ресурс</th>
+            <th>Описание</th>
+            <th>Текущее значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="2">1</td>
+            <td>emailRecipients:to</td>
+            <td rowspan="2">ics60001_init_params</td>
+            <td>Email-адрес(а) получателей уведомлений о статусе процесса (старт, завершение, ошибки)</td>
+            <td>admin@example.com</td>
+        </tr>
+        <tr>
+            <td>emailRecipients:cc</td>
+            <td>Email-адрес(а) для копий уведомлений о статусе процесса</td>
+            <td>support@example.com</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>controllerEmail</td>
+            <td>ics60001_init_params</td>
+            <td>Email контролёра, которому направляется задача проверки и определяется как подписант письма владельцам</td>
+            <td>V.Glazkova@A1.by</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>reportEndDate</td>
+            <td>ics60001_init_params</td>
+            <td>Дата окончания отчёта (yyyy-MM-dd), пусто — последний день прошлого месяца, целое — смещение в месяцах</td>
+            <td>-12</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>materialityLevel</td>
+            <td>ics60001_init_params</td>
+            <td>Порог существенности в валюте отчёта, умножается на курс для расчёта порога в ВВ</td>
+            <td>500000</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>currencyCode</td>
+            <td>ics60001_init_params</td>
+            <td>Код валюты, для которой запрашивается курс (EUR, USD и пр.)</td>
+            <td>EUR</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>sharepointBaseUrl</td>
+            <td>ics60001_init_params</td>
+            <td>Базовый URL SharePoint-инстанса</td>
+            <td>https://vactpro.main.velcom.by</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>sharepointProject</td>
+            <td>ics60001_init_params</td>
+            <td>Проект SharePoint, в котором создаются папки</td>
+            <td>Project_1776</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>sharepointBasePath</td>
+            <td>ics60001_init_params</td>
+            <td>Базовый путь к папке процесса внутри проекта SharePoint</td>
+            <td>Lists/documents/БОТ/ICS-60001</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>processName</td>
+            <td>ics60001_init_params</td>
+            <td>Имя процесса, используется в письмах и в пути папок UnifiedFolders</td>
+            <td>ICS-60001</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>controlName</td>
+            <td>ics60001_init_params</td>
+            <td>Название контроля для письма владельцам проводок</td>
+            <td>Correctness of manual journal entries</td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td>sapTransactionCode</td>
+            <td>ics60001_init_params</td>
+            <td>Код SAP-транзакции для выгрузки отчёта</td>
+            <td>ZFI_FCRP1</td>
+        </tr>
+        <tr>
+            <td>12</td>
+            <td>sapMocked</td>
+            <td>ics60001_init_params</td>
+            <td>При true отчёт берётся из тестового Excel-файла SharePoint без обращения к SAP</td>
+            <td>false</td>
+        </tr>
+        <tr>
+            <td>13</td>
+            <td>testExcelPath</td>
+            <td>ics60001_init_params</td>
+            <td>Путь к тестовому Excel-файлу в SharePoint для режима sapMocked=true</td>
+            <td>Project_1776/Lists/documents/Бот/ICS-60001/ZFI_FCRP1_test_eun.xlsx</td>
+        </tr>
+        <tr>
+            <td>14</td>
+            <td>documentTypePolicyEditorActionLink</td>
+            <td>ics60001_init_params</td>
+            <td>Ссылка на Action редактора списков типов документов</td>
+            <td>https://sherpa-test.a1.by/main/my-actions/0d2e7712-27a1-40b8-808e-4ba9c3e30241</td>
+        </tr>
+        <tr>
+            <td>15</td>
+            <td>documentReviewActionLink</td>
+            <td>ics60001_init_params</td>
+            <td>Ссылка на Action формы проверки документа</td>
+            <td>https://sherpa-test.a1.by/main/my-actions/e570fcdf-b5a2-4432-87e8-57c166e32222</td>
+        </tr>
+        <tr>
+            <td>16</td>
+            <td>mimCommand</td>
+            <td>ics60001_init_params</td>
+            <td>Шаблон PowerShell-команды для запроса к MIM (%1$s=URL, %2$s=login, %3$s=password, %4$s=filter, %5$s=attrs)</td>
+            <td>$ErrorActionPreference='Stop'; $sec=ConvertTo-SecureString ...</td>
+        </tr>
+        <tr>
+            <td>17</td>
+            <td>mimUrl</td>
+            <td>ics60001_init_params</td>
+            <td>URL сервиса MIM</td>
+            <td>http://srv-mimsprt-01.main.velcom.by:5725</td>
+        </tr>
+        <tr>
+            <td>18</td>
+            <td>mimAccountsAttributesToGet</td>
+            <td>ics60001_init_params</td>
+            <td>Список атрибутов аккаунтов, возвращаемых MIM</td>
+            <td>DisplayedOwner, vc_AppAccountName</td>
+        </tr>
+        <tr>
+            <td>19</td>
+            <td>mimPersonsAttributesToGet</td>
+            <td>ics60001_init_params</td>
+            <td>Список атрибутов сотрудников, возвращаемых MIM</td>
+            <td>DisplayName, MiddleName, vc_JobTitleRus, Email, MobilePhone, vc_EmployeeStatus, Department, vc_ExpectedFiringDate, EmployeeStartDate, vc_AppAccountName, ObjectID</td>
+        </tr>
+        <tr>
+            <td>20</td>
+            <td>mimAccountsFilter</td>
+            <td>ics60001_init_params</td>
+            <td>XPath-фильтр запроса аккаунтов MIM</td>
+            <td>/vc_Account[vc_AccountType = 'Primary' and vc_SourceSystem = 'SAP' and DisplayedOwner = /Person[vc_UserAccountControl>0] and starts-with(vc_AppAccountName, '%')]</td>
+        </tr>
+        <tr>
+            <td>21</td>
+            <td>mimPersonsFilter</td>
+            <td>ics60001_init_params</td>
+            <td>XPath-фильтр запроса сотрудников MIM</td>
+            <td>/Person[vc_UserAccountControl>0]</td>
+        </tr>
+        <tr>
+            <td>22</td>
+            <td>mimCommandTimeoutMs</td>
+            <td>ics60001_init_params</td>
+            <td>Таймаут выполнения PowerShell-команды MIM, мс</td>
+            <td>30000</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Нотификации">Нотификации</h2>
+<p>Сообщения, отправляемые процессом на группы пользователей и support.</p>
+<p>Все описанные параметры (кроме стандартных) находятся в ресурсах из группы <strong>ics60001</strong>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Наименование</th>
+            <th>Ресурс</th>
+            <th>Описание</th>
+            <th>Текущее значение</th>
+            <th>Тип</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>process_started</td>
+            <td>— (стандартный шаблон EmailService)</td>
+            <td>Уведомление о старте процесса</td>
+            <td>Используется <a href="https://wiki.a1.by/pages/viewpage.action?pageId=474058264">стандартное
+                    значение</a></td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>task_assigned</td>
+            <td>— (стандартный шаблон EmailService)</td>
+            <td>Назначение задачи "Обновление справочника" (редактор списков типов документов)</td>
+            <td>Используется <a href="https://wiki.a1.by/pages/viewpage.action?pageId=474058264">стандартное
+                    значение</a></td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>multitask_new</td>
+            <td>ics60001_email_templates</td>
+            <td>Письмо активным владельцам проводок с таблицей отобранных документов для проверки</td>
+            <td>"subjectTemplate":"${processName}<#if controlName??> ${controlName}</#if>","bodyTemplate":"Добрый день! ... Ваши проводки были отобраны для проверки ... ${expireDate} не позднее ${expireTime} ..."</td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>task_assigned</td>
+            <td>— (стандартный шаблон EmailService)</td>
+            <td>Назначение задачи "Проверка ручных проводок" контролёру</td>
+            <td>Используется <a href="https://wiki.a1.by/pages/viewpage.action?pageId=474058264">стандартное
+                    значение</a></td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>task_completed</td>
+            <td>— (стандартный шаблон EmailService)</td>
+            <td>Завершение задачи "Обновление справочника" (сохранение списков типов документов)</td>
+            <td>Используется <a href="https://wiki.a1.by/pages/viewpage.action?pageId=474058264">стандартное
+                    значение</a></td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>task_completed</td>
+            <td>— (стандартный шаблон EmailService)</td>
+            <td>Завершение задачи "Проверка ручных проводок" (финализация)</td>
+            <td>Используется <a href="https://wiki.a1.by/pages/viewpage.action?pageId=474058264">стандартное
+                    значение</a></td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>process_completed</td>
+            <td>— (стандартный шаблон EmailService)</td>
+            <td>Уведомление о завершении процесса с итоговым статусом контроля и ссылкой на результаты в SharePoint</td>
+            <td>Используется <a href="https://wiki.a1.by/pages/viewpage.action?pageId=474058264">стандартное
+                    значение</a></td>
+            <td>Email</td>
+        </tr>
+    </tbody>
+</table>
+<p><em>Примечание:</em> Уведомление об ошибке процесса (process_error) в коде явно не вызывается; при падении шага ошибка обрабатывается инфраструктурой Sherpa.</p>
+
+<h2 id="Конфиденциальные значения">Конфиденциальные значения</h2>
+<p>Учетные данные и т.п.</p>
+<p>Необходимо проверять, что указанные ресурсы с нужной УЗ указаны в <a
+        href="https://wiki.a1.by/pages/viewpage.action?pageId=407798383">Интеграции со сторонними системами (учетные
+        записи)</a></p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Ресурс</th>
+            <th>Группа</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>sherpa_api_credentials</td>
+            <td>credentials</td>
+            <td>Токен (password) для авторизации в API Sherpa при создании задач documentReview</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>sap_credentials</td>
+            <td>credentials</td>
+            <td>Учётные данные для подключения к SAP через SAP Shortcut (логин/пароль)</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>sharepoint_credentials</td>
+            <td>credentials</td>
+            <td>Учётные данные для доступа к SharePoint (создание папок, загрузка/выгрузка файлов)</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>proxy_credentials</td>
+            <td>credentials</td>
+            <td>Учётные данные прокси-сервера для внешних соединений (получение курсов валют)</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>mim_credentials</td>
+            <td>credentials</td>
+            <td>Учётные данные для запросов к MIM через PowerShell</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Прочие ресурсы">Прочие ресурсы</h2>
+<p>Не конфиденциальные данные, используемые в ходе работы процесса.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Ресурс</th>
+            <th>Группа</th>
+            <th>Описание</th>
+            <th>Текущее значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>ics60001_init_params</td>
+            <td>ics60001</td>
+            <td>Параметры инициализации процесса (все ключи верхнего уровня см. в разделе "Конфигурируемые параметры")</td>
+            <td>Sherpa Orchestrator</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>ics60001_email_templates</td>
+            <td>ics60001</td>
+            <td>Шаблоны email-уведомлений процесса (multitask_new)</td>
+            <td>Sherpa Orchestrator</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>currency_rates_config</td>
+            <td>ics60001</td>
+            <td>Конфигурация сервиса курсов валют (CurrencyRatesConfig, JSON)</td>
+            <td>Sherpa Orchestrator</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>sap_settings</td>
+            <td>ics60001</td>
+            <td>Параметры подключения к SAP (SapGuiSettings: systemName, client, language)</td>
+            <td>Sherpa Orchestrator</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>document_type_classification</td>
+            <td>ics60001</td>
+            <td>Классификатор типов документов: списки allowed/denied (JSON, DocumentTypeClassification)</td>
+            <td>Sherpa Orchestrator</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>document_type_comments</td>
+            <td>ics60001</td>
+            <td>Справочник комментариев к типам документов (Map&lt;String,String&gt; в JSON)</td>
+            <td>Sherpa Orchestrator</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Хранилище">Хранилище</h2>
+<p>Используемые папки и файлы в Хранилище файлов в Оркестраторе.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№ п/п</th>
+            <th>Наименование папки в Хранилище</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>ICS-60001</td>
+            <td>Корневая папка процесса в SharePoint (UnifiedFoldersUtil.monthly): хранит входные данные, скриншоты, рабочие результаты и доказательства по периодам</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>ICS-60001/{period}/work/input_data</td>
+            <td>Выгруженный из SAP Excel-отчёт (ZFI_FCRP1.xlsx)</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>ICS-60001/{period}/work/screenshots</td>
+            <td>Книга скриншотов SAP (screenshots.xlsx): входные параметры, первая и последняя страница отчёта</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>ICS-60001/{period}/work/working</td>
+            <td>Результаты проверки (ICS-60001.xlsx) и технический архив (zip) по завершении процесса</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>ICS-60001/{period}/work/other_evidence</td>
+            <td>Прикреплённые пользователями подтверждающие документы из задач documentReview</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Папки доступа">Папки доступа</h2>
+<p>Папки доступа, которые использует процесс.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№ п/п</th>
+            <th>Наименование папки доступа</th>
+            <th>Описание</th>
+            <th>Перечень объектов, которым присвоена папка</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>ICS-60001</td>
+            <td>Папка для процесса "Контроль корректности ручных бухгалтерских проводок" и его пользовательских действий</td>
+            <td>
+                <ul>
+                    <li>Action "document-type-policy-editor" (редактор списков типов документов)</li>
+                    <li>Action "document-review" (форма проверки документа)</li>
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>

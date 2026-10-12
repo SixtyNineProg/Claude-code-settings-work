@@ -1,0 +1,583 @@
+<h2 id="Общая информация">Общая информация</h2>
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Процесс</strong></td>
+            <td>ICS-00057 / Обновление справочника</td>
+        </tr>
+        <tr>
+            <td><strong>Название бизнес-процесса</strong></td>
+            <td>ICS-00057 / Обновление справочника</td>
+        </tr>
+        <tr>
+            <td><strong>Управление</strong></td>
+            <td>Document Verification Accounting</td>
+        </tr>
+        <tr>
+            <td><strong>Версия и место хранения бизнес-процесса</strong></td>
+            <td><a
+                    href="">http://srv-gitlabprod-001.main.velcom.by/workfusion/sherpa/-/tree/master/rpa-suite/ics00057-accounts</a>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Владелец бизнес-процесса</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Пользователи бизнес-процесса</strong></td>
+            <td>Контролёр счетов (Исполнитель MT №1/№2/№3), группа SOX</td>
+        </tr>
+        <tr>
+            <td><strong>Связанные документы</strong></td>
+            <td>
+                <ul>
+                    <li><a href="">ICS-00057-TD: Test
+                            Documentation / Тестовая документация</a></li>
+                    <li><a href="">ICS-00057-UG: User Guide /
+                            Руководство пользователя</a></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td><strong>Верифицировано</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Статус документа</td>
+            <td>DRAFT 05.08.2026</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Используемые системы">Используемые системы</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Наименование (полное)</th>
+            <th>Наименование (сокращение), используемое в документации</th>
+            <th>Примечания</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Sherpa Orchestrator</td>
+            <td>Orchestrator</td>
+            <td>Платформа роботизации: ассеты (credentials/text), задачи (Task Queue), триггеры, файловое хранилище (Storage)</td>
+        </tr>
+        <tr>
+            <td>SAP GUI</td>
+            <td>SAP</td>
+            <td>Транзакция ZACCOUNTS (план счетов IFRS, БЕ 1320); выгрузка справочника счетов в Excel и скриншоты экранов</td>
+        </tr>
+        <tr>
+            <td>SharePoint</td>
+            <td>SharePoint</td>
+            <td>Сайт vactpro.main.velcom.by (project Project_928 на прод); хранение результатов по унифицированной структуре папок</td>
+        </tr>
+        <tr>
+            <td>Почтовый сервер (SMTP)</td>
+            <td>Почтовый сервер</td>
+            <td>Отправка нотификаций о запуске, новых MT, обработке задач и завершении процесса</td>
+        </tr>
+        <tr>
+            <td>Sherpa Manual Task (Shadow Core Engine)</td>
+            <td>MT</td>
+            <td>Три Manual Task (№1 «Проверка новых счетов», №2 «Проверка изменения меток счетов», №3 «Внесение изменений по счетам»)</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Описание процесса">Описание процесса</h2>
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Назначение бизнес-процесса</strong></td>
+        </tr>
+        <tr>
+            <td>Первый шаг контроля ICS-00057: обновление справочника релевантных для контроля счетов. Бот выгружает
+                справочник счетов из SAP (ZACCOUNTS), сравнивает с состоянием в Orchestrator Assets, формирует три
+                последовательные Manual Task для контролёра (новые счета, изменённые метки, корректировки) и загружает
+                итоговые доказательства (чек-лист и технический архив) в SharePoint и Orchestrator Storage по
+                унифицированной структуре папок.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3>Упрощенная BPMN схема бизнес-процесса</h3>
+<p><img alt="BPMN схема ICS-00057" src="" />
+</p>
+<p>Файл-исходник: <a href="">ICS-00057.bpm</a>
+</p>
+
+<table>
+    <tbody>
+        <tr>
+            <td><strong>Выходные данные бизнес-процесса</strong></td>
+        </tr>
+        <tr>
+            <td>Письмо с информацией о завершении работы и ссылкой на папку SharePoint с результатами; обновлённые ассеты состояния справочника и комментариев в Orchestrator Storage; чек-лист и технический ZIP-архив в Storage и SharePoint</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Сценарий использования">Сценарий использования (перечень Steps)</h2>
+<table>
+    <tbody>
+        <tr>
+            <td><a href="">ICS-00057-Step-01</a></td>
+            <td>InfrastructureStep — Подготовка инфраструктуры</td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-Step-02</a></td>
+            <td>SapStep — Выгрузка справочника счетов из SAP</td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-Step-03</a></td>
+            <td>PrepareNewStep — Подготовка новых счетов для MT №1</td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-Step-04</a></td>
+            <td>SaveNewStep — Обработка результатов MT №1</td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-Step-05</a></td>
+            <td>PrepareChangedStep — Подготовка изменённых счетов для MT №2</td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-Step-06</a></td>
+            <td>SaveChangedStep — Обработка результатов MT №2</td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-Step-07</a></td>
+            <td>PrepareAllStep — Подготовка MT №3</td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-Step-08</a></td>
+            <td>SaveAllStep — Обработка результатов MT №3</td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-Step-09</a></td>
+            <td>UploadEvidenceStep — Загрузка результатов на SharePoint и в Storage</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Возможные исключения">Возможные исключения (Exceptions)</h2>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Описание</th>
+            <th>Тип исключения</th>
+            <th>Действие Bot при наступлении</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><a href="">ICS-00057-EX-01</a></td>
+            <td>Некорректный отчётный период: periodStart &gt;= periodEnd или periodEnd &gt;= дата запуска (параметры парсятся, но не проходят валидацию)</td>
+            <td>Бизнес</td>
+            <td>
+                <ol>
+                    <li>Бот выбрасывает BusinessException с описанием периода и даты запуска;</li>
+                    <li>rpa-core HandleErrorStep отправляет письмо <code>process_error</code> Исполнителю и support-группе;</li>
+                    <li>Процесс останавливается с ошибочным статусом.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-EX-02</a></td>
+            <td>Ошибка SAP-сессии: сбой подключения к SAP Logon, транзакция ZACCOUNTS не выполнена, экспорт в Excel не построен</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Бот логирует ошибку SessionException;</li>
+                    <li>Бот выбрасывает BusinessException("SAP session failed");</li>
+                    <li>HandleErrorStep отправляет <code>process_error</code>;</li>
+                    <li>Процесс останавливается.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-EX-03</a></td>
+            <td>Прочий сбой шага SapStep (ошибка Robot при эмуляции клавиатуры/мыши, недоступен ресурсный файл mock-режима, ошибка выгрузки)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Бот логирует причину;</li>
+                    <li>Бот выбрасывает BusinessException("SAP step failed" / "Cannot perform mocked SAP transaction" / "Resource file not found");</li>
+                    <li>HandleErrorStep отправляет <code>process_error</code>;</li>
+                    <li>Процесс останавливается.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-EX-04</a></td>
+            <td>Ошибка чтения/записи состояния справочника или комментариев (файлы ics00057_accounts.json / ics00057_comments.json в Storage)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Бот логирует ошибку работы с Storage;</li>
+                    <li>Бот выбрасывает BusinessException("Failed to read/write storage file: ...");</li>
+                    <li>HandleErrorStep отправляет <code>process_error</code>;</li>
+                    <li>Процесс останавливается.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-EX-05</a></td>
+            <td>Ошибка парсинга результата MT-задачи: параметр initialData отсутствует, пуст или имеет необрабатываемый формат</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Бот логирует guid задачи и причину;</li>
+                    <li>Бот выбрасывает BusinessException("Failed to parse MT №1/№2/№3 task ...");</li>
+                    <li>HandleErrorStep отправляет <code>process_error</code>;</li>
+                    <li>Процесс останавливается.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-EX-06</a></td>
+            <td>Не найдена MT-задача в очереди: отсутствует задача с ожидаемым именем, final-тегом и статусом IN_PROGRESS (сработал триггер, но задача не найдена)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Бот логирует критерий поиска;</li>
+                    <li>Бот выбрасывает IllegalStateException (оборачивается в BusinessException на верхнем уровне SaveNewStep/SaveChangedStep/SaveAllStep);</li>
+                    <li>HandleErrorStep отправляет <code>process_error</code>;</li>
+                    <li>Процесс останавливается.</li>
+                </ol>
+            </td>
+        </tr>
+        <tr>
+            <td><a href="">ICS-00057-EX-07</a></td>
+            <td>Отсутствует обязательный параметр транзакции или InitParameters (SAP accounts / Checklist accounts / InitParameters / системное свойство transaction.path)</td>
+            <td>Системное</td>
+            <td>
+                <ol>
+                    <li>Бот логирует отсутствующее поле;</li>
+                    <li>Бот выбрасывает IllegalStateException (оборачивается в BusinessException на верхнем уровне шага);</li>
+                    <li>HandleErrorStep отправляет <code>process_error</code>;</li>
+                    <li>Процесс останавливается.</li>
+                </ol>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Конфигурируемые параметры">Конфигурируемые параметры</h2>
+<p>Входные параметры процесса, используемые нотификации и т.п.</p>
+<p>Все описанные параметры находятся в ресурсах из группы <strong>ics00057_accounts</strong>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Параметр</th>
+            <th>Ресурс</th>
+            <th>Описание</th>
+            <th>Текущее значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td rowspan="2">1</td>
+            <td>emailRecipients:to</td>
+            <td rowspan="2">ics00057_accounts_init_params</td>
+            <td rowspan="2">Email-адрес(а) для уведомлений о статусе процесса (старт, новые MT, обработка, завершение, ошибки)</td>
+            <td>SOX_Workfusion_App_RPA_ICS-00057@a1.by</td>
+        </tr>
+        <tr>
+            <td>emailRecipients:cc</td>
+            <td>SC_SG_WorkFusion@A1.by</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>storageFolderName</td>
+            <td>ics00057_accounts_init_params</td>
+            <td>Имя папки в Orchestrator Storage для выгрузки, скриншотов, чек-листа и архива (плоские имена с суффиксом даты-времени)</td>
+            <td>ICS-00057</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>unloadingFileName</td>
+            <td>ics00057_accounts_init_params</td>
+            <td>Имя файла выгрузки SAP (без пути), сохраняется в Storage и SharePoint в папку input data</td>
+            <td>ZACCOUNTS.xlsx</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>screenshotsFileName</td>
+            <td>ics00057_accounts_init_params</td>
+            <td>Имя xlsx-файла со скриншотами экранов SAP, сохраняется в папку screenshots</td>
+            <td>screenshots.xlsx</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>spVactproBase</td>
+            <td>ics00057_accounts_init_params</td>
+            <td>Базовый URL сайта SharePoint для хранения результатов</td>
+            <td>https://vactpro.main.velcom.by</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>spVactproProject</td>
+            <td>ics00057_accounts_init_params</td>
+            <td>Проект SharePoint (defaultProject), куда загружаются файлы результатов</td>
+            <td>Project_928 (прод) / Project_1776 (тест)</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td>spVactproPath</td>
+            <td>ics00057_accounts_init_params</td>
+            <td>Корневой путь в SharePoint, под которым создаётся унифицированная структура папок UnifiedFoldersUtil</td>
+            <td>Lists/documents (прод) / Lists/documents/Бот/ICS-00057 (тест)</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td>mockSap</td>
+            <td>ics00057_accounts_init_params</td>
+            <td>Режим имитации SAP: true — выгрузка берётся из ресурсов sap_mock/*, false — реальная выгрузка из SAP</td>
+            <td>false (прод) / true (тест)</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td>periodStart</td>
+            <td>ics00057_accounts_init_params</td>
+            <td>Начало отчётного периода в формате dd.MM.yyyy; "-" означает расчёт прошлого квартала по умолчанию</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td>periodEnd</td>
+            <td>ics00057_accounts_init_params</td>
+            <td>Конец отчётного периода в формате dd.MM.yyyy; должен быть &gt; periodStart и &lt; даты запуска</td>
+            <td>-</td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td>processNewActionLink</td>
+            <td>ics00057_accounts_init_params</td>
+            <td>Action-ссылка MT №1 «Проверка новых счетов» для подстановки в письмо new_tasks</td>
+            <td>https://sherpa-prod.a1.by/main/my-actions/...</td>
+        </tr>
+        <tr>
+            <td>12</td>
+            <td>processChangedActionLink</td>
+            <td>ics00057_accounts_init_params</td>
+            <td>Action-ссылка MT №2 «Проверка изменения меток счетов» для подстановки в письмо new_tasks</td>
+            <td>https://sherpa-prod.a1.by/main/my-actions/...</td>
+        </tr>
+        <tr>
+            <td>13</td>
+            <td>processAllActionLink</td>
+            <td>ics00057_accounts_init_params</td>
+            <td>Action-ссылка MT №3 «Внесение изменений по счетам» для подстановки в письмо new_tasks</td>
+            <td>https://sherpa-prod.a1.by/main/my-actions/...</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Нотификации">Нотификации</h2>
+<p>Сообщения, отправляемые процессом на группы заказчиков, support группу и т.д.</p>
+<p>Все описанные параметры (кроме стандартных) находятся в ресурсах из группы <strong>ics00057_accounts</strong>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Наименование</th>
+            <th>Ресурс</th>
+            <th>Описание</th>
+            <th>Текущее значение</th>
+            <th>Тип</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>process_started</td>
+            <td>ics00057_accounts_email_templates</td>
+            <td>Уведомление о запуске ботопроцесса (отправляет InfrastructureStep через sendProcessStarted)</td>
+            <td>Используется <a href="https://wiki.a1.by/pages/viewpage.action?pageId=474058264">стандартное
+                    значение</a></td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>process_error</td>
+            <td>ics00057_accounts_email_templates</td>
+            <td>Уведомление об ошибке ботопроцесса (отправляет rpa-core HandleErrorStep); ссылка «Порядок действий при возникновении ошибок» добавляется, если в init_params задан errorHandling.errorOccursUrl</td>
+            <td>Используется <a href="https://wiki.a1.by/pages/viewpage.action?pageId=474058264">стандартное
+                    значение</a></td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>new_tasks</td>
+            <td>ics00057_accounts_email_templates</td>
+            <td>Уведомление о новой задаче MT (№1/№2/№3) со ссылкой на Action</td>
+            <td>"subjectTemplate":"${bpNumber} ${bpDescription}: Новая задача — ${mtName}","bodyTemplate":"...Новая задача в процессе ${bpNumber} ${bpDescription}...Ссылка на задачу: &lt;a href=\"${actionUrl}\"&gt;открыть&lt;/a&gt;..."</td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td>no_new_tasks</td>
+            <td>ics00057_accounts_email_templates</td>
+            <td>Уведомление об отсутствии новых задач MT №1/MT №2 (при auto-trigger ветке)</td>
+            <td>"subjectTemplate":"${bpNumber} ${bpDescription}: Новых задач нет — ${mtName}","bodyTemplate":"...Новых задач в процессе ${bpNumber} ${bpDescription} не обнаружено..."</td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td>task_processed</td>
+            <td>ics00057_accounts_email_templates</td>
+            <td>Уведомление об обработке задачи MT (отправляют SaveNewStep/SaveChangedStep/SaveAllStep после разбора processedAccounts)</td>
+            <td>"subjectTemplate":"${bpNumber} ${bpDescription}: Задача обработана — ${mtName}","bodyTemplate":"...Задача обработана в процессе ${bpNumber} ${bpDescription}..."</td>
+            <td>Email</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>work_end</td>
+            <td>ics00057_accounts_email_templates</td>
+            <td>Уведомление о завершении работы со ссылкой на папку SharePoint с результатами (отправляет UploadEvidenceStep)</td>
+            <td>"subjectTemplate":"${bpNumber} ${bpDescription}: Работа завершена","bodyTemplate":"...Работа процесса ${bpNumber} ${bpDescription} завершена...Ссылка на результаты: ${controlResultsLink}..."</td>
+            <td>Email</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Конфиденциальные значения">Конфиденциальные значения</h2>
+<p>Учетные данные и т.п.</p>
+<p>Необходимо проверять, что указанные ресурсы с нужной УЗ указаны в <a
+        href="https://wiki.a1.by/pages/viewpage.action?pageId=407798383">Интеграции со сторонними системами (учетные
+        записи)</a></p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Ресурс</th>
+            <th>Группа</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>sap_credentials</td>
+            <td>credentials</td>
+            <td>Логин и пароль для доступа Робота к серверу SAP (использует SapStep для транзакции ZACCOUNTS)</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>sharepoint_credentials</td>
+            <td>credentials</td>
+            <td>Логин и пароль для доступа Робота к каталогам SharePoint (SapStep создаёт структуру папок, UploadEvidenceStep загружает файлы)</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>sherpa_api_credentials</td>
+            <td>credentials</td>
+            <td>Bearer-токен для JS-вызовов Manual Task (/api/task/*), передаётся в initialData MT как bearerToken (PrepareNewStep, PrepareChangedStep, PrepareAllStep)</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td><a href="https://wiki.a1.by/spaces/SRPA/pages/407798383">smtp_credentials</a>
+            </td>
+            <td>rpa_configurations</td>
+            <td>Настройки почтового сервера + данные УЗ, используемой для отправки нотификаций</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Прочие ресурсы">Прочие ресурсы</h2>
+<p>Не конфиденциальные данные, используемые в ходе работы процесса.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№</th>
+            <th>Ресурс</th>
+            <th>Группа</th>
+            <th>Описание</th>
+            <th>Текущее значение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>sap_settings</td>
+            <td>ics00057_accounts</td>
+            <td>JSON с настройками подключения SAP Logon (systemName, client, language); language должен быть "RU" — имена счетов зависят от языка</td>
+            <td>Sherpa Orchestrator</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>ics00057_accounts.json</td>
+            <td>ics00057_accounts</td>
+            <td>JSON-состояние справочника счетов в Orchestrator Storage (заменяет DataStore); читает PrepareNewStep, обновляют Save* и UploadEvidenceStep через ProcessStateService</td>
+            <td>Sherpa Orchestrator</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>ics00057_comments.json</td>
+            <td>ics00057_accounts</td>
+            <td>JSON-состояние комментариев MT (заменяет DataStore) для autocomplete в формах MT; обновляют Save* и UploadEvidenceStep</td>
+            <td>Sherpa Orchestrator</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Хранилище">Хранилище</h2>
+<p>Используемые папки и файлы в Хранилище файлов в Оркестраторе.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№ п/п</th>
+            <th>Наименование папки в Хранилище</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>ICS-00057</td>
+            <td>Папка Orchestrator Storage (значение параметра storageFolderName) для временного хранения выгрузки SAP, скриншотов, чек-листа и технического архива между стадиями; файлы хранятся под плоским уникальным именем с суффиксом даты-времени (StorageNames)</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>ics00057_accounts.json</td>
+            <td>Файл-состояние справочника счетов в плоском Storage (читается/пишется через ProcessStateService)</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>ics00057_comments.json</td>
+            <td>Файл-состояние комментариев MT в плоском Storage (читается/пишется через ProcessStateService)</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2 id="Папки доступа">Папки доступа</h2>
+<p>Папки доступа, которые использует процесс.</p>
+<table>
+    <thead>
+        <tr>
+            <th>№ п/п</th>
+            <th>Наименование папки доступа</th>
+            <th>Описание</th>
+            <th>Перечень объектов, которым присвоена папка</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>ICS-00057</td>
+            <td>Папка доступа для Bot-процесса "ICS-00057 Обновление справочника" и его Manual Task форм</td>
+            <td>
+                <ul>
+                    <li>Action "processNew" (MT №1 «Проверка новых счетов», скрипт actions/process_new.js)</li>
+                    <li>Action "processChanged" (MT №2 «Проверка изменения меток счетов», скрипт actions/process_changed.js)</li>
+                    <li>Action "processAll" (MT №3 «Внесение изменений по счетам», скрипт actions/process_all.js)</li>
+                </ul>
+            </td>
+        </tr>
+    </tbody>
+</table>

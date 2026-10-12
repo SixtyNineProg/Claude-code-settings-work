@@ -1,0 +1,26 @@
+{
+  "skill_name": "write-documentation",
+  "evals": [
+    {
+      "id": 0,
+      "name": "fresh-rich-process",
+      "prompt": "Сгенерируй полную документацию для RPA-процесса rpa-suite/ics00057-accounts. У процесса пока нет папки documentation — создай её с нуля по шаблонам DemoBP. Учти, что процесс использует SAP GUI, SharePoint, Email и Orchestrator, и содержит 9 шагов.",
+      "expected_output": "Полный набор HTML-файлов в src/main/resources/documentation/: ICS-00057.html, история изменений, инструкция по развёртыванию, PDD, 9 Step-файлов, TD, UG. Все файлы — HTML-фрагменты без обёртки, кросс-ссылки в формате ICS-00057-Step-0N / ICS-00057-EX-NN. В PDD указаны SAP GUI, SharePoint, Orchestrator, Email среди используемых систем.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "regenerate-existing",
+      "prompt": "Обнови документацию для процесса rpa-suite/ics60001 — там уже есть устаревший набор HTML в src/main/resources/documentation/. Перегенерируй его по шаблонам DemoBP на основе текущего Java-кода и конфигов, сохранив структуру и кросс-ссылки.",
+      "expected_output": "Обновлённый набор из ~17 HTML-файлов в src/main/resources/documentation/ (PDD, UG, TD, инструкция, история, обзор, по файлу на каждый Step). Файлы остаются HTML-фрагментами без обёртки; имена и ID-формат (ICS-60001-Step-0N) согласованы с существующей структурой.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "minimal-config-edge-case",
+      "prompt": "Сделай PDD и остальную документацию для процесса rpa-suite/ics00012. Это небольшой процесс с 4 шагами (StartNotification, JiraTicketCreation, ScriptExecuting, EndNotification) и минимальным process-config.json, где есть только поле bpName.",
+      "expected_output": "Документация для ICS-00012 в src/main/resources/documentation/. Корректно обрабатывается отсутствие bpNumber/bpDescription/controlName в process-config.json (поля оставлены как —/TBD или заполнены из README/кода). PDD «Используемые системы» включает Jira/JSD (по импортам) и Orchestrator. 4 Step-файла в порядке из .process.",
+      "files": []
+    }
+  ]
+}

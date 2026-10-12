@@ -1,0 +1,12 @@
+Note: lsof not found, cannot check if port is in use
+
+  Eval Viewer
+  ─────────────────────────────────
+  URL:       http://localhost:3121
+  Workspace: C:\Users\dzmitry_klim\.claude\skills\sherpa-cron-workspace\iteration-2
+  Feedback:  C:\Users\dzmitry_klim\.claude\skills\sherpa-cron-workspace\iteration-2\feedback.json
+  Previous:  C:\Users\dzmitry_klim\.claude\skills\sherpa-cron-workspace\iteration-1 (14 runs)
+  Benchmark: C:\Users\dzmitry_klim\.claude\skills\sherpa-cron-workspace\iteration-2\benchmark.json
+
+  Press Ctrl+C to stop.
+

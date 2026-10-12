@@ -1,0 +1,43 @@
+{
+  "expectations": [
+    {
+      "text": "Расшифровка содержит 25 декабря",
+      "passed": true,
+      "evidence": "«Это **разовый в году** запуск — 25 декабря, четыре раза в этот день»."
+    },
+    {
+      "text": "Перечислены все четыре времени: 11:29, 13:29, 15:29, 17:29",
+      "passed": true,
+      "evidence": "«в 11:29, 13:29, 15:29 и 17:29 **по Минску**» + вывод скрипта с четырьмя запусками 25.12.2026 и повтор 25.12.2027."
+    },
+    {
+      "text": "Выражение не истолковано в UTC — подразумевается местное время Sherpa",
+      "passed": true,
+      "evidence": "«`cron_tab` считается в **местном времени Sherpa (Минск, UTC+3)**. При этом API `/schedules` отдаёт `last_run` ... в **UTC**. Поэтому ... вы увидите `last_run` = `08:29:00Z` — это те же самые 11:29»."
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "execution_metrics": {
+    "tool_calls": {
+      "Read": 1,
+      "Bash": 2,
+      "Write": 2
+    },
+    "total_tool_calls": 5,
+    "total_steps": 3,
+    "files_created": [
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-4-decode-multi-hour-expression\\with_skill\\run-1\\outputs\\answer.md",
+      "C:\\Users\\dzmitry_klim\\.claude\\skills\\sherpa-cron-workspace\\iteration-2\\eval-4-decode-multi-hour-expression\\with_skill\\run-1\\outputs\\metrics.json"
+    ],
+    "errors_encountered": 0
+  },
+  "timing": {
+    "executor_duration_seconds": 79.7
+  },
+  "eval_feedback": "A1 и A2 проходят в обеих конфигурациях: разбор списка часов — общее знание cron. Различает A3 (часовой пояс + разделение cron_tab/last_run)."
+}
