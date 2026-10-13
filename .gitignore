@@ -17,5 +17,6 @@ rules/AtlassianMCP.md
 !/output-styles/
 !/workflows/
 !/statusline-command.sh
+!/statusline-parse.py
 !/hooks/
 !/get-shit-done/
