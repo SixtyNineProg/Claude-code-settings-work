@@ -16,3 +16,6 @@ rules/AtlassianMCP.md
 !/themes/
 !/output-styles/
 !/workflows/
+!/statusline-command.sh
+!/hooks/
+!/get-shit-done/
