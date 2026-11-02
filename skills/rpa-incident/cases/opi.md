@@ -146,6 +146,27 @@
 
 ---
 
+## Кейс 9: Шаг не стартует — недоступен asset `sherpa_api_credentials` (OPI-OCR)
+
+**Дата:** 2026-10-28
+**Jira:** Не указан
+**Процесс:** OPI-OCR
+**Шаг:** InfrastructureStep (`d861f432-8eff-411a-ae09-24e083e9bbbf`) — и любой другой Java-шаг процесса
+**Сигнатура ошибки:** `[ERROR] Failed to retrieve Sherpa asset 'sherpa_api_credentials': Failed to get asset: sherpa_api_credentials`
+**Категория причины:** Конфигурация/инфраструктура — Orchestrator не отдаёт credential-asset
+**Причина:** Универсальный PowerShell-обёртка `rpa-core/src/main/resources/Run-JavaStep.ps1:578` перед вызовом JAR всегда делает `Get-SherpaAsset -AssetGuid "sherpa_api_credentials"` → `__Orchestrator.GetAsset(...)`. Любая ошибка вызова схлопывается в `Failed to get asset: <имя>`. Java-код OPI-OCR использует только `sharepoint_credentials`, поэтому причина не в коде процесса.
+**Диагностический признак:** `designer_item_id` оканчивается на GUID блока из `Главная.process` (после `MyBlock` + 32-символьный хеш) — так можно точно определить упавший шаг. `[UNHANDLED ERROR]` рядом означает, что `Handle-StepError.ps1:486` упал на том же asset → письмо об ошибке не отправлено. Дубль `[ERROR]`/`[UNHANDLED ERROR]` с одной меткой времени — одно событие, залогированное дважды.
+**Данные-триггер:** В `Run-JavaStep.ps1` `Get-SherpaAsset` вызывается ровно один раз за исполнение блока (строка 578), поэтому ошибка asset с тем же `designer_item_id` — это **повторное исполнение того же блока InfrastructureStep**. Все события имеют один `job.guid=1b05b24b-...` (он же имя transaction-файла), т.е. это перезапуск **того же запуска**, а не новый прогон. Схема линейная, петель нет (`Старт → Try/Catch → InfrastructureStep → PrepareFilesStep → ParseResolutionsAutomaticallyStep → EndStep → Конец`). Итог: в 10:04:04 InfrastructureStep успешно получил asset (`Successfully retrieved asset 'sherpa_api_credentials'`, `Successfully initialized Sherpa credentials`), в 10:22–10:27 Prepare/Parse отработали, затем около 10:27–10:29 произошёл **первый сбой** (в логе не показан), запуск был перезапущен с первого шага — и на перезапуске asset уже был недоступен. Ошибка asset — **вторичная**; первичную причину даёт `executionHistory` в transaction-файле или события окна 10:27–10:29:36.
+**Диагностическая проверка:** `GetAsset` в скрипте блока вызывается ровно один раз (в `Run-JavaStep.ps1` и во встроенном скрипте блока — по одному вхождению), поэтому второй `Failed to retrieve Sherpa asset` = повторный вход в скрипт блока. Asset берётся **до** строки `[START] Step:`, поэтому повторный вход не оставляет нового `[START]` в логе. Признак того, что первый проход блока завершился, — строка `[SUCCESS] Step '<name>' completed successfully` (или `[JAVA PROCESS FAILED]`). На агенте прочитать `C:\RPA\Transactions\2026\10\28\transaction_1b05b24b-3f48-426c-9adc-eaf67cf05539.json` — `executionHistory` (список `{stepName, status}`, статусы `SUCCESS`/`FAILED`) покажет, какой шаг упал первым. Дополнительно посмотреть события 10:27–10:29:36 с `designer_item_id`, оканчивающимся на `0cc5455b5081412fa911c25f278e0392` (ParseResolutionsAutomaticallyStep) и `c17918f1bb2445debe0789ec65557c15` (HandleError).
+**Исправление (код):** Не требуется. Опционально: pre-flight проверка asset с понятным сообщением; fallback в Handle-StepError, чтобы уведомление об ошибке уходило без asset.
+**Исправление (данные):** Проверить в Orchestrator asset `sherpa_api_credentials` (тип credentials, область/проект, права робота, срок действия) и восстановить/обновить. Отдельно проверить лог Orchestrator на 10:27–10:30: правка/ротация asset, рестарт, ошибки авторизации робота.
+**Repair:** Перезапуск остановился на InfrastructureStep до каких-либо действий, поэтому дублей он не создал. Но первый проход успел отработать Prepare/Parse: файлы лежат в `Work/OCR/2026_октябрь_28_100236/`, распознанные резолюции могли быть дописаны в `Results_*.XLSX` (в `ParseResolutionsAutomaticallyStep:94` `appendRecognized` вызывается **до** архивации в строке 95–100). Поэтому repair `ParseResolutionsAutomaticallyStep` опасен — повторно допишет строки. Сначала определить первичный сбой по transaction-файлу и состоянию SMB.
+**Общая папка:** Проверить `Work/OCR/2026_октябрь_28_100236/` и `PDF/` (перенесённые и подготовленные файлы), `Архив_распознанного/2026/октябрь/` (дошла ли архивация) и `Файлы_с_данными_должников_и_исполнителей/Results_*.XLSX` (дописана ли строка и не забрал ли её OPI-Flow). Неперенесённые исходники остаются в `Постановления_для_ботопроцесса/`.
+**Исторический прецедент:** Новый кейс. Ближайший по механике — Кейс 7 (недоступный endpoint из-за runtime-конфигурации), но здесь именно asset.
+**Затронутые процессы:** Все процессы Sherpa на обёртке `Run-JavaStep.ps1`/`Handle-StepError.ps1` (практически весь `rpa-suite`), включая OPI-Flow, OPI-Manual, OPI-Resolutions.
+
+---
+
 ## Шаблон нового кейса
 
 ```

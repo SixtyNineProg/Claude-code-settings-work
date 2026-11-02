@@ -6,6 +6,9 @@ description: >
   a Workfusion (WF) process into a Sherpa RPA project — even if they don't say the word 'migrate'.
   Also use when the user asks about WF-to-Sherpa mapping, generating Sherpa process skeletons,
   analyzing Workfusion XML configs, or converting WF Processors to Sherpa Steps.
+  Also use when the user asks to remove, clean up, or rewrite Workfusion traces, legacy class names,
+  TODOs, or comments in a project already migrated to Sherpa
+  («убрать упоминания Workfusion из процесса»).
   This skill auto-detects the process type (server-side, desktop, SAP, manual task, parallel,
   PowerShell) and guides the full migration workflow.
 compatibility: "PowerShell 5.1+, Gradle 8.5+, Java 21+"
@@ -109,6 +112,8 @@ etalon. Freshness is a recency signal, not a quality signal, so a master gate is
 - User needs to analyze a WF `.process` or XML config directory
 - User mentions `gradle generateProcess` in context of WF migration
 - User asks about converting WF `AppInitParams`, `AppTransaction`, `AppDoc` to Sherpa equivalents
+- User asks to remove/clean up Workfusion traces (WF mentions, legacy class names, TODOs, comments)
+  from an already migrated Sherpa process — see `references/wf-cleanup.md`
 
 ## Supported process types (auto-detected)
 
@@ -258,6 +263,14 @@ After generation, apply changes from the analysis report:
    `actions/*.js`, `*ActionLink` fields, Prepare/Save step pairs, `MT_<NN>_*`
    constants, Orchestrator-setup) straight from the code — do **not** hand-write
    the MT section. Do **not** reference another process by name in the new README.
+10. **Cleanup WF traces.** Once the code and README are final, remove every remaining reference to
+    the source Workfusion process: explicit `WF`/`Workfusion` mentions and indirect legacy
+    artifacts (WF class/processor/datastore names, `mt/...` paths, SQL fragments). Rewrite comments
+    and Javadoc instead of deleting them blindly — keep the technical rationale («почему так»),
+    drop the WF comparison. Never change functional identifiers (init-param keys, asset names,
+    `@SerializedName` fields) or runtime log strings. Verify with
+    `rg -n --glob '!build/**' --glob '!*.process' --glob '!*.sherpa*' '(?i)workfusion|\bWF\b|WF-' <process-dir>`
+    → 0 matches, then compile and run tests. Full playbook: `references/wf-cleanup.md`.
 
 ### Phase 6: Validation
 
@@ -1159,6 +1172,12 @@ Before declaring any migration complete, perform a **semantic-equivalence review
 После завершения миграции проверьте:
 
 - [ ] **Semantic Equivalence Gate пройден:** каждый мигрированный WF-компонент сопоставлен с исходником; поведение, порядок, условия, преобразования, side effects и обработка ошибок сохранены; все отклонения документированы как platform-forced; необъяснимых изменений нет
+- [ ] **Следы WF удалены:** явные `WF`/`Workfusion` и косвенные legacy-артефакты (`*Processor`,
+      `*Supplier`, `*Datastore`, `S3Service`, `mt/mt_0*`, `join_intake`, `AppTransaction`,
+      `AppProcessException`) отсутствуют; комментарии переписаны с сохранением смысла;
+      функциональные ключи, имена полей и runtime-строки логов не менялись;
+      `rg -n --glob '!build/**' --glob '!*.process' --glob '!*.sherpa*' '(?i)workfusion|\bWF\b|WF-' <process-dir>`
+      → 0 совпадений (см. `references/wf-cleanup.md`)
 - [ ] **Процесс независим:** `build.gradle` зависит только от `:rpa-core` (+ сторонние библиотеки); нет
       импортов пакетов других процессов; **существующие процессы не модифицировались** во время миграции
 - [ ] **Freshest Reference Discovery:** для платформенных вопросов вне канона применена процедура —
@@ -1296,6 +1315,7 @@ Generated files:
 ## Bundled Resources
 
 - `scripts/wf-migrate.ps1` — PowerShell analyzer and code generator that scans a WF process directory and optionally produces Java source files, a structured JSON report, and `build.gradle`.
+- `references/wf-cleanup.md` — post-migration playbook for removing Workfusion traces: when to run, explicit/indirect search patterns, false positives, rewrite rules, verification, and git hygiene.
 
 ## Important Notes
 

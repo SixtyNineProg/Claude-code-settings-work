@@ -69,3 +69,88 @@ HTML-формы ручных задач (Manual Tasks) на базе Shadow Core
 **Общая папка:** Не применимо; транзакция Sherpa сохранена в `C:\RPA\Transactions\2026\09\15\transaction_d8d6f97d-3238-4272-a4dd-7ec82d42b4e5.json`.
 **Исторический прецедент:** Не проверен.
 **Затронутые процессы:** ICS-00442_AD_APP_all_domain и процессы, использующие тот же Jira workflow/переходы.
+
+---
+
+## Кейс 3: Can't map name to dispid: press — click() по текстовому полю в мультивыборе SAP
+
+**Дата:** 2026-10-20
+**Jira:** — (RPA-16569, миграция процесса «Проверка проводок»)
+**Процесс:** ics00057-postings
+**Шаг:** SapStep → SapRobotRpa.setMultipleAccountNumbers (строка 128)
+**Сигнатура ошибки:** `ComFailException: Can't map name to dispid: press` (обёрнуто в `RuntimeException: SAP GUI method call failed: press()`)
+**Категория причины:** Баг кода — неверный метод SAP GUI Scripting для типа элемента
+**Причина:** В диалоге «Многократный выбор для Счет главной книги» (SAPLALDB, screen 3000) элемент
+`.../tblSAPLALDBSINGLE/ctxtRSCSEL_255-SLOW_I[1,0]` имеет тип `GuiCTextField`. Вызов `.click()` в
+`SapGuiElementImpl` транслируется в COM-метод `press`, который есть только у `GuiButton`; у текстового
+поля такого метода нет → JACOB не может замапить имя на dispid.
+**Данные-триггер:** Не зависит от данных — сбой на первом обращении к первой ячейке таблицы.
+**Диагностика на живой сессии:** Процесс `saplogon` (32-bit) оставлен открытым. Через 32-битный
+`cscript` + `GetObject("SAPGUI")` (из 64-битного PowerShell ROT падает с RPC_E_SERVERFAULT /
+AccessViolation) проверено: `GetCell(0,1).Type = GuiCTextField`, `findById` находит элемент,
+`setFocus` и `caretPosition=0` выполняются без ошибок; `wnd[1]/tbar[0]/btn[24]` — «Загрузка из
+буфера (Shift+F12)».
+**Исправление (код):** `SapRobotRpa.setMultipleAccountNumbers()`: `.click()` → `.setFocus()` для
+первой ячейки перед нажатием `btn[24]` (загрузка из буфера).
+**Исправление (данные):** Не требуется.
+**Repair:** Не применимо (Sherpa). После сборки перезапустить шаг/процесс; старую SAP-сессию,
+оставшуюся в модальном диалоге, закрыть (F12), иначе она помешает новому запуску.
+**Общая папка:** Не применимо.
+**Исторический прецедент:** Кейс 1 (тоже ошибка миграции/устаревший контракт UI).
+**Затронутые процессы:** Только ics00057-postings: аналогичных `.click()` по `ctxt`-элементам
+в rpa-suite не найдено. Соседние процессы (cmr, ics60125-recon, ics60026, ics60210 и др.)
+заполняют ячейки мультивыбора через `setText(...)`.
+
+---
+
+## Кейс 4: sendVKey: The virtual key is not enabled — pressKey(PAGE_DOWN) через SAP GUI Scripting
+
+**Дата:** 2026-10-20
+**Jira:** — (RPA-16569)
+**Процесс:** ics00057-postings
+**Шаг:** SapStep → SapRobotRpa.setMultipleAccountNumbers (строка 137), следующий запуск после фикса кейса 3
+**Сигнатура ошибки:** `ComFailException: Invoke of: sendVKey` / `Description: The virtual key is not enabled.`
+(обёрнуто в `RuntimeException: Failed to press key: PAGE_DOWN`)
+**Категория причины:** Баг общей библиотеки `rpa-core` — неверный способ отправки навигационной клавиши
+**Причина:** `SapGuiElementImpl.pressKey("PAGE_DOWN")` для одиночной клавиши уходил в
+`Dispatch.call(element, "sendVKey", 17)`. `sendVKey` в SAP GUI Scripting поддерживает только
+функциональные клавиши/Enter; PageDown виртуальной клавишей не является, поэтому SAP Frontend
+отвечает «The virtual key is not enabled». Код `mapKeyToCode` (HOME=14, END=15, PAGE_UP=16,
+PAGE_DOWN=17, INSERT=18, DELETE=19) — не VKey-коды SAP, а неверная таблица.
+**Данные-триггер:** Число счетов > 8: `countPgDnClicks(size)` даёт хотя бы одну прокрутку.
+В запуске 00:53 было 285 аккаунтов → 35 прокруток, падение на первой.
+**Исправление (код):** `rpa-core/.../session/SapGuiElementImpl.java`: константа `ROBOT_KEY_NAMES`
+(`PAGE_UP`, `PAGE_DOWN`); в `pressKey` такие клавиши отправляются через `sendKeyCombination`
+(`java.awt.Robot`), как уже делают соседние процессы при CTRL+PAGE_DOWN.
+**Исправление (данные):** Не требуется.
+**Проверка на живой сессии:** В диалоге было вставлено 285 счетов (видны 8 строк на страницу).
+Прокрутка системным нажатием PGDN прошла 35 раз; `btn[8]` («Скопировать») закрыл диалог,
+`SO_HKONT-LOW=62440100`; повторное открытие мультивыбора показало те же первые значения —
+выбор применился и сохранился. Нюанс теста: cscript-консоль перехватывала фокус, поэтому
+использовались `AppActivate` + `WScript.Shell.SendKeys`; в Java-ветке аналог — `java.awt.Robot`
+после `wnd[x].setFocus`, как в продакшене у процессов с CTRL+PAGE_DOWN.
+**Repair:** Не применимо (Sherpa). После сборки перезапустить шаг.
+**Общая папка:** Не применимо.
+**Исторический прецедент:** Кейс 3 (та же строка метода, предыдущая ошибка).
+**Затронутые процессы:** Сейчас только ics00057-postings (единственное использование одиночной
+`pressKey(PAGE_DOWN)`). Латентно та же ошибка возможна для HOME/END/INSERT/DELETE/TAB/ESCAPE —
+их коды в `mapKeyToCode` тоже не являются VKey; вызовов в rpa-suite не найдено, менять не стали.
+
+---
+
+## Кейс 5: Orchestrator Storage upload returned result=0
+
+**Дата:** 2026-10-22
+**Jira:** —
+**Процесс:** ics00057-reopening
+**Шаг:** SapStep → StorageService.upload (строка 109)
+**Сигнатура ошибки:** `NetworkException: Upload failed: result = 0`
+**Категория причины:** Инфраструктура / конфигурация Storage
+**Причина:** API `api/files/create` ответил HTTP-успехом, но бизнес-результат загрузки равен `0`; точная серверная причина не попадает в текущий stack trace, потому что клиент проверяет только поле `result` и не логирует тело ответа.
+**Данные-триггер:** Файл `screenshots_20261022_141542.xlsx`; загрузка выполняется в папку `ICS-00057-reopening` из `storageFolderName`.
+**Исправление (код):** Не подтверждено. Для диагностики нужно сохранять безопасные диагностические данные ответа `api/files/create` (HTTP-код, result, guid и error-поля без токена/содержимого файла), а не менять retry вслепую.
+**Исправление (данные):** Проверить существование и права API-токена на папку `ICS-00057-reopening`, а также отсутствие конфликта имени/гонки между `files().exists()` и `files().upload()`.
+**Repair:** Повторный запуск шага может сработать только после устранения причины на Storage; сначала проверить папку и права. Если файл уже создан сервером, повторить без проверки может получить конфликт имени.
+**Общая папка:** Не применимо.
+**Исторический прецедент:** Не найден.
+**Затронутые процессы:** Любые процессы, использующие `rpa-core` `FileOperationsImpl` и тот же Storage endpoint.

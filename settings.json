@@ -1,8 +1,9 @@
 {
   "env": {
-    "ANTHROPIC_BASE_URL": "http://localhost:11434",
-    "ANTHROPIC_AUTH_TOKEN": "ollama",
+    "ANTHROPIC_BASE_URL": "http://localhost:11434",                                                                    
+    "ANTHROPIC_AUTH_TOKEN": "ollama",                                                                                  
     "ANTHROPIC_API_KEY": "ollama"
+
   },
   "permissions": {
     "defaultMode": "plan"
@@ -133,7 +134,8 @@
     "obsidian@obsidian-skills": true,
     "jdtls-lsp@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": false,
-    "feature-dev@claude-plugins-official": true
+    "feature-dev@claude-plugins-official": true,
+    "postman@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "obsidian-skills": {
